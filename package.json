@@ -1,0 +1,53 @@
+{
+  "name": "rgbstrip-new",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "rakkas --host 0.0.0.0 --port 8001",
+    "build": "cross-env VITE_RSC_BUILD=1 rakkas build",
+    "start": "cross-env NODE_ENV=production PORT=8001 HOST=0.0.0.0 node dist/server",
+    "restart": "pm2 restart 8",
+    "format": "prettier --write --ignore-unknown src",
+    "test": "npm run test:typecheck && npm run test:format && npm run test:lint",
+    "test:typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:format": "prettier --check --ignore-unknown src",
+    "test:lint": "eslint . --ignore-pattern dist"
+  },
+  "devDependencies": {
+    "@rakkasjs/eslint-config": "0.6.7",
+    "@types/lodash": "^4.14.190",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
+    "aedes": "^0.47.0",
+    "axios": "^0.27.2",
+    "axios-cookiejar-support": "^4.0.3",
+    "chroma-js": "^2.4.2",
+    "eslint": "^8.27.0",
+    "express": "^4.18.1",
+    "grammy": "^1.9.2",
+    "grammy-inline-menu": "^8.0.0",
+    "nanotimer": "^0.3.15",
+    "prettier": "^2.7.1",
+    "rakkasjs": "^0.6.7",
+    "simplex-noise": "^4.0.0",
+    "tough-cookie": "^4.0.0",
+    "typescript": "^4.8.4",
+    "vite": "^3.2.3",
+    "vite-tsconfig-paths": "^3.5.2"
+  },
+  "dependencies": {
+    "@grammyjs/web-app": "^1.2.0",
+    "@hattip/adapter-node": "^0.0.35",
+    "@progress/kendo-react-inputs": "^5.9.0",
+    "@thednp/bezier-easing": "^1.0.3",
+    "awesome-debounce-promise": "^2.1.0",
+    "colorjs.io": "^0.4.4-patch.1",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-colorful": "^5.6.1",
+    "react-dom": "^18.2.0",
+    "ring-buffer-ts": "^1.2.0",
+    "telegram-webapps-types": "^1.0.5",
+    "use-constant": "^1.1.1"
+  }
+}
