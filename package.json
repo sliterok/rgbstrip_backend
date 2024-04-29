@@ -19,15 +19,11 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
     "@types/tough-cookie": "^4.0.5",
-    "aedes": "^0.47.0",
     "axios": "^0.27.2",
     "axios-cookiejar-support": "^4.0.7",
-    "chroma-js": "^2.4.2",
     "eslint": "^8.57.0",
-    "express": "^4.19.2",
     "grammy": "^1.22.4",
     "grammy-inline-menu": "^8.0.1",
-    "nanotimer": "^0.3.15",
     "prettier": "^2.8.8",
     "rakkasjs": "0.7.0-next.47",
     "simplex-noise": "^4.0.1",
@@ -37,19 +33,14 @@
     "vite-tsconfig-paths": "^3.6.0"
   },
   "dependencies": {
-    "@grammyjs/web-app": "^1.3.0",
     "@hattip/adapter-node": "^0.0.35",
     "@hattip/response": "0.0.45",
-    "@progress/kendo-react-inputs": "^5.19.0",
-    "awesome-debounce-promise": "^2.1.0",
     "colorjs.io": "^0.4.5",
     "cross-env": "^7.0.3",
-    "lodash": "^4.17.21",
+    "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-colorful": "^5.6.1",
     "react-dom": "^18.3.1",
-    "ring-buffer-ts": "^1.2.0",
-    "telegram-webapps-types": "^1.0.5",
-    "use-constant": "^1.1.1"
+    "ring-buffer-ts": "^1.2.0"
   }
 }

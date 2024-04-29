@@ -1,3 +1,5 @@
+import Datagram from 'dgram'
+
 export enum IMode {
 	Disabled,
 	Rainbow,
@@ -26,4 +28,17 @@ export interface ISettings {
 	geoOverride: boolean
 	away: boolean
 	alive: Date
+}
+
+export interface IDynamicDto {
+	offset: number
+	lastMessage?: number
+	target?: Datagram.RemoteInfo
+}
+
+export interface IConfig {
+	routerEndpoint: string
+	tgAllowedUsers: string
+	tgApiKey: string
+	routerPassword: string
 }

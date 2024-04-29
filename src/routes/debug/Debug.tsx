@@ -2,14 +2,14 @@
 import { Head } from 'rakkasjs'
 import { useEffect, useRef, useState } from 'react'
 import classes from './pixel.module.css'
-import { rgbToHex } from '../helpers'
+import { rgbToHex } from '../../helpers'
 
 let eventSource: EventSource
 // eslint-disable-next-line ssr-friendly/no-dom-globals-in-module-scope
 if (typeof window !== 'undefined') window.addEventListener('unload', () => eventSource.close())
 
 export default function Debug() {
-	eventSource = eventSource ?? new EventSource('/debug-stream')
+	eventSource = eventSource ?? new EventSource('/debug/stream')
 
 	const [readyState, setReadyState] = useState(eventSource.readyState)
 	const pixelsRef = useRef<HTMLDivElement>(null)

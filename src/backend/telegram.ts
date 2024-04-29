@@ -1,12 +1,13 @@
 import { Bot, Context } from 'grammy'
 import { settings } from '../settings'
-
-const bot = new Bot('***REMOVED***:***REMOVED***')
 import { MenuTemplate, MenuMiddleware, createBackMainMenuButtons } from 'grammy-inline-menu'
+import { config } from './config'
+
+const bot = new Bot(config.tgApiKey)
 
 const menuTemplate = new MenuTemplate<Context>(ctx => `привет ${ctx?.from?.first_name}`)
 
-const allowedUsers = [***REMOVED***]
+const allowedUsers = config.tgAllowedUsers.split(',').map(el => parseInt(el))
 
 menuTemplate.interact('ночь', 'nightOverride', {
 	do: async ctx => {
@@ -48,6 +49,6 @@ bot.command('start', ctx => {
 })
 bot.use(menuMiddleware)
 
-export function initTg() {
+export function startTelegram() {
 	if (import.meta.env.PROD) bot.start().catch(err => console.error(err))
 }

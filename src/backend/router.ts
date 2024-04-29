@@ -2,10 +2,12 @@ import { AxiosError, default as axios } from 'axios'
 import { wrapper } from 'axios-cookiejar-support'
 import { CookieJar } from 'tough-cookie'
 import crypto from 'crypto'
+import { settings } from 'src/settings'
+import { config } from './config'
 
 const jar = new CookieJar()
-const client = wrapper(axios.create({ jar, baseURL: 'https://***REMOVED***' }))
-const auth = { login: 'api', password: '***REMOVED***' }
+const client = wrapper(axios.create({ jar, baseURL: config.routerEndpoint }))
+const auth = { login: 'api', password: config.routerPassword }
 
 async function init() {
 	try {
@@ -42,4 +44,23 @@ export async function phoneLastSeen() {
 	} catch (err) {
 		console.error('phone last seen failed', (err as AxiosError).response?.data)
 	}
+}
+
+let seenTimeout: NodeJS.Timeout | null = null
+async function updatePhoneLastSeen() {
+	const lastSeen = await phoneLastSeen()
+	// eslint-disable-next-line no-console
+	console.log('phone last seen:', lastSeen)
+	if (lastSeen === undefined || lastSeen > 120) {
+		if (!seenTimeout) seenTimeout = setTimeout(() => (settings.away = true), 120000)
+	} else {
+		if (seenTimeout) clearTimeout(seenTimeout)
+		seenTimeout = null
+		settings.away = false
+	}
+}
+
+export function startRouterIntegration() {
+	setInterval(updatePhoneLastSeen, 120000)
+	updatePhoneLastSeen()
 }
