@@ -1,42 +1,22 @@
-import { Head, useServerSideMutation } from 'rakkasjs'
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { useEffect } from 'react'
-import { TelegramWebApps } from 'telegram-webapps-types'
+import { useServerSideMutation } from 'rakkasjs'
+import { useState } from 'react'
 import { HexColorPicker } from 'react-colorful'
-import AwesomeDebouncePromise from 'awesome-debounce-promise'
-import useConstant from 'use-constant'
-
-import _ from 'lodash'
 import { settings } from '../settings'
 
+let timeout: NodeJS.Timeout
 function useThrottle(cb: any, delay: number) {
-	const options = { leading: true, trailing: false } // add custom lodash options
-	const cbRef = useRef(cb)
-	// use mutable ref to make useCallback/throttle not depend on `cb` dep
-	useEffect(() => {
-		cbRef.current = cb
-	})
-	return useCallback(
-		_.throttle((...args) => cbRef.current(...args), delay, options),
-		[delay]
-	)
+	if (timeout) clearTimeout(timeout)
+	timeout = setTimeout(cb, delay)
 }
 
 export default function Color() {
-	const [user, setUser] = useState({})
 	const [color, setColor] = useState('#aabbcc')
-	// const [serverColor, setServerColor] = useState('#aabbcc')
-
-	// Debounce the original search async function
-	// const debouncedColor = (color: string) => AwesomeDebouncePromise(() => setServerColor(color), 50)
-	// const debouncedColor = useConstant(() => AwesomeDebouncePromise((color: string) => setServerColor(color), 300))
 
 	const mutation = useServerSideMutation(async (ctx, color: string) => {
 		settings.color = color
 	})
-	const throttledCb = useThrottle(() => mutation.mutate(color), 50)
 
-	useEffect(throttledCb, [color])
+	useThrottle(() => mutation.mutate(color), 50)
 
 	return (
 		<div>

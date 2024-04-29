@@ -17,9 +17,6 @@ dependencies:
   '@progress/kendo-react-inputs':
     specifier: ^5.19.0
     version: 5.19.0(@progress/kendo-drawing@1.20.1)(@progress/kendo-licensing@1.3.5)(@progress/kendo-react-animation@5.19.0)(@progress/kendo-react-form@5.19.0)(@progress/kendo-react-intl@5.19.0)(@progress/kendo-svg-icons@2.3.0)(react-dom@18.3.1)(react@18.3.1)
-  '@thednp/bezier-easing':
-    specifier: ^1.0.5
-    version: 1.0.5
   awesome-debounce-promise:
     specifier: ^2.1.0
     version: 2.1.0
@@ -1168,10 +1165,6 @@ packages:
   /@rushstack/eslint-patch@1.10.2:
     resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
     dev: true
-
-  /@thednp/bezier-easing@1.0.5:
-    resolution: {integrity: sha512-wKl6Q9EFCKp5S6EKNMmHc9wfCIVO4+a4dwijXJcBnYdG/9pDPRFHDGrIjANjSCf/CTkWx6VKZUOcNScCSDYtYQ==}
-    dev: false
 
   /@types/debounce-promise@3.1.9:
     resolution: {integrity: sha512-awNxydYSU+E2vL7EiOAMtiSOfL5gUM5X4YSE2A92qpxDJQ/rXz6oMPYBFDcDywlUmvIDI6zsqgq17cGm5CITQw==}

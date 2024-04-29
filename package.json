@@ -41,7 +41,6 @@
     "@hattip/adapter-node": "^0.0.35",
     "@hattip/response": "0.0.45",
     "@progress/kendo-react-inputs": "^5.19.0",
-    "@thednp/bezier-easing": "^1.0.5",
     "awesome-debounce-promise": "^2.1.0",
     "colorjs.io": "^0.4.5",
     "cross-env": "^7.0.3",
