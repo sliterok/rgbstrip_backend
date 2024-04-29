@@ -11,9 +11,5 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "types": ["vite/client"],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/telegram-webapps-types"
-    ]
   }
 }

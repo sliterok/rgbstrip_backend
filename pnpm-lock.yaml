@@ -64,6 +64,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18.3.0
     version: 18.3.0
+  '@types/tough-cookie':
+    specifier: ^4.0.5
+    version: 4.0.5
   aedes:
     specifier: ^0.47.0
     version: 0.47.0
@@ -1220,6 +1223,10 @@ packages:
   /@types/telegram-web-app@6.9.4:
     resolution: {integrity: sha512-Zc1CKYw0D869oz6Z6nGEy+TptJT0In9pATcPgzp25wiUBc+E8UVwbpdO1+BD6mhHTZH+hCu0DLg6Qt6zWYYl0w==}
     dev: false
+
+  /@types/tough-cookie@4.0.5:
+    resolution: {integrity: sha512-/Ad8+nIOV7Rl++6f1BdKxFSMgmoqEoYbHRpPcx3JEfv8VRsQe9Z4mCXeJBzxs7mbHY/XOZZuXlRNfhpVPbs6ZA==}
+    dev: true
 
   /@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.57.0)(typescript@5.4.5):
     resolution: {integrity: sha512-TiZzBSJja/LbhNPvk6yc0JrX9XqhQ0hdh6M2svYfsHGejaKFIAGd9MQ+ERIMzLGlN/kZoYIgdxFV0PuljTKXag==}
