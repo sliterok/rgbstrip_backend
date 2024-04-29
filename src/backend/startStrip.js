@@ -207,8 +207,8 @@ function getPixels(mode, frameIndex) {
 
 				// (colorNoise(x, y) + 1) / 2
 				const baseOffset = ((colorNoise(x, y) + 1) / 2 + index / pixelsCount) % 1
-				const segmentWidth = 1 / (activeColors - 2)
-				const i = baseOffset + (offset + 1) * segmentWidth
+				const segmentWidth = 1 / (activeColors - 1)
+				const i = baseOffset + offset * segmentWidth
 				const segmentIndex = Math.floor(i / segmentWidth)
 				const segmentFraction = bezier((i % segmentWidth) / segmentWidth)
 				const colorStart = colors.get(segmentIndex)
