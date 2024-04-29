@@ -32,15 +32,16 @@ async function init() {
 	}
 }
 
-init()
+const initted = init()
 
 export async function phoneLastSeen() {
 	try {
+		await initted
 		const devicesRes = await client.get('/rci/show/ip/hotspot?mac=***REMOVED***')
 		const myPhone = devicesRes.data.host.find(item => item.name.includes('***REMOVED***'))
 		// console.log(myPhone)
 		return myPhone?.['last-seen']
 	} catch (err) {
-		console.error(err)
+		console.error("phone last seen failed", err.response.data)
 	}
 }
