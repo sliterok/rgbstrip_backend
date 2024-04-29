@@ -7,6 +7,7 @@ import AwesomeDebouncePromise from 'awesome-debounce-promise'
 import useConstant from 'use-constant'
 
 import _ from 'lodash'
+import { settings } from '../settings'
 
 function useThrottle(cb: any, delay: number) {
 	const options = { leading: true, trailing: false } // add custom lodash options
@@ -30,20 +31,8 @@ export default function Color() {
 	// const debouncedColor = (color: string) => AwesomeDebouncePromise(() => setServerColor(color), 50)
 	// const debouncedColor = useConstant(() => AwesomeDebouncePromise((color: string) => setServerColor(color), 300))
 
-	useEffect(() => {
-		if (globalThis.location.hash) {
-			globalThis.location.hash = ''
-			location.reload()
-		}
-	}, [globalThis.location])
-
-	useEffect(() => {
-		const app = globalThis?.Telegram?.WebApp as TelegramWebApps.WebApp
-		console.log(app)
-	}, [globalThis?.Telegram])
-
 	const mutation = useServerSideMutation(async (ctx, color: string) => {
-		ctx.locals.settings.color = color
+		settings.color = color
 	})
 	const throttledCb = useThrottle(() => mutation.mutate(color), 50)
 

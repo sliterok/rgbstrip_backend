@@ -6,11 +6,12 @@ import { createNoise2D } from 'simplex-noise'
 import chroma from 'chroma-js'
 import NanoTimer from 'nanotimer'
 const timer = new NanoTimer()
-import { settings } from '../entry-hattip'
+import { settings } from '../settings'
 import Color from 'colorjs.io'
 import RingBufferPkg from 'ring-buffer-ts'
 const { RingBuffer } = RingBufferPkg
 import CubicBezier from '@thednp/bezier-easing'
+import { broadcastMessage } from '../routes/debug-stream.api'
 
 const bezier = new CubicBezier(0.25, 0.1, 0.25, 1.0)
 
@@ -214,8 +215,8 @@ function getPixels(mode, frameIndex) {
 				const colorEnd = colors.get(segmentIndex + 1)
 
 				const mixed = colorStart.mix(colorEnd, segmentFraction, { space: 'lab', outputSpace: 'lab' }).to('srgb')
-
-				return mixed.coords.map(el => el * 255)
+				
+				return mixed.coords.map(el => Math.min(255, Math.max(0, Math.floor(el * 255))))
 
 				// return HSLToRGB(h, 100, 50)
 				// const g = colorNoise(index + frameIndex, 1) * 255
@@ -227,7 +228,6 @@ function getPixels(mode, frameIndex) {
 				return hexToRgb(settings.color)
 			}
 		})
-		.map(([r, g, b]) => [Math.ceil(g * 0.5), r, b])
 
 	return pixels
 }
@@ -271,14 +271,18 @@ socket.on('message', (msg, newTarget) => {
 
 // let lastSent = 0
 const buf = new Uint8Array(pixelsCount * 3)
-timer.setInterval(
+setInterval(
 	() => {
 		exec++
 		const rawOffset = offset + 0.004
 		offset = rawOffset % 1
 		if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
 		// colors.toArray().forEach(el => (el.hwb.h += 0.1))
-		if (!target) return
+		if (!target) {
+			const mode = 5
+			const pixels = getPixels(mode, exec)
+			return broadcastMessage(JSON.stringify(pixels))
+		}
 		if (Date.now() - lastMessage > 7000) {
 			target = null
 			console.log({ target })
@@ -300,13 +304,23 @@ timer.setInterval(
 		// 	}
 		// }
 		for (let index = 0; index < pixels.length; index++) {
-			for (let color = 0; color < 3; color++) buf[index * 3 + color] = pixels[index][color]
+			for (let color = 0; color < 3; color++) {
+				let actualColor = color
+				switch (color) {
+					case 0:
+						actualColor = 1
+						break;
+					case 1:
+						actualColor = 0
+						break;
+				}
+				const colorValue = pixels[index][actualColor]
+				buf[index * 3 + actualColor] = actualColor === 0 ? colorValue * 0.5 : colorValue
+			}
 		}
 
 		socket.send(buf, port, address)
 		// lastSent = now
 	},
-	[],
-	'16000u',
-	err => console.error(err)
+	16
 )

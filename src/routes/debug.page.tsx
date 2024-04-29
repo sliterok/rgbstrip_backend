@@ -1,15 +1,12 @@
 import { ClientSuspense, Head } from 'rakkasjs'
-import { lazy } from 'react'
-
-const Color = lazy(() => import('./Color'))
+import Debug from './Debug'
 
 export default function HomePage() {
-	// console.log(window, globalThis)
 	return (
 		<div>
-			<Head title="lights" />
+			<Head title="debug"></Head>
 			<ClientSuspense fallback="loading...">
-				<Color />
+				<Debug />
 			</ClientSuspense>
 		</div>
 	)

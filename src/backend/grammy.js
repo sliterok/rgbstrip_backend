@@ -1,5 +1,6 @@
-import { Bot, Context, CommandContext } from 'grammy'
-import { settings } from '../entry-hattip'
+import grammy from 'grammy'
+const { Bot, Context, CommandContext } = grammy
+import { settings } from '../settings'
 
 const bot = new Bot('***REMOVED***:***REMOVED***')
 import { MenuTemplate, MenuMiddleware, createBackMainMenuButtons } from 'grammy-inline-menu'

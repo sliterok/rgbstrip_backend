@@ -1,4 +1,4 @@
-import { ISettings } from './backend'
+import { ISettings } from './typings'
 
 declare module 'rakkasjs' {
 	interface ServerSideLocals {
