@@ -5,54 +5,56 @@ import { pixelsCount, dynamic, colors, randomColor } from './shared'
 import { socket } from './udp'
 
 export function startLoop() {
-	let colorChange = 0
-	const buf = new Uint8Array(pixelsCount * 3)
-	setInterval(() => {
-		const rawOffset = dynamic.offset + 0.004
-		dynamic.offset = rawOffset % 1
-		if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
+	setInterval(loop, 16)
+}
 
-		if (hasConnections()) broadcastMessage(JSON.stringify(getPixels(5)))
+let colorChange = 0
+const buf = new Uint8Array(pixelsCount * 3)
+function loop() {
+	const rawOffset = dynamic.offset + 0.004
+	dynamic.offset = rawOffset % 1
+	if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
 
-		if (!dynamic.target) return
-		if (Date.now() - (dynamic.lastMessage || 0) > 7000) {
-			delete dynamic.target
-			return
-		}
+	if (hasConnections()) broadcastMessage(JSON.stringify(getPixels(5)))
 
-		const mode = getCurrentMode()
+	if (!dynamic.target) return
+	if (Date.now() - (dynamic.lastMessage || 0) > 7000) {
+		delete dynamic.target
+		return
+	}
 
-		const pixels = getPixels(mode)
+	const mode = getCurrentMode()
 
-		for (let index = 0; index < pixels.length; index++) {
-			for (let color = 0; color < 3; color++) {
-				let actualColor = color
-				// rgb strip uses g, r, b
-				switch (color) {
-					case 0:
-						actualColor = 1
-						break
-					case 1:
-						actualColor = 0
-						break
-				}
+	const pixels = getPixels(mode)
 
-				const colorValue = pixels[index][actualColor]
-
-				let overrideColor
-				switch (color) {
-					case 0:
-						overrideColor = Math.ceil(colorValue * 0.65)
-						break
-					case 2:
-						overrideColor = Math.ceil(colorValue * 0.75)
-						break
-				}
-				buf[index * 3 + color] = overrideColor || colorValue
+	for (let index = 0; index < pixels.length; index++) {
+		for (let color = 0; color < 3; color++) {
+			let actualColor = color
+			// rgb strip uses g, r, b
+			switch (color) {
+				case 0:
+					actualColor = 1
+					break
+				case 1:
+					actualColor = 0
+					break
 			}
-		}
 
-		const { address, port } = dynamic.target
-		socket.send(buf, port, address)
-	}, 16)
+			const colorValue = pixels[index][actualColor]
+
+			let overrideColor
+			switch (color) {
+				case 0:
+					overrideColor = Math.ceil(colorValue * 0.65)
+					break
+				case 2:
+					overrideColor = Math.ceil(colorValue * 0.75)
+					break
+			}
+			buf[index * 3 + color] = overrideColor || colorValue
+		}
+	}
+
+	const { address, port } = dynamic.target
+	socket.send(buf, port, address)
 }
