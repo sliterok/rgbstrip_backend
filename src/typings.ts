@@ -22,7 +22,7 @@ export const ModeToWord = {
 
 export interface ISettings {
 	mode: IMode
-	color: string
+	color: [number, number, number]
 	progress: { current: number; total: number; lastUpdate: Date | null }
 	nightOverride: boolean
 	geoOverride: boolean

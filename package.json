@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@rakkasjs/eslint-config": "0.6.7",
+    "@types/d3-interpolate": "^3.0.4",
     "@types/lodash": "^4.17.0",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
@@ -35,8 +36,8 @@
   "dependencies": {
     "@hattip/adapter-node": "^0.0.35",
     "@hattip/response": "0.0.45",
-    "colorjs.io": "^0.4.5",
     "cross-env": "^7.0.3",
+    "d3-interpolate": "^3.0.1",
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-colorful": "^5.6.1",

@@ -1,9 +1,11 @@
-import { getTime, preWakeupTime, wakeupTimeWeekend, wakeupTime, HSLToRGB, hexToRgb, clamp } from 'src/helpers'
+import { getTime, preWakeupTime, wakeupTimeWeekend, wakeupTime, HSLToRGB, clamp } from 'src/helpers'
 import { settings } from 'src/settings'
 import { pixelsCount, colorNoise, activeColors, colors, dynamic } from './shared'
+import { interpolateLab } from 'd3-interpolate'
 
 let disabledColor = [0, 0, 1]
 let frameIndex = 0
+
 export function getPixels(mode: number): [number, number, number][] {
 	frameIndex++
 
@@ -73,12 +75,13 @@ export function getPixels(mode: number): [number, number, number][] {
 				const colorStart = colors.get(segmentIndex)!
 				const colorEnd = colors.get(segmentIndex + 1)!
 
-				const mixed = colorStart.mix(colorEnd, segmentFraction, { space: 'lab', outputSpace: 'srgb' })
-
-				return mixed.coords.map(el => clamp(0, Math.floor(el * 255), 255))
+				const mixed = interpolateLab(`hsl(${colorStart}, 100%, 60%)`, `hsl(${colorEnd}, 100%, 60%)`)(segmentFraction)
+				return mixed
+					.replace(/[^\d,]/g, '')
+					.split(',')
+					.map(el => parseInt(el))
 			} else if (mode === 6) {
-				// console.log('color: ', settings.color)
-				return hexToRgb(settings.color)
+				return settings.color
 			}
 		}) as [number, number, number][]
 

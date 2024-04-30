@@ -2,7 +2,6 @@
 import { Head } from 'rakkasjs'
 import { useEffect, useRef, useState } from 'react'
 import classes from './pixel.module.css'
-import { rgbToHex } from '../../helpers'
 
 let eventSource: EventSource
 // eslint-disable-next-line ssr-friendly/no-dom-globals-in-module-scope
@@ -26,10 +25,9 @@ export default function Debug() {
 		eventSource.onmessage = event => {
 			const pixels = JSON.parse(event.data) as [number, number, number][]
 			for (const i in pixels) {
-				const pixel = pixels[i]
+				const [r, g, b] = pixels[i]
 				const el = pixelsRef.current?.children[i]
-				const color = rgbToHex(...pixel)
-				el?.setAttribute('style', `background: ${color}`)
+				el?.setAttribute('style', `background: rgb(${r}, ${g}, ${b})`)
 			}
 		}
 	}, [])

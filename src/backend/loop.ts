@@ -12,11 +12,9 @@ export function startLoop() {
 		dynamic.offset = rawOffset % 1
 		if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
 
-		if (import.meta.env.DEV) {
-			const mode = 5
-			const pixels = getPixels(mode)
-			broadcastMessage(JSON.stringify(pixels))
-		}
+		// if (import.meta.env.DEV) {
+		broadcastMessage(JSON.stringify(getPixels(5)))
+		// }
 
 		if (!dynamic.target) return
 		if (Date.now() - (dynamic.lastMessage || 0) > 7000) {
@@ -40,7 +38,7 @@ export function startLoop() {
 						break
 				}
 				const colorValue = pixels[index][actualColor]
-				buf[index * 3 + actualColor] = actualColor === 0 ? colorValue * 0.5 : colorValue
+				buf[index * 3 + actualColor] = actualColor === 0 ? Math.floor(colorValue * 0.5) : colorValue
 			}
 		}
 
