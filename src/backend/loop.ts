@@ -37,8 +37,19 @@ export function startLoop() {
 						actualColor = 0
 						break
 				}
+
 				const colorValue = pixels[index][actualColor]
-				buf[index * 3 + actualColor] = actualColor === 0 ? Math.floor(colorValue * 0.7) : colorValue
+
+				let overrideColor
+				switch (actualColor) {
+					case 0:
+						overrideColor = Math.floor(colorValue * 0.6)
+						break
+					case 2:
+						overrideColor = Math.floor(colorValue * 0.8)
+						break
+				}
+				buf[index * 3 + actualColor] = overrideColor || colorValue
 			}
 		}
 
