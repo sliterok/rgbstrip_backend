@@ -2,9 +2,12 @@ import { getTime, preWakeupTime, wakeupTimeWeekend, wakeupTime, HSLToRGB, clamp 
 import { settings } from 'src/settings'
 import { pixelsCount, colorNoise, activeColors, colors, dynamic } from './shared'
 import { interpolateLab } from 'd3-interpolate'
+import { HSLColor } from 'd3-color'
 
 let disabledColor = [0, 0, 1]
 let frameIndex = 0
+
+const interpolators = new WeakMap<HSLColor, WeakMap<HSLColor, (t: number) => string>>()
 
 export function getPixels(mode: number): [number, number, number][] {
 	frameIndex++
@@ -75,7 +78,22 @@ export function getPixels(mode: number): [number, number, number][] {
 				const colorStart = colors.get(segmentIndex)!
 				const colorEnd = colors.get(segmentIndex + 1)!
 
-				const mixed = interpolateLab(`hsl(${colorStart}, 100%, 50%)`, `hsl(${colorEnd}, 100%, 50%)`)(segmentFraction)
+				let interpolator: undefined | ((t: number) => string)
+				const hadFirstColor = interpolators.has(colorStart)
+				let subInterpolator: WeakMap<HSLColor, (t: number) => string>
+				if (hadFirstColor) {
+					subInterpolator = interpolators.get(colorStart)!
+					interpolator = subInterpolator.get(colorEnd)
+				}
+				const hadSecondColor = !!interpolator
+				if (!interpolator) interpolator = interpolateLab(colorStart, colorEnd)
+				if (!hadFirstColor) {
+					subInterpolator = new WeakMap()
+					interpolators.set(colorStart, subInterpolator)
+				}
+				if (!hadSecondColor) subInterpolator!.set(colorEnd, interpolator)
+
+				const mixed = interpolator(segmentFraction)
 				return mixed
 					.replace(/[^\d,]/g, '')
 					.split(',')
