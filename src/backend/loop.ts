@@ -49,7 +49,7 @@ export function startLoop() {
 						overrideColor = Math.floor(colorValue * 0.8)
 						break
 				}
-				buf[index * 3 + actualColor] = overrideColor || colorValue
+				buf[index * 3 + color] = overrideColor || colorValue
 			}
 		}
 
