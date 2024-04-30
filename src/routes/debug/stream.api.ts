@@ -17,6 +17,10 @@ export function get() {
 	})
 }
 
+export function hasConnections() {
+	return connections.size !== 0
+}
+
 export function broadcastMessage(data: any) {
 	for (const sink of connections) {
 		sink.send({ data })
