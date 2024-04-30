@@ -31,6 +31,7 @@ export interface ISettings {
 }
 
 export interface IDynamicDto {
+	disabledColor: [number, number, number]
 	offset: number
 	hasConnections: boolean
 	lastMessage?: number

@@ -1,7 +1,8 @@
-import { Bot, Context } from 'grammy'
+import { Bot, Context, CommandContext } from 'grammy'
 import { settings } from '../settings'
 import { MenuTemplate, MenuMiddleware, createBackMainMenuButtons } from 'grammy-inline-menu'
 import { config } from './config'
+import { IMode } from 'src/typings'
 
 const bot = new Bot(config.tgApiKey)
 
@@ -32,11 +33,14 @@ modesMenu.select(
 	{ 0: 'off', 1: 'rainbow', 2: 'progress', 3: 'white', 4: 'away', 5: 'noise', 6: 'color' },
 	{
 		isSet: (ctx, key) => settings.mode === parseInt(key),
-		set: /** @param {CommandContext<Context>} ctx */ (ctx, key) => {
-			// eslint-disable-next-line no-console
-			console.log('selected mode:', settings.mode)
+		set: async (_ctx, key) => {
+			const ctx = _ctx as CommandContext<Context>
 			settings.mode = parseInt(key)
-			// if (settings.mode === 6) return ctx.answerCallbackQuery() TODO: context menu
+			const selectedMode = IMode[settings.mode]
+			// eslint-disable-next-line no-console
+			console.log('selected mode:', selectedMode)
+			await ctx.answerCallbackQuery(`Selected mode: ${selectedMode}`)
+
 			return true
 		},
 	}

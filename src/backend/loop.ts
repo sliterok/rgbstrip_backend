@@ -1,6 +1,6 @@
 import { getCurrentMode } from 'src/helpers'
 import { broadcastMessage } from 'src/routes/debug/stream.api'
-import { getPixels } from './colorGen'
+import { getPixels } from './color'
 import { pixelsCount, dynamic, colors, randomColor } from './shared'
 import { socket } from './udp'
 
@@ -15,15 +15,14 @@ function loop() {
 	dynamic.offset = rawOffset % 1
 	if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
 
-	if (dynamic.hasConnections) broadcastMessage(JSON.stringify(getPixels(5)))
+	const mode = getCurrentMode()
+	if (dynamic.hasConnections) broadcastMessage(JSON.stringify(getPixels(mode || 5)))
 
 	if (!dynamic.target) return
 	if (Date.now() - (dynamic.lastMessage || 0) > 7000) {
 		delete dynamic.target
 		return
 	}
-
-	const mode = getCurrentMode()
 
 	const pixels = getPixels(mode)
 

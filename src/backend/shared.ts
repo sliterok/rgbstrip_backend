@@ -12,6 +12,7 @@ export const pixelsCount = 288
 export const dynamic: IDynamicDto = {
 	offset: 0,
 	hasConnections: false,
+	disabledColor: [0, 0, 1],
 }
 
 export const colors = new RingBuffer<HSLColor>(activeColors + 1)
