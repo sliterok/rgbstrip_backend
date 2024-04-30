@@ -43,10 +43,10 @@ export function startLoop() {
 				let overrideColor
 				switch (color) {
 					case 0:
-						overrideColor = Math.floor(colorValue * 0.65)
+						overrideColor = Math.ceil(colorValue * 0.65)
 						break
 					case 2:
-						overrideColor = Math.floor(colorValue * 0.75)
+						overrideColor = Math.ceil(colorValue * 0.75)
 						break
 				}
 				buf[index * 3 + color] = overrideColor || colorValue
