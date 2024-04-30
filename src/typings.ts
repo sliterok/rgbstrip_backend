@@ -38,6 +38,9 @@ export interface IDynamicDto {
 }
 
 export interface IConfig {
+	TZ?: string
+	routerMac: string
+	routerDevice: string
 	routerEndpoint: string
 	tgAllowedUsers: string
 	tgApiKey: string

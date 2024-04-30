@@ -2,9 +2,10 @@ import { startTelegram } from './telegram'
 import { startLoop } from './loop'
 import { startRouterIntegration } from './router'
 import { startUdpServer } from './udp'
+import { config } from './config'
 
 // eslint-disable-next-line no-undef
-process.env.TZ = '***REMOVED***'
+process.env.TZ = config.TZ
 
 let initted = false
 

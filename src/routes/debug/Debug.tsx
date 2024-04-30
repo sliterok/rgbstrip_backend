@@ -32,7 +32,6 @@ export default function Debug() {
 		}
 	}, [])
 
-	// console.log(window, globalThis)
 	return (
 		<div>
 			<p>Status: {readyState ? 'Connected' : 'Connecting...'}</p>
@@ -40,7 +39,7 @@ export default function Debug() {
 				{Array(288)
 					.fill(0)
 					.map((el, i) => (
-						<div key={i} data-index={i} className={classes.pixel}></div>
+						<div key={i} className={classes.pixel}></div>
 					))}
 			</div>
 			<Head title="debug"></Head>

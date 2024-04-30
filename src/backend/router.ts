@@ -37,9 +37,9 @@ interface IHost {
 export async function phoneLastSeen() {
 	try {
 		await initted
-		const devicesRes = await client.get('/rci/show/ip/hotspot?mac=***REMOVED***')
+		const devicesRes = await client.get(`/rci/show/ip/hotspot?mac=${config.routerMac}`)
 		const hosts = devicesRes.data.host as IHost[]
-		const myPhone = hosts.find(item => item.name.includes('***REMOVED***'))
+		const myPhone = hosts.find(item => item.name.includes(config.routerDevice))
 		return myPhone?.['last-seen']
 	} catch (err) {
 		console.error('phone last seen failed', (err as AxiosError).response?.data)

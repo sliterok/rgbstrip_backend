@@ -5,14 +5,14 @@ import { config } from './config'
 
 const bot = new Bot(config.tgApiKey)
 
-const menuTemplate = new MenuTemplate<Context>(ctx => `привет ${ctx?.from?.first_name}`)
+const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_name}`)
 
 const allowedUsers = config.tgAllowedUsers.split(',').map(el => parseInt(el))
 
-menuTemplate.interact('ночь', 'nightOverride', {
+menuTemplate.interact('night', 'nightOverride', {
 	do: async ctx => {
 		settings.nightOverride = !settings.nightOverride
-		await ctx.answerCallbackQuery(`Переопределение ночи ${settings.nightOverride ? 'включено' : 'выключено'}`)
+		await ctx.answerCallbackQuery(`Night override ${settings.nightOverride ? 'on' : 'off'}`)
 		return false
 	},
 })
@@ -20,16 +20,16 @@ menuTemplate.interact('ночь', 'nightOverride', {
 menuTemplate.interact('geo', 'geoOverride', {
 	do: async ctx => {
 		settings.geoOverride = !settings.geoOverride
-		await ctx.answerCallbackQuery(`Переопределение GEO ${settings.geoOverride ? 'включено' : 'выключено'}`)
+		await ctx.answerCallbackQuery(`GEO override ${settings.geoOverride ? 'on' : 'off'}`)
 		return false
 	},
 })
 
-const modesMenu = new MenuTemplate('выбери режим')
-menuTemplate.submenu('режимы', 'modes', modesMenu)
+const modesMenu = new MenuTemplate('select mode')
+menuTemplate.submenu('modes', 'modes', modesMenu)
 modesMenu.select(
 	'select_mode',
-	{ 0: 'выкл', 1: 'радуга', 2: 'прогрессбар', 3: 'белый', 4: 'ушел', 5: 'шум', 6: 'цвет' },
+	{ 0: 'off', 1: 'rainbow', 2: 'progress', 3: 'white', 4: 'away', 5: 'noise', 6: 'color' },
 	{
 		isSet: (ctx, key) => settings.mode === parseInt(key),
 		set: /** @param {CommandContext<Context>} ctx */ (ctx, key) => {
@@ -41,7 +41,7 @@ modesMenu.select(
 		},
 	}
 )
-modesMenu.manualRow(createBackMainMenuButtons('назад'))
+modesMenu.manualRow(createBackMainMenuButtons('back'))
 
 const menuMiddleware = new MenuMiddleware('/', menuTemplate)
 bot.command('start', ctx => {
