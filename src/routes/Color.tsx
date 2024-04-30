@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useServerSideMutation } from 'rakkasjs'
-import { useState } from 'react'
 import { RgbColorPicker } from 'react-colorful'
 import { settings } from '../settings'
 
@@ -17,7 +16,7 @@ export default function Color() {
 
 	return (
 		<div>
-			<RgbColorPicker onChange={({ r, g, b }) => useThrottle(() => mutation.mutate([r, g, b]), 50)} style={{ width: '100%', height: '90vh' }} />
+			<RgbColorPicker onChange={({ r, g, b }) => useThrottle(() => mutation.mutate([r, g, b]), 20)} style={{ width: '100%', height: '90vh' }} />
 		</div>
 	)
 }
