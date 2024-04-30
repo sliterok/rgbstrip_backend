@@ -64,8 +64,8 @@ export function getPixels(mode: number): [number, number, number][] {
 			} else if (mode === 4) {
 				return [5, 20, 5]
 			} else if (mode === 5) {
-				const x = index / 80 + frameIndex / 200
-				const y = frameIndex / 300
+				const x = index / 80 + frameIndex / 400
+				const y = frameIndex / 600
 
 				const baseOffset = ((colorNoise(x, y) + 1) / 2 + index / pixelsCount) % 1
 				const segmentWidth = 1 / (activeColors - 1)

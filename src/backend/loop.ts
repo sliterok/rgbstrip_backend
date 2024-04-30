@@ -41,12 +41,12 @@ export function startLoop() {
 				const colorValue = pixels[index][actualColor]
 
 				let overrideColor
-				switch (actualColor) {
+				switch (color) {
 					case 0:
-						overrideColor = Math.floor(colorValue * 0.6)
+						overrideColor = Math.floor(colorValue * 0.65)
 						break
 					case 2:
-						overrideColor = Math.floor(colorValue * 0.8)
+						overrideColor = Math.floor(colorValue * 0.75)
 						break
 				}
 				buf[index * 3 + color] = overrideColor || colorValue
