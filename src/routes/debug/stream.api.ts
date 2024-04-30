@@ -1,4 +1,5 @@
 import { serverSentEvents, ServerSentEventSink } from '@hattip/response'
+import { dynamic } from 'src/backend/shared'
 
 const connections = new Set<ServerSentEventSink>()
 
@@ -10,15 +11,13 @@ export function get() {
 			thisSink = sink
 			connections.add(sink)
 			sink.ping()
+			dynamic.hasConnections = true
 		},
 		onClose() {
 			connections.delete(thisSink)
+			dynamic.hasConnections = connections.size !== 0
 		},
 	})
-}
-
-export function hasConnections() {
-	return connections.size !== 0
 }
 
 export function broadcastMessage(data: any) {

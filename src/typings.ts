@@ -32,6 +32,7 @@ export interface ISettings {
 
 export interface IDynamicDto {
 	offset: number
+	hasConnections: boolean
 	lastMessage?: number
 	target?: Datagram.RemoteInfo
 }
