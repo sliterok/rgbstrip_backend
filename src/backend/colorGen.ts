@@ -75,7 +75,7 @@ export function getPixels(mode: number): [number, number, number][] {
 				const colorStart = colors.get(segmentIndex)!
 				const colorEnd = colors.get(segmentIndex + 1)!
 
-				const mixed = interpolateLab(`hsl(${colorStart}, 100%, 60%)`, `hsl(${colorEnd}, 100%, 60%)`)(segmentFraction)
+				const mixed = interpolateLab(`hsl(${colorStart}, 100%, 50%)`, `hsl(${colorEnd}, 100%, 50%)`)(segmentFraction)
 				return mixed
 					.replace(/[^\d,]/g, '')
 					.split(',')

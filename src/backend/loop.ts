@@ -38,7 +38,7 @@ export function startLoop() {
 						break
 				}
 				const colorValue = pixels[index][actualColor]
-				buf[index * 3 + actualColor] = actualColor === 0 ? Math.floor(colorValue * 0.5) : colorValue
+				buf[index * 3 + actualColor] = actualColor === 0 ? Math.floor(colorValue * 0.7) : colorValue
 			}
 		}
 
