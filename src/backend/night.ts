@@ -5,18 +5,20 @@ import { CronJob } from 'cron'
 import { config } from './config'
 
 const nightUpdateTimes: [number, number][] = []
-function getTime(hours: number, minutes: number, store = true) {
+function getTime(hours: number, minutes: number, store = false) {
 	if (store) nightUpdateTimes.push([minutes, hours])
 	return hours + minutes / 60
 }
 
 const preWakeupTime = getTime(7, 30)
-const wakeupTime = getTime(8, 50)
-const sleepTime = getTime(23, 30)
-const wakeupTimeWeekend = getTime(10, 0)
-const sleepTimeWeekend = getTime(23, 58)
+const wakeupTime = getTime(8, 50, true)
+const sleepTime = getTime(23, 30, true)
+const wakeupTimeWeekend = getTime(10, 0, true)
+const sleepTimeWeekend = getTime(23, 58, true)
 
 export function startNightChecks() {
+	updateNightStatus()
+	updateDisabledColor()
 	setInterval(updateDisabledColor, 60000)
 	for (const [minutes, hours] of nightUpdateTimes) {
 		CronJob.from({
@@ -32,7 +34,7 @@ function getTimeAndIsWeekend() {
 	const d = new Date()
 	const day = d.getDay()
 	const isWeekend = [6, 7].includes(day)
-	const time = getTime(d.getHours(), d.getMinutes(), false)
+	const time = getTime(d.getHours(), d.getMinutes())
 
 	return { isWeekend, time }
 }
