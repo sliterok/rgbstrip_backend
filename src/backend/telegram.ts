@@ -1,6 +1,6 @@
 import { Bot, Context, CommandContext } from 'grammy'
 import { settings } from '../settings'
-import { MenuTemplate, MenuMiddleware, createBackMainMenuButtons } from 'grammy-inline-menu'
+import { MenuTemplate, MenuMiddleware } from 'grammy-inline-menu'
 import { config } from './config'
 import { IMode } from 'src/typings'
 
@@ -10,7 +10,7 @@ const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_nam
 
 const allowedUsers = config.tgAllowedUsers.split(',').map(el => parseInt(el))
 
-menuTemplate.interact('night', 'nightOverride', {
+menuTemplate.interact('Night override', 'nightOverride', {
 	do: async ctx => {
 		settings.nightOverride = !settings.nightOverride
 		await ctx.answerCallbackQuery(`Night override ${settings.nightOverride ? 'on' : 'off'}`)
@@ -18,7 +18,7 @@ menuTemplate.interact('night', 'nightOverride', {
 	},
 })
 
-menuTemplate.interact('geo', 'geoOverride', {
+menuTemplate.interact('GEO override', 'geoOverride', {
 	do: async ctx => {
 		settings.geoOverride = !settings.geoOverride
 		await ctx.answerCallbackQuery(`GEO override ${settings.geoOverride ? 'on' : 'off'}`)
@@ -26,12 +26,11 @@ menuTemplate.interact('geo', 'geoOverride', {
 	},
 })
 
-const modesMenu = new MenuTemplate('select mode')
-menuTemplate.submenu('modes', 'modes', modesMenu)
-modesMenu.select(
+menuTemplate.select(
 	'select_mode',
 	{ 0: 'off', 1: 'rainbow', 2: 'progress', 3: 'white', 4: 'away', 5: 'noise', 6: 'color' },
 	{
+		columns: 2,
 		isSet: (ctx, key) => settings.mode === parseInt(key),
 		set: async (_ctx, key) => {
 			const ctx = _ctx as CommandContext<Context>
@@ -45,7 +44,6 @@ modesMenu.select(
 		},
 	}
 )
-modesMenu.manualRow(createBackMainMenuButtons('back'))
 
 const menuMiddleware = new MenuMiddleware('/', menuTemplate)
 bot.command('start', ctx => {
@@ -54,5 +52,7 @@ bot.command('start', ctx => {
 bot.use(menuMiddleware)
 
 export function startTelegram() {
-	if (import.meta.env.PROD) bot.start().catch(err => console.error(err))
+	if (import.meta.env.PROD) {
+		bot.start().catch(err => console.error(err))
+	}
 }

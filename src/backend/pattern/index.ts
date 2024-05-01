@@ -6,8 +6,6 @@ import { getNoiseColor } from './noise'
 import { getProgressColor } from './progress'
 import { getRainbowColor } from './rainbow'
 
-let frameIndex = 0
-
 const modeToGetter: Record<IMode, [number, number, number] | IColorGetter> = {
 	[IMode.Disabled]: dynamic.disabledColor,
 	[IMode.Rainbow]: getRainbowColor,
@@ -17,6 +15,8 @@ const modeToGetter: Record<IMode, [number, number, number] | IColorGetter> = {
 	[IMode.Noise]: getNoiseColor,
 	[IMode.Color]: settings.color,
 }
+
+let frameIndex = 0
 
 export function getPixels(mode: IMode): [number, number, number][] {
 	frameIndex++
