@@ -21,7 +21,7 @@ export default function Color() {
 						mutation.mutate([r, g, b])
 					})
 				}
-				style={{ width: '100%', height: '90vh' }}
+				style={{ width: '95vw', height: '95vh' }}
 			/>
 		</div>
 	)
