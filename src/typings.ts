@@ -12,16 +12,6 @@ export enum IMode {
 	Color,
 }
 
-export const ModeToWord = {
-	[IMode.Disabled]: 'выкл',
-	[IMode.Rainbow]: 'радуга',
-	[IMode.Progress]: 'прогрессбар',
-	[IMode.White]: 'белый',
-	[IMode.Away]: 'ушел',
-	[IMode.Noise]: 'шум',
-	[IMode.Color]: 'цвет',
-}
-
 export interface ISettings {
 	mode: IMode
 	color: [number, number, number]
