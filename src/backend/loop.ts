@@ -47,17 +47,7 @@ function loop() {
 			}
 
 			const colorValue = pixels[index][actualColor]
-
-			let overrideColor
-			switch (color) {
-				case 0:
-					overrideColor = Math.ceil(colorValue * 0.65)
-					break
-				case 2:
-					overrideColor = Math.ceil(colorValue * 0.75)
-					break
-			}
-			buf[index * 3 + color] = Math.ceil(Math.sqrt(overrideColor || colorValue) * 15.969)
+			buf[index * 3 + color] = Math.ceil(Math.sqrt(colorValue) * 15.969)
 		}
 	}
 
