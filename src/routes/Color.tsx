@@ -4,11 +4,7 @@ import { RgbColorPicker } from 'react-colorful'
 import { settings } from '../settings'
 import { IArrColor } from 'src/typings'
 
-let timeout: NodeJS.Timeout
-function useThrottle(cb: any, delay: number) {
-	if (timeout) clearTimeout(timeout)
-	timeout = setTimeout(cb, delay)
-}
+let lastTimestamp: number
 
 export default function Color() {
 	const mutation = useServerSideMutation(async (ctx, color: IArrColor) => {
@@ -17,7 +13,16 @@ export default function Color() {
 
 	return (
 		<div>
-			<RgbColorPicker onChange={({ r, g, b }) => useThrottle(() => mutation.mutate([r, g, b]), 20)} style={{ width: '100%', height: '90vh' }} />
+			<RgbColorPicker
+				onChange={({ r, g, b }) =>
+					requestAnimationFrame(timestamp => {
+						if (lastTimestamp === timestamp) return
+						lastTimestamp = timestamp
+						mutation.mutate([r, g, b])
+					})
+				}
+				style={{ width: '100%', height: '90vh' }}
+			/>
 		</div>
 	)
 }
