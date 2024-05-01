@@ -46,8 +46,7 @@ function loop() {
 					break
 			}
 
-			const colorValue = pixels[index][actualColor]
-			buf[index * 3 + color] = Math.ceil(Math.sqrt(colorValue) * 15.969)
+			buf[index * 3 + color] = pixels[index][actualColor]
 		}
 	}
 
