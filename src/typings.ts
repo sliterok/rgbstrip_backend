@@ -1,5 +1,7 @@
 import Datagram from 'dgram'
 
+export type IColorGetter = (frameIndex: number, index: number) => [number, number, number]
+
 export enum IMode {
 	Disabled,
 	Rainbow,

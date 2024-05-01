@@ -1,6 +1,6 @@
 import { getCurrentMode } from 'src/helpers'
 import { broadcastMessage } from 'src/routes/debug/stream.api'
-import { getPixels } from './color'
+import { getPixels } from './pattern'
 import { pixelsCount, dynamic, colors, randomColor } from './shared'
 import { socket } from './udp'
 
