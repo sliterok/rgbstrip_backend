@@ -2,6 +2,7 @@
 import { Head } from 'rakkasjs'
 import { useEffect, useRef, useState } from 'react'
 import classes from './pixel.module.css'
+import { IArrColor } from 'src/typings'
 
 let eventSource: EventSource
 // eslint-disable-next-line ssr-friendly/no-dom-globals-in-module-scope
@@ -23,7 +24,7 @@ export default function Debug() {
 		}
 
 		eventSource.onmessage = event => {
-			const pixels = JSON.parse(event.data) as [number, number, number][]
+			const pixels = JSON.parse(event.data) as IArrColor[]
 			for (const i in pixels) {
 				const [r, g, b] = pixels[i]
 				const el = pixelsRef.current?.children[i]

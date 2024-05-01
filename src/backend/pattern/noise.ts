@@ -1,6 +1,6 @@
 import { HSLColor } from 'd3-color'
 import { interpolateLab } from 'd3-interpolate'
-import { IColorGetter } from 'src/typings'
+import { IArrColor, IColorGetter } from 'src/typings'
 import { colorNoise, pixelsCount, activeColors, dynamic, colors } from '../shared'
 
 const interpolators = new WeakMap<HSLColor, WeakMap<HSLColor, (t: number) => string>>()
@@ -36,5 +36,5 @@ export const getNoiseColor: IColorGetter = (frameIndex, index) => {
 	return mixed
 		.replace(/[^\d,]/g, '')
 		.split(',')
-		.map(el => parseInt(el)) as [number, number, number]
+		.map(el => parseInt(el)) as IArrColor
 }

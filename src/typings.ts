@@ -1,6 +1,8 @@
 import Datagram from 'dgram'
 
-export type IColorGetter = (frameIndex: number, index: number) => [number, number, number]
+export type IArrColor = [number, number, number]
+export type IStaticColorGetter = () => IArrColor
+export type IColorGetter = (frameIndex: number, index: number) => IArrColor
 
 export enum IMode {
 	Disabled,
@@ -14,7 +16,7 @@ export enum IMode {
 
 export interface ISettings {
 	mode: IMode
-	color: [number, number, number]
+	color: IArrColor
 	progress: { current: number; total: number; lastUpdate: Date | null }
 	nightOverride: boolean
 	geoOverride: boolean
@@ -23,7 +25,7 @@ export interface ISettings {
 }
 
 export interface IDynamicDto {
-	disabledColor: [number, number, number]
+	disabledColor: IArrColor
 	offset: number
 	hasConnections: boolean
 	isNight: boolean

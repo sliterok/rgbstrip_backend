@@ -2,6 +2,7 @@
 import { useServerSideMutation } from 'rakkasjs'
 import { RgbColorPicker } from 'react-colorful'
 import { settings } from '../settings'
+import { IArrColor } from 'src/typings'
 
 let timeout: NodeJS.Timeout
 function useThrottle(cb: any, delay: number) {
@@ -10,7 +11,7 @@ function useThrottle(cb: any, delay: number) {
 }
 
 export default function Color() {
-	const mutation = useServerSideMutation(async (ctx, color: [number, number, number]) => {
+	const mutation = useServerSideMutation(async (ctx, color: IArrColor) => {
 		settings.color = color
 	})
 
