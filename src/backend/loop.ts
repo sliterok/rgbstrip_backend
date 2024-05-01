@@ -57,7 +57,7 @@ function loop() {
 					overrideColor = Math.ceil(colorValue * 0.75)
 					break
 			}
-			buf[index * 3 + color] = overrideColor || colorValue
+			buf[index * 3 + color] = Math.ceil(Math.sqrt(overrideColor || colorValue) * 15.969)
 		}
 	}
 
