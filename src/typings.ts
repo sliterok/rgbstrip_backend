@@ -26,6 +26,7 @@ export interface IDynamicDto {
 	disabledColor: [number, number, number]
 	offset: number
 	hasConnections: boolean
+	isNight: boolean
 	lastMessage?: number
 	target?: Datagram.RemoteInfo
 }

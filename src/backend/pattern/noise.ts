@@ -18,8 +18,8 @@ export const getNoiseColor: IColorGetter = (frameIndex, index) => {
 	const colorEnd = colors.get(segmentIndex + 1)!
 
 	let interpolator: undefined | ((t: number) => string)
-	const hadFirstColor = interpolators.has(colorStart)
 	let subInterpolator: WeakMap<HSLColor, (t: number) => string>
+	const hadFirstColor = interpolators.has(colorStart)
 	if (hadFirstColor) {
 		subInterpolator = interpolators.get(colorStart)!
 		interpolator = subInterpolator.get(colorEnd)

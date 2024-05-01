@@ -1,11 +1,18 @@
-import { getCurrentMode } from 'src/helpers'
 import { broadcastMessage } from 'src/routes/debug/stream.api'
 import { getPixels } from './pattern'
 import { pixelsCount, dynamic, colors, randomColor } from './shared'
 import { socket } from './udp'
+import { settings } from 'src/settings'
+import { IMode } from 'src/typings'
 
 export function startLoop() {
 	setInterval(loop, 16)
+}
+
+function getCurrentMode() {
+	if (dynamic.isNight && !settings.nightOverride) return IMode.Disabled
+	else if (settings.away && !settings.geoOverride) return IMode.Away
+	else return settings.mode
 }
 
 let colorChange = 0
@@ -15,8 +22,7 @@ function loop() {
 	dynamic.offset = rawOffset % 1
 	if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
 
-	const mode = getCurrentMode()
-	if (dynamic.hasConnections) broadcastMessage(JSON.stringify(getPixels(mode || 5)))
+	if (dynamic.hasConnections) broadcastMessage(JSON.stringify(getPixels(5)))
 
 	if (!dynamic.target) return
 	if (Date.now() - (dynamic.lastMessage || 0) > 7000) {
@@ -24,6 +30,7 @@ function loop() {
 		return
 	}
 
+	const mode = getCurrentMode()
 	const pixels = getPixels(mode)
 
 	for (let index = 0; index < pixels.length; index++) {

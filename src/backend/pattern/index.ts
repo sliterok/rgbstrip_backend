@@ -1,4 +1,3 @@
-import { getTime, preWakeupTime, wakeupTimeWeekend, wakeupTime } from 'src/helpers'
 import { settings } from 'src/settings'
 import { pixelsCount, dynamic } from '../shared'
 import { IColorGetter, IMode } from 'src/typings'
@@ -21,8 +20,6 @@ let frameIndex = 0
 export function getPixels(mode: IMode): [number, number, number][] {
 	frameIndex++
 
-	if (mode === IMode.Disabled) updateDisabledColor()
-
 	const getter = modeToGetter[mode]
 	if (getter instanceof Function) {
 		return Array(pixelsCount)
@@ -30,20 +27,5 @@ export function getPixels(mode: IMode): [number, number, number][] {
 			.map((_, index): [number, number, number] => getter(frameIndex, index))
 	} else {
 		return Array(pixelsCount).fill(getter)
-	}
-}
-
-function updateDisabledColor() {
-	if (frameIndex % 15000 === 0) {
-		// every 4 minutes or something like this
-		const d = new Date()
-		const day = d.getDay()
-		const isWeekend = [6, 7].includes(day)
-		const time = getTime(d.getHours(), d.getMinutes())
-		if (time >= preWakeupTime && time <= (isWeekend ? wakeupTimeWeekend : wakeupTime)) {
-			if (dynamic.disabledColor[1] !== 1) dynamic.disabledColor = [0, 1, 0]
-		} else {
-			if (dynamic.disabledColor[2] !== 1) dynamic.disabledColor = [0, 0, 1]
-		}
 	}
 }

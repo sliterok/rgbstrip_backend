@@ -37,6 +37,7 @@
   "dependencies": {
     "@hattip/adapter-node": "^0.0.35",
     "@hattip/response": "0.0.45",
+    "cron": "^3.1.7",
     "cross-env": "^7.0.3",
     "d3-color": "^3.1.0",
     "d3-interpolate": "^3.0.1",
