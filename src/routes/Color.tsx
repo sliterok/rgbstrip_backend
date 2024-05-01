@@ -3,6 +3,7 @@ import { useServerSideMutation } from 'rakkasjs'
 import { RgbColorPicker } from 'react-colorful'
 import { settings } from '../settings'
 import { IArrColor } from 'src/typings'
+import classes from './container.module.css'
 
 let lastTimestamp: number
 
@@ -12,7 +13,7 @@ export default function Color() {
 	})
 
 	return (
-		<div>
+		<div className={classes.container}>
 			<RgbColorPicker
 				onChange={({ r, g, b }) =>
 					requestAnimationFrame(timestamp => {
