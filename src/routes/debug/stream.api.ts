@@ -6,9 +6,13 @@ const connections = new Set<ServerSentEventSink>()
 export function get() {
 	let thisSink: ServerSentEventSink
 
+	if (import.meta.env.PROD) {
+		console.warn('debug stream connection attempt rejected on prod')
+		return
+	}
+
 	return serverSentEvents({
 		onOpen(sink) {
-			if (import.meta.env.PROD) return sink.close()
 			thisSink = sink
 			connections.add(sink)
 			sink.ping()
