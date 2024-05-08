@@ -1,4 +1,4 @@
-import { Bot, Context, CommandContext } from 'grammy'
+import { Bot, Context } from 'grammy'
 import { settings } from '../settings'
 import { MenuTemplate, MenuMiddleware } from 'grammy-inline-menu'
 import { config } from './config'
@@ -8,20 +8,28 @@ const bot = new Bot(config.tgApiKey)
 
 const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_name}`)
 
-const allowedUsers = config.tgAllowedUsers.split(',').map(el => parseInt(el))
+const allowedUsers = new Set(config.tgAllowedUsers.split(',').map(el => parseInt(el)))
 
 menuTemplate.interact('Night override', 'nightOverride', {
 	do: async ctx => {
-		settings.nightOverride = !settings.nightOverride
-		await ctx.answerCallbackQuery(`Night override ${settings.nightOverride ? 'on' : 'off'}`)
+		if (!allowedUsers.has(ctx.chat!.id)) {
+			await ctx.answerCallbackQuery('Unauthorized')
+		} else {
+			settings.nightOverride = !settings.nightOverride
+			await ctx.answerCallbackQuery(`Night override ${settings.nightOverride ? 'on' : 'off'}`)
+		}
 		return false
 	},
 })
 
 menuTemplate.interact('GEO override', 'geoOverride', {
 	do: async ctx => {
-		settings.geoOverride = !settings.geoOverride
-		await ctx.answerCallbackQuery(`GEO override ${settings.geoOverride ? 'on' : 'off'}`)
+		if (!allowedUsers.has(ctx.chat!.id)) {
+			await ctx.answerCallbackQuery('Unauthorized')
+		} else {
+			settings.geoOverride = !settings.geoOverride
+			await ctx.answerCallbackQuery(`GEO override ${settings.geoOverride ? 'on' : 'off'}`)
+		}
 		return false
 	},
 })
@@ -32,8 +40,11 @@ menuTemplate.select(
 	{
 		columns: 2,
 		isSet: (ctx, key) => settings.mode === parseInt(key),
-		set: async (_ctx, key) => {
-			const ctx = _ctx as CommandContext<Context>
+		set: async (ctx, key) => {
+			if (!allowedUsers.has(ctx.chat!.id)) {
+				await ctx.answerCallbackQuery('Unauthorized')
+				return false
+			}
 			settings.mode = parseInt(key)
 			const selectedMode = IMode[settings.mode]
 			// eslint-disable-next-line no-console
@@ -45,9 +56,16 @@ menuTemplate.select(
 	}
 )
 
+menuTemplate.manual({
+	web_app: {
+		url: config.externalUrl,
+	},
+	text: 'select color',
+})
+
 const menuMiddleware = new MenuMiddleware('/', menuTemplate)
 bot.command('start', ctx => {
-	if (allowedUsers.includes(ctx.chat.id)) menuMiddleware.replyToContext(ctx)
+	if (allowedUsers.has(ctx.chat.id)) menuMiddleware.replyToContext(ctx)
 })
 bot.use(menuMiddleware)
 

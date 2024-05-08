@@ -41,4 +41,5 @@ export interface IConfig {
 	tgAllowedUsers: string
 	tgApiKey: string
 	routerPassword: string
+	externalUrl: string
 }

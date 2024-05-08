@@ -8,6 +8,7 @@ export function get() {
 
 	return serverSentEvents({
 		onOpen(sink) {
+			if (import.meta.env.PROD) return sink.close()
 			thisSink = sink
 			connections.add(sink)
 			sink.ping()
