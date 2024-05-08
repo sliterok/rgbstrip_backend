@@ -10,15 +10,16 @@ import { urlParseHashParams } from 'src/backend/telegram/decode'
 let lastTimestamp: number
 
 export default function Color() {
-	const tgWebAppData = useRef<string | null>(null)
+	const tgWebAppDataRef = useRef<string | null>(null)
+
 	useEffect(() => {
 		const initData = urlParseHashParams(location.hash)
-		tgWebAppData.current = initData.tgWebAppData
+		tgWebAppDataRef.current = initData.tgWebAppData
 	}, [])
 
-	const mutation = useServerSideMutation(async (ctx, color: IArrColor) => {
-		if (!tgWebAppData.current) return
-		const verified = isVerifiedUser(tgWebAppData.current)
+	const mutation = useServerSideMutation(async (ctx, [color, tgWebAppData]: [IArrColor, string]) => {
+		if (!tgWebAppData) return
+		const verified = isVerifiedUser(tgWebAppData)
 		if (verified) settings.color = color
 	})
 
@@ -29,7 +30,8 @@ export default function Color() {
 					requestAnimationFrame(timestamp => {
 						if (lastTimestamp === timestamp) return
 						lastTimestamp = timestamp
-						mutation.mutate([r, g, b])
+						const tgWebAppData = tgWebAppDataRef.current
+						if (tgWebAppData) mutation.mutate([[r, g, b], tgWebAppData])
 					})
 				}
 				style={{ width: '95vw', height: '95vh' }}
