@@ -38,7 +38,7 @@ function updateNightStatus(time = getCurrentTime()) {
 	const targetSleepTime = getTargetTime(TargetTimes.sleep)
 	const targetWakeupTime = getTargetTime(TargetTimes.wakeUp)
 	if (time >= targetSleepTime) dynamic.isNight = true
-	else if (time <= targetWakeupTime) dynamic.isNight = true
+	else if (time < targetWakeupTime) dynamic.isNight = true
 	else {
 		dynamic.isNight = false
 		return
@@ -48,7 +48,7 @@ function updateNightStatus(time = getCurrentTime()) {
 }
 
 function updateDisabledColor(time: number, targetWakeupTime: number) {
-	if (time >= preWakeupTime && time <= targetWakeupTime) {
+	if (time >= preWakeupTime && time < targetWakeupTime) {
 		if (dynamic.disabledColor[1] !== 1) dynamic.disabledColor = [0, 1, 0]
 	} else {
 		if (dynamic.disabledColor[2] !== 1) dynamic.disabledColor = [0, 0, 1]
