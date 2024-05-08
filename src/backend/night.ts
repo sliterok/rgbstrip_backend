@@ -1,6 +1,8 @@
 import { dynamic } from './shared'
 import { CronJob } from 'cron'
 import { config } from './config'
+import { settings } from 'src/settings'
+import { IMode } from 'src/typings'
 
 interface ICronTime {
 	minutes: number
@@ -39,12 +41,9 @@ function updateNightStatus(time = getCurrentTime()) {
 	const targetWakeupTime = getTargetTime(TargetTimes.wakeUp)
 	if (time >= targetSleepTime) dynamic.isNight = true
 	else if (time < targetWakeupTime) dynamic.isNight = true
-	else {
-		dynamic.isNight = false
-		return
-	}
+	else dynamic.isNight = false
 
-	updateDisabledColor(time, targetWakeupTime)
+	if (dynamic.isNight || settings.mode === IMode.Disabled) updateDisabledColor(time, targetWakeupTime)
 }
 
 function updateDisabledColor(time: number, targetWakeupTime: number) {
