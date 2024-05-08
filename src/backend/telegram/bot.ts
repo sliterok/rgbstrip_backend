@@ -1,18 +1,17 @@
 import { Bot, Context } from 'grammy'
-import { settings } from '../settings'
+import { settings } from '../../settings'
 import { MenuTemplate, MenuMiddleware } from 'grammy-inline-menu'
-import { config } from './config'
+import { config } from '../config'
 import { IMode } from 'src/typings'
+import { allowedTelegramUsers } from '.'
 
 const bot = new Bot(config.tgApiKey)
 
 const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_name}`)
 
-const allowedUsers = new Set(config.tgAllowedUsers.split(',').map(el => parseInt(el)))
-
 menuTemplate.interact('Night override', 'nightOverride', {
 	do: async ctx => {
-		if (!allowedUsers.has(ctx.chat!.id)) {
+		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
 			await ctx.answerCallbackQuery('Unauthorized')
 		} else {
 			settings.nightOverride = !settings.nightOverride
@@ -24,7 +23,7 @@ menuTemplate.interact('Night override', 'nightOverride', {
 
 menuTemplate.interact('GEO override', 'geoOverride', {
 	do: async ctx => {
-		if (!allowedUsers.has(ctx.chat!.id)) {
+		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
 			await ctx.answerCallbackQuery('Unauthorized')
 		} else {
 			settings.geoOverride = !settings.geoOverride
@@ -41,7 +40,7 @@ menuTemplate.select(
 		columns: 2,
 		isSet: (ctx, key) => settings.mode === parseInt(key),
 		set: async (ctx, key) => {
-			if (!allowedUsers.has(ctx.chat!.id)) {
+			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
 				await ctx.answerCallbackQuery('Unauthorized')
 				return false
 			}
@@ -65,7 +64,7 @@ menuTemplate.manual({
 
 const menuMiddleware = new MenuMiddleware('/', menuTemplate)
 bot.command('start', ctx => {
-	if (allowedUsers.has(ctx.chat.id)) menuMiddleware.replyToContext(ctx)
+	if (allowedTelegramUsers.has(ctx.chat.id)) menuMiddleware.replyToContext(ctx)
 })
 bot.use(menuMiddleware)
 

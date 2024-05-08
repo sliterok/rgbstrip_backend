@@ -1,4 +1,4 @@
-import { startTelegram } from './telegram'
+import { startTelegram } from './telegram/bot'
 import { startLoop } from './loop'
 import { startRouterIntegration } from './router'
 import { startUdpServer } from './udp'
