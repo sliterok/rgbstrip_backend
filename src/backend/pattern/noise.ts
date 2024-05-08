@@ -1,15 +1,16 @@
-import { HSLColor } from 'd3-color'
+import { HCLColor } from 'd3-color'
 import { interpolateLab } from 'd3-interpolate'
 import { IArrColor, IColorGetter } from 'src/typings'
-import { colorNoise, pixelsCount, activeColors, dynamic, colors } from '../shared'
+import { pixelsCount, activeColors, dynamic, colors, normalNoise } from '../shared'
 
-const interpolators = new WeakMap<HSLColor, WeakMap<HSLColor, (t: number) => string>>()
+const interpolators = new WeakMap<HCLColor, WeakMap<HCLColor, (t: number) => string>>()
 
 export const getNoiseColor: IColorGetter = (frameIndex, index) => {
 	const x = index / 80 + frameIndex / 400
 	const y = frameIndex / 600
 
-	const baseOffset = ((colorNoise(x, y) + 1) / 2 + index / pixelsCount) % 1
+	const normalizedNoise = normalNoise(x, y)
+	const baseOffset = (normalizedNoise + index / pixelsCount) % 1
 	const segmentWidth = 1 / (activeColors - 1)
 	const i = baseOffset + dynamic.offset * segmentWidth
 	const segmentIndex = Math.floor(i / segmentWidth)
@@ -18,7 +19,7 @@ export const getNoiseColor: IColorGetter = (frameIndex, index) => {
 	const colorEnd = colors.get(segmentIndex + 1)!
 
 	let interpolator: undefined | ((t: number) => string)
-	let subInterpolator: WeakMap<HSLColor, (t: number) => string>
+	let subInterpolator: WeakMap<HCLColor, (t: number) => string>
 	const hadFirstColor = interpolators.has(colorStart)
 	if (hadFirstColor) {
 		subInterpolator = interpolators.get(colorStart)!

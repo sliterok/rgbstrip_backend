@@ -1,6 +1,6 @@
 import { broadcastMessage } from 'src/routes/debug/stream.api'
 import { getPixels } from './pattern'
-import { pixelsCount, dynamic, colors, randomColor } from './shared'
+import { pixelsCount, dynamic, colors, randomColor, normalNoise } from './shared'
 import { socket } from './udp'
 import { settings } from 'src/settings'
 import { IArrColor, IMode } from 'src/typings'
@@ -18,9 +18,13 @@ function getCurrentMode() {
 let colorChange = 0
 const buf = new Uint8Array(pixelsCount * 3)
 function loop() {
-	const rawOffset = dynamic.offset + 0.004
+	const rawOffset = dynamic.offset + 0.006
 	dynamic.offset = rawOffset % 1
-	if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
+	if (rawOffset >= 1) {
+		colorChange += normalNoise(Date.now(), 0) * 5
+		const newColor = randomColor(colorChange, 0)
+		colors.add(newColor)
+	}
 
 	let pixels: IArrColor[] | undefined
 	if (dynamic.hasConnections) {
