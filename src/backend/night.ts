@@ -70,11 +70,11 @@ enum WekeendDay {
 function getTargetTime(target: TargetTimes): number {
 	const isWeekend = getIsWeekend()
 	if (target === TargetTimes.wakeUp) {
-		return isWeekend !== WekeendDay.friday ? wakeupTimeWeekend : wakeupTime
+		return isWeekend && isWeekend !== WekeendDay.friday ? wakeupTimeWeekend : wakeupTime
 	} else if (target === TargetTimes.sleep) {
-		return isWeekend !== WekeendDay.sunday ? sleepTimeWeekend : sleepTime
+		return isWeekend && isWeekend !== WekeendDay.sunday ? sleepTimeWeekend : sleepTime
 	}
-	throw Error(`unexpected target: ${target} in getTargetTime`)
+	throw new Error(`unexpected target: ${target} in getTargetTime`)
 }
 
 const weekends = new Map([
