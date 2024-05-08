@@ -22,7 +22,7 @@ function loop() {
 	dynamic.offset = rawOffset % 1
 	if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
 
-	if (dynamic.hasConnections) broadcastMessage(JSON.stringify(getPixels(5)))
+	if (dynamic.hasConnections) broadcastMessage(JSON.stringify(getPixels(IMode.Noise)))
 
 	if (!dynamic.target) return
 	if (Date.now() - (dynamic.lastMessage || 0) > 7000) {
