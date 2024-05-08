@@ -4,21 +4,21 @@ import { settings } from '../settings'
 import { IArrColor } from 'src/typings'
 import classes from './container.module.css'
 import { isVerifiedUser } from 'src/backend/telegram/verify'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { urlParseHashParams } from 'src/backend/telegram/decode'
 
 let lastTimestamp: number
-let tgWebAppData: string
 
 export default function Color() {
+	const tgWebAppData = useRef<string | null>(null)
 	useEffect(() => {
 		const initData = urlParseHashParams(location.hash)
-		tgWebAppData = initData.tgWebAppData!
+		tgWebAppData.current = initData.tgWebAppData
 	}, [])
 
 	const mutation = useServerSideMutation(async (ctx, color: IArrColor) => {
-		if (!tgWebAppData) return
-		const verified = isVerifiedUser(tgWebAppData)
+		if (!tgWebAppData.current) return
+		const verified = isVerifiedUser(tgWebAppData.current)
 		if (verified) settings.color = color
 	})
 
