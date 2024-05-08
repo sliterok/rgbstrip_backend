@@ -3,7 +3,7 @@ import { getPixels } from './pattern'
 import { pixelsCount, dynamic, colors, randomColor } from './shared'
 import { socket } from './udp'
 import { settings } from 'src/settings'
-import { IMode } from 'src/typings'
+import { IArrColor, IMode } from 'src/typings'
 
 export function startLoop() {
 	setInterval(loop, 16)
@@ -22,7 +22,11 @@ function loop() {
 	dynamic.offset = rawOffset % 1
 	if (rawOffset >= 1) colors.add(randomColor((colorChange += 7 / 3), Math.random() * 5))
 
-	if (dynamic.hasConnections) broadcastMessage(JSON.stringify(getPixels(IMode.Noise)))
+	let pixels: IArrColor[] | undefined
+	if (dynamic.hasConnections) {
+		pixels = getPixels(IMode.Noise)
+		broadcastMessage(JSON.stringify(pixels))
+	}
 
 	if (!dynamic.target) return
 	if (Date.now() - (dynamic.lastMessage || 0) > 7000) {
@@ -31,7 +35,7 @@ function loop() {
 	}
 
 	const mode = getCurrentMode()
-	const pixels = getPixels(mode)
+	if (!pixels || mode !== IMode.Noise) pixels = getPixels(mode)
 
 	for (let index = 0; index < pixels.length; index++) {
 		for (let color = 0; color < 3; color++) {
