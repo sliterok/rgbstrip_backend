@@ -3,9 +3,9 @@ import { RgbColorPicker } from 'react-colorful'
 import { settings } from '../settings'
 import { IArrColor } from 'src/typings'
 import classes from './container.module.css'
-import { urlParseHashParams, getVerifiedUser } from 'src/backend/telegram/helpers'
-import { allowedTelegramUsers } from 'src/backend/telegram'
+import { isVerifiedUser } from 'src/backend/telegram/verify'
 import { useEffect } from 'react'
+import { urlParseHashParams } from 'src/backend/telegram/decode'
 
 let lastTimestamp: number
 let tgWebAppData: string
@@ -18,8 +18,8 @@ export default function Color() {
 
 	const mutation = useServerSideMutation(async (ctx, color: IArrColor) => {
 		if (!tgWebAppData) return
-		const user = getVerifiedUser(tgWebAppData)
-		if (allowedTelegramUsers.has(user?.id || 0)) settings.color = color
+		const verified = isVerifiedUser(tgWebAppData)
+		if (verified) settings.color = color
 	})
 
 	return (
