@@ -15,14 +15,16 @@ function getCurrentMode() {
 	else return settings.mode
 }
 
-let colorChange = 0
+let colorNoiseOffset = 0
 const buf = new Uint8Array(pixelsCount * 3)
 function loop() {
 	const rawOffset = dynamic.offset + 0.006
 	dynamic.offset = rawOffset % 1
 	if (rawOffset >= 1) {
-		colorChange += normalNoise(Date.now(), 0) * 10
-		const hue = normalNoise(colorChange, 0) * 360 + normalNoise(0, Date.now()) * 360
+		const colorChange = normalNoise(Date.now(), 0) ** 2 * 10
+		colorNoiseOffset += colorChange
+
+		const hue = normalNoise(colorNoiseOffset, 0) * 360 + normalNoise(0, Date.now()) * 360
 		const newColor = hueToColor(hue)
 		colors.add(newColor)
 	}
