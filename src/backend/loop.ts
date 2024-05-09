@@ -21,7 +21,7 @@ function loop() {
 	const rawOffset = dynamic.offset + 0.006
 	dynamic.offset = rawOffset % 1
 	if (rawOffset >= 1) {
-		const colorChange = normalNoise(Date.now(), 0) ** 2 * 23
+		const colorChange = normalNoise(Date.now(), 0) ** 2 * 23 + 1 / 3
 		colorNoiseOffset += colorChange
 
 		const hue = normalNoise(colorNoiseOffset, 0) * 360 + normalNoise(0, Date.now()) * 360
