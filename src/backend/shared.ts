@@ -19,5 +19,5 @@ export const dynamic: IDynamicDto = {
 
 export const colors = new RingBuffer<HSLColor>(activeColors + 1)
 
-export const randomColor = (hue: number) => hsl(hue, 1, 0.5)
-for (let i = 0; i <= activeColors; i++) colors.add(randomColor(Math.random() * 5000))
+export const hueToColor = (hue: number) => hsl(hue, 1, 0.5)
+for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 5000))

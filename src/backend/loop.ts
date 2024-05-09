@@ -1,6 +1,6 @@
 import { broadcastMessage } from 'src/routes/debug/stream.api'
 import { getPixels } from './pattern'
-import { pixelsCount, dynamic, colors, randomColor, normalNoise } from './shared'
+import { pixelsCount, dynamic, colors, hueToColor, normalNoise } from './shared'
 import { socket } from './udp'
 import { settings } from 'src/settings'
 import { IArrColor, IMode } from 'src/typings'
@@ -23,7 +23,7 @@ function loop() {
 	if (rawOffset >= 1) {
 		colorChange += normalNoise(Date.now(), 0) * 10
 		const hue = normalNoise(colorChange, 0) * 360 + normalNoise(0, Date.now()) * 360
-		const newColor = randomColor(hue)
+		const newColor = hueToColor(hue)
 		colors.add(newColor)
 	}
 
