@@ -3,7 +3,7 @@ import RingBufferTs from 'ring-buffer-ts'
 const RingBuffer = RingBufferTs.RingBuffer
 import { createNoise2D } from 'simplex-noise'
 import { IDynamicDto } from 'src/typings'
-import { HCLColor, hcl } from 'd3-color'
+import { HSLColor, hsl } from 'd3-color'
 
 export const activeColors = 5
 export const colorNoise = createNoise2D()
@@ -17,7 +17,7 @@ export const dynamic: IDynamicDto = {
 	isNight: true,
 }
 
-export const colors = new RingBuffer<HCLColor>(activeColors + 1)
+export const colors = new RingBuffer<HSLColor>(activeColors + 1)
 
-export const randomColor = (hue: number) => hcl(hue, 230, 100)
+export const randomColor = (hue: number) => hsl(hue, 1, 0.5)
 for (let i = 0; i <= activeColors; i++) colors.add(randomColor(Math.random() * 5000))
