@@ -10,11 +10,11 @@ export const getNoiseColor: IColorGetter = (frameIndex, index) => {
 	const y = frameIndex / 600
 
 	const normalizedNoise = normalNoise(x, y)
-	const baseOffset = (normalizedNoise + index / pixelsCount) % 1
-	const segmentWidth = 1 / (activeColors - 1)
-	const i = baseOffset + dynamic.offset * segmentWidth
-	const segmentIndex = Math.floor(i / segmentWidth)
-	const segmentFraction = (i % segmentWidth) / segmentWidth
+	const baseOffset = ((normalizedNoise + index / pixelsCount) / 2) * (activeColors - 1)
+	const i = baseOffset + dynamic.offset
+	const segmentIndex = Math.floor(i)
+	const segmentFraction = i - segmentIndex
+
 	const colorStart = colors.get(segmentIndex)!
 	const colorEnd = colors.get(segmentIndex + 1)!
 
