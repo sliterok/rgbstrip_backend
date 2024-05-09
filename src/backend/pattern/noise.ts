@@ -33,7 +33,7 @@ export const getNoiseColor: IColorGetter = index => {
 	}
 	if (!hadSecondColor) subInterpolator!.set(colorEnd, interpolator)
 
-	const mixed = interpolator(segmentFraction)
+	const mixed = interpolator(segmentFraction ** 2)
 	return mixed
 		.replace(/[^\d,]/g, '')
 		.split(',')
