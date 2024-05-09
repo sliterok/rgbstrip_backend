@@ -22,7 +22,8 @@ function loop() {
 	dynamic.offset = rawOffset % 1
 	if (rawOffset >= 1) {
 		colorChange += normalNoise(Date.now(), 0) * 10
-		const newColor = randomColor(colorChange, 0)
+		const hue = normalNoise(colorChange, 0) * 360 + normalNoise(0, Date.now()) * 360
+		const newColor = randomColor(hue)
 		colors.add(newColor)
 	}
 

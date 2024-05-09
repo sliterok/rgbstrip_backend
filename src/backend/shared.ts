@@ -19,5 +19,5 @@ export const dynamic: IDynamicDto = {
 
 export const colors = new RingBuffer<HCLColor>(activeColors + 1)
 
-export const randomColor = (x: number, y: number) => hcl(normalNoise(x, y) * 360, 230, 100) as HCLColor
-for (let i = 0; i <= activeColors; i++) colors.add(randomColor(Math.random() * 1000, 0))
+export const randomColor = (hue: number) => hcl(hue, 230, 100)
+for (let i = 0; i <= activeColors; i++) colors.add(randomColor(Math.random() * 5000))
