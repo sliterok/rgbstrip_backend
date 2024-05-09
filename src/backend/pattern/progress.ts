@@ -3,7 +3,7 @@ import { settings } from 'src/settings'
 import { IColorGetter } from 'src/typings'
 import { pixelsCount } from '../shared'
 
-export const getProgressColor: IColorGetter = (frameIndex, index) => {
+export const getProgressColor: IColorGetter = index => {
 	const { current, total, lastUpdate } = settings.progress
 
 	const mult = total / pixelsCount
@@ -12,7 +12,7 @@ export const getProgressColor: IColorGetter = (frameIndex, index) => {
 
 	let lightness = clamp(25, progress > index ? 50 : 50 - 20 * dist, 50)
 	let saturation = lightness * 2
-	let color = (frameIndex + index) % 360
+	let color = (Date.now() / 16 + index) % 360
 
 	if (total === 0) {
 		lightness = 50

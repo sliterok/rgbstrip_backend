@@ -5,12 +5,11 @@ import { pixelsCount, activeColors, dynamic, colors, normalNoise } from '../shar
 
 const interpolators = new WeakMap<HSLColor, WeakMap<HSLColor, (t: number) => string>>()
 
-export const getNoiseColor: IColorGetter = (frameIndex, index) => {
+export const getNoiseColor: IColorGetter = index => {
 	const now = Date.now()
-	const x = (index * 10 * normalNoise(now, now)) / pixelsCount
-	const y = frameIndex / 600
+	const x = (10 * normalNoise(now, now) + 3) * (index / pixelsCount)
 
-	const normalizedNoise = normalNoise(x, y)
+	const normalizedNoise = normalNoise(x, -now / 5000)
 	const baseOffset = normalizedNoise * (activeColors - 1)
 	const i = baseOffset + dynamic.offset
 	const segmentIndex = Math.floor(i)
