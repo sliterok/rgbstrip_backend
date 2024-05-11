@@ -7,9 +7,9 @@ const interpolators = new WeakMap<HSLColor, WeakMap<HSLColor, (t: number) => str
 
 export const getNoiseColor: IColorGetter = index => {
 	const now = Date.now()
-	const x = (10 * normalNoise(now, now) + 3) * (index / pixelsCount)
+	const x = (10 * normalNoise(now, index) + 3) * (index / pixelsCount)
 
-	const normalizedNoise = normalNoise(x, -now / 5000)
+	const normalizedNoise = normalNoise(x, now / 5000)
 	const baseOffset = normalizedNoise * (activeColors - 1)
 	const i = baseOffset + dynamic.offset
 	const segmentIndex = Math.floor(i)
