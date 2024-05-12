@@ -4,59 +4,46 @@ const RingBuffer = RingBufferTs.RingBuffer
 import { ColorCommonInstance, rgb } from 'd3-color'
 import { interpolateLab } from 'd3-interpolate'
 import { IArrColor, IColorGetter, IColorMapper } from 'src/typings'
-import { pixelsCount, activeColors, normalNoise, hueToColor, dynamic } from '../shared'
-import { settings } from 'src/settings'
+import { pixelsCount, activeColors, normalNoise, hueToColor } from '../shared'
+import { defaultMapperMiddleware } from './mappers'
 
 const colors = new RingBuffer<ColorCommonInstance>(activeColors + 1)
 for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 5000))
 
 let baseOffset = 0
-let alternativeColor: ColorCommonInstance
-let shouldBeAway: boolean
-let shouldBeNight: boolean
-const awayColor = rgb(5, 20, 5)
 let lastTrueColor = Date.now()
 
 export const noiseFrameMapper: IColorMapper = () => {
-	shouldBeNight = !settings.nightOverride && dynamic.isNight
-	shouldBeAway = !settings.geoOverride && dynamic.isAway
+	const middlewareRes = defaultMapperMiddleware()
 	let coeff = 0
-	if (shouldBeAway || shouldBeNight) {
+	if (middlewareRes) {
 		const diff = Date.now() - lastTrueColor
-		coeff = Math.cbrt(diff / (5 * 60 * 1000))
+		coeff = coeff < 1 ? Math.cbrt(diff / (5 * 60 * 1000)) : diff / (5 * 60 * 1000)
 		const hasFullyTransitioned = coeff > 1.3
-		if (hasFullyTransitioned) {
-			const { r, g, b } = alternativeColor.rgb()
-			return Array(pixelsCount).fill([r, g, b])
-		}
+		if (hasFullyTransitioned) return Array(pixelsCount).fill(middlewareRes)
 	}
 
 	const rawOffset = baseOffset + 0.006
 	baseOffset = rawOffset % 1
-	if (rawOffset >= 1) colors.add(getNextColor(coeff))
+	if (rawOffset >= 1) colors.add(getNextColor(coeff, middlewareRes && rgb(...middlewareRes)))
 
 	return Array(pixelsCount)
 		.fill(null)
 		.map((_, index): IArrColor => getNoiseColor(index))
 }
 
-function getNextColor(coeff: number): ColorCommonInstance {
+function getNextColor(coeff: number, alternativeColor?: ColorCommonInstance): ColorCommonInstance {
 	const hasTransitioned = coeff > 1.1
-	if (hasTransitioned && (shouldBeAway || shouldBeNight)) return alternativeColor
+	if (hasTransitioned) return alternativeColor!
 
 	let color: ColorCommonInstance = getNextRandomColor()
-	if (shouldBeAway || shouldBeNight) {
-		alternativeColor = getAlternativeColor()
-		const interpolator = getInterpolator(color, alternativeColor)
+	if (coeff) {
+		const interpolator = getInterpolator(color, alternativeColor!)
 		color = rgb(...interpolator(coeff))
 	} else {
 		lastTrueColor = Date.now()
 	}
 	return color
-}
-
-function getAlternativeColor() {
-	return shouldBeNight ? rgb(...dynamic.disabledColor) : awayColor
 }
 
 let colorNoiseOffset = 0

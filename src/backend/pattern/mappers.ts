@@ -1,16 +1,29 @@
 import { IColorGetter, IArrColor, IStaticColorGetter, IColorMapper } from 'src/typings'
-import { pixelsCount } from '../shared'
+import { dynamic, pixelsCount } from '../shared'
+import { settings } from 'src/settings'
+
+export const defaultMapperMiddleware = (): IArrColor | undefined => {
+	const shouldBeNight = !settings.nightOverride && dynamic.isNight
+	if (shouldBeNight) return dynamic.disabledColor
+	const shouldBeAway = !settings.geoOverride && dynamic.isAway
+	if (shouldBeAway) return [5, 20, 5]
+}
 
 export const createIndexedMapper =
 	(getter: IColorGetter): IColorMapper =>
-	() =>
-		Array(pixelsCount)
+	() => {
+		const middlewareRes = defaultMapperMiddleware()
+		if (middlewareRes) return Array(pixelsCount).fill(middlewareRes)
+
+		return Array(pixelsCount)
 			.fill(null)
 			.map((_, index): IArrColor => getter(index))
+	}
 
 export const createFlatMapper =
 	(getter: IStaticColorGetter | IArrColor): IColorMapper =>
 	() => {
-		const value = getter instanceof Function ? getter() : getter
+		const middlewareRes = defaultMapperMiddleware()
+		const value = middlewareRes || (getter instanceof Function ? getter() : getter)
 		return Array(pixelsCount).fill(value)
 	}
