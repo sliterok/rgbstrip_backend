@@ -9,27 +9,33 @@ const bot = new Bot(config.tgApiKey)
 
 const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_name}`)
 
-menuTemplate.interact('Night override', 'nightOverride', {
-	do: async ctx => {
+menuTemplate.toggle('Night override', 'nightOverride', {
+	isSet: () => settings.nightOverride,
+	set: async (ctx, val) => {
 		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
 			await ctx.answerCallbackQuery('Unauthorized')
-		} else {
-			settings.nightOverride = !settings.nightOverride
-			await ctx.answerCallbackQuery(`Night override ${settings.nightOverride ? 'on' : 'off'}`)
+			return false
 		}
-		return false
+
+		settings.nightOverride = val
+		await ctx.answerCallbackQuery(`Night override ${settings.nightOverride ? 'on' : 'off'}`)
+
+		return true
 	},
 })
 
-menuTemplate.interact('GEO override', 'geoOverride', {
-	do: async ctx => {
+menuTemplate.toggle('GEO override', 'geoOverride', {
+	isSet: () => settings.geoOverride,
+	set: async (ctx, val) => {
 		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
 			await ctx.answerCallbackQuery('Unauthorized')
-		} else {
-			settings.geoOverride = !settings.geoOverride
-			await ctx.answerCallbackQuery(`GEO override ${settings.geoOverride ? 'on' : 'off'}`)
+			return false
 		}
-		return false
+
+		settings.geoOverride = val
+		await ctx.answerCallbackQuery(`GEO override ${settings.geoOverride ? 'on' : 'off'}`)
+
+		return true
 	},
 })
 
