@@ -21,6 +21,8 @@ export interface ISettings {
 	nightOverride: boolean
 	geoOverride: boolean
 	forceAway: boolean
+	mixColorWithNoise: boolean
+	mixRatio: number
 	alive: Date
 }
 

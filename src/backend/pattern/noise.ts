@@ -6,6 +6,7 @@ import { interpolateLab } from 'd3-interpolate'
 import { IArrColor, IColorGetter, IColorMapper } from 'src/typings'
 import { pixelsCount, activeColors, normalNoise, hueToColor } from '../shared'
 import { defaultMapperMiddleware } from './mappers'
+import { settings } from 'src/settings'
 
 const colors = new RingBuffer<ColorCommonInstance>(activeColors + 1)
 for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 5000))
@@ -26,15 +27,20 @@ export const noiseFrameMapper: IColorMapper = () => {
 	const rawOffset = baseOffset + 0.006
 	baseOffset = rawOffset % 1
 	if (rawOffset >= 1) {
-		const hasInCache = middlewareRes && alternativeColors.has(middlewareRes)
-		const color = hasInCache ? alternativeColors.get(middlewareRes) : middlewareRes && rgb(...middlewareRes)
-		if (!hasInCache && color && middlewareRes) alternativeColors.set(middlewareRes, color)
+		const color = middlewareRes && getCachedColor(middlewareRes)
 		colors.add(getNextColor(coeff, color))
 	}
 
 	return Array(pixelsCount)
 		.fill(null)
 		.map((_, index): IArrColor => getNoiseColor(index))
+}
+
+function getCachedColor(arrColor: IArrColor) {
+	const hasInCache = arrColor && alternativeColors.has(arrColor)
+	const color = hasInCache ? alternativeColors.get(arrColor)! : arrColor && rgb(...arrColor)
+	if (!hasInCache && color) alternativeColors.set(arrColor, color)
+	return color
 }
 
 function getNextColor(coeff: number, alternativeColor?: ColorCommonInstance): ColorCommonInstance {
@@ -47,6 +53,10 @@ function getNextColor(coeff: number, alternativeColor?: ColorCommonInstance): Co
 		color = rgb(...interpolator(coeff))
 	} else {
 		lastTrueColor = Date.now()
+	}
+	if (settings.mixColorWithNoise) {
+		const interpolator = getInterpolator(color, getCachedColor(settings.color))
+		color = rgb(...interpolator(settings.mixRatio))
 	}
 	return color
 }

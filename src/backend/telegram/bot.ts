@@ -2,57 +2,34 @@ import { Bot, Context } from 'grammy'
 import { settings } from '../../settings'
 import { MenuTemplate, MenuMiddleware } from 'grammy-inline-menu'
 import { config } from '../config'
-import { IMode } from 'src/typings'
+import { IMode, ISettings } from 'src/typings'
 import { allowedTelegramUsers } from '.'
 
 const bot = new Bot(config.tgApiKey)
 
 const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_name}`)
 
-menuTemplate.toggle('Night override', 'nightOverride', {
-	isSet: () => settings.nightOverride,
-	set: async (ctx, val) => {
-		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-			await ctx.answerCallbackQuery('Unauthorized')
-			return false
-		}
+function toggleTemplate(title: string, key: keyof ISettings) {
+	return menuTemplate.toggle(title, key, {
+		isSet: () => settings[key] as boolean,
+		set: async (ctx, val) => {
+			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
+				await ctx.answerCallbackQuery('Unauthorized')
+				return false
+			}
 
-		settings.nightOverride = val
-		await ctx.answerCallbackQuery(`Night override ${settings.nightOverride ? 'on' : 'off'}`)
+			settings.nightOverride = val
+			await ctx.answerCallbackQuery(`${title} ${val ? 'on' : 'off'}`)
 
-		return true
-	},
-})
+			return true
+		},
+	})
+}
 
-menuTemplate.toggle('GEO override', 'geoOverride', {
-	isSet: () => settings.geoOverride,
-	set: async (ctx, val) => {
-		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-			await ctx.answerCallbackQuery('Unauthorized')
-			return false
-		}
-
-		settings.geoOverride = val
-		await ctx.answerCallbackQuery(`GEO override ${settings.geoOverride ? 'on' : 'off'}`)
-
-		return true
-	},
-})
-
-menuTemplate.toggle('Force away', 'forceAway', {
-	isSet: () => settings.forceAway,
-	set: async (ctx, val) => {
-		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-			await ctx.answerCallbackQuery('Unauthorized')
-			return false
-		}
-
-		settings.forceAway = val
-		await ctx.answerCallbackQuery(`Force away geo ${settings.forceAway ? 'on' : 'off'}`)
-
-		return true
-	},
-})
+toggleTemplate('Night override', 'nightOverride')
+toggleTemplate('GEO override', 'geoOverride')
+toggleTemplate('Force away', 'forceAway')
+toggleTemplate('Mix color with noise', 'mixColorWithNoise')
 
 menuTemplate.select(
 	'select_mode',

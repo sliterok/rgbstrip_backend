@@ -1,5 +1,5 @@
 import { useServerSideMutation } from 'rakkasjs'
-import { RgbColorPicker } from 'react-colorful'
+import { RgbColorPicker, RgbaColorPicker } from 'react-colorful'
 import { settings } from '../settings'
 import { IArrColor } from 'src/typings'
 import classes from './container.module.css'
@@ -17,21 +17,23 @@ export default function Color() {
 		tgWebAppDataRef.current = initData.tgWebAppData
 	}, [])
 
-	const mutation = useServerSideMutation(async (ctx, [color, tgWebAppData]: [IArrColor, string]) => {
+	const mutation = useServerSideMutation(async (ctx, [color, alpha, tgWebAppData]: [IArrColor, number, string]) => {
 		if (!tgWebAppData) return
 		const verified = isVerifiedUser(tgWebAppData)
-		if (verified) settings.color = color
+		if (!verified) return
+		settings.color = color
+		settings.mixRatio = alpha
 	})
 
 	return (
 		<div className={classes.container}>
-			<RgbColorPicker
-				onChange={({ r, g, b }) =>
+			<RgbaColorPicker
+				onChange={({ r, g, b, a }) =>
 					requestAnimationFrame(timestamp => {
 						if (lastTimestamp === timestamp) return
 						lastTimestamp = timestamp
 						const tgWebAppData = tgWebAppDataRef.current
-						if (tgWebAppData) mutation.mutate([[r, g, b], tgWebAppData])
+						if (tgWebAppData) mutation.mutate([[r, g, b], a, tgWebAppData])
 					})
 				}
 				style={{ width: '95vw', height: '95vh' }}

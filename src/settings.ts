@@ -7,5 +7,7 @@ export const settings: ISettings = {
 	nightOverride: false,
 	geoOverride: false,
 	forceAway: false,
+	mixRatio: 0,
+	mixColorWithNoise: false,
 	alive: new Date(),
 }
