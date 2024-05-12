@@ -41,7 +41,7 @@ function getNextColor(): ColorCommonInstance {
 	if (!shouldBeAway && !shouldBeNight) lastTrueColor = Date.now()
 
 	const diff = Date.now() - lastTrueColor
-	const coeff = Math.sqrt(diff / (2 * 60 * 1000))
+	const coeff = Math.cbrt(diff / (5 * 60 * 1000))
 	const hasTransitioned = coeff > 1
 
 	const alternativeColor = shouldBeNight ? rgb(...dynamic.disabledColor) : awayColor
