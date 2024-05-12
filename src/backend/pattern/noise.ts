@@ -3,21 +3,36 @@ import { interpolateLab } from 'd3-interpolate'
 import { IArrColor, IColorGetter } from 'src/typings'
 import { pixelsCount, activeColors, dynamic, colors, normalNoise } from '../shared'
 
-const interpolators = new WeakMap<HSLColor, WeakMap<HSLColor, (t: number) => string>>()
-
 export const getNoiseColor: IColorGetter = index => {
 	const now = Date.now()
-	const x = (10 * normalNoise(now, index) + 3) * (index / pixelsCount)
+	const normalPosition = index / pixelsCount
+	const positionScaleNoise = 10 * normalNoise(now, index) + 3
 
-	const normalizedNoise = normalNoise(x, now / 5000)
-	const baseOffset = normalizedNoise * (activeColors - 1)
-	const i = baseOffset + dynamic.offset
-	const segmentIndex = Math.floor(i)
-	const segmentFraction = i - segmentIndex
+	const x = normalPosition * positionScaleNoise
+	const y = now / 5000
+
+	const offsetNoise = normalNoise(x, y)
+	const baseOffset = offsetNoise * (activeColors - 1)
+	const offset = baseOffset + dynamic.offset
+
+	const segmentIndex = Math.floor(offset)
+	const segmentFraction = offset - segmentIndex
 
 	const colorStart = colors.get(segmentIndex)!
 	const colorEnd = colors.get(segmentIndex + 1)!
 
+	const interpolator = getInterpolator(colorStart, colorEnd)
+	const mixed = interpolator(segmentFraction ** 2)
+
+	return mixed
+		.replace(/[^\d,]/g, '')
+		.split(',')
+		.map(el => parseInt(el)) as IArrColor
+}
+
+const interpolators = new WeakMap<HSLColor, WeakMap<HSLColor, (t: number) => string>>()
+
+function getInterpolator(colorStart: HSLColor, colorEnd: HSLColor) {
 	let interpolator: undefined | ((t: number) => string)
 	let subInterpolator: WeakMap<HSLColor, (t: number) => string>
 	const hadFirstColor = interpolators.has(colorStart)
@@ -33,9 +48,5 @@ export const getNoiseColor: IColorGetter = index => {
 	}
 	if (!hadSecondColor) subInterpolator!.set(colorEnd, interpolator)
 
-	const mixed = interpolator(segmentFraction ** 2)
-	return mixed
-		.replace(/[^\d,]/g, '')
-		.split(',')
-		.map(el => parseInt(el)) as IArrColor
+	return interpolator
 }
