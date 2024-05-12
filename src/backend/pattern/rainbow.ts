@@ -1,7 +1,8 @@
-import { HSLToRGB } from 'src/helpers'
 import { IColorGetter } from 'src/typings'
+import { hueToColor } from '../shared'
 
 export const getRainbowColor: IColorGetter = index => {
-	const color = (Date.now() / 16 + index) % 360
-	return HSLToRGB(color, 50, 100)
+	const hue = (Date.now() / 16 + index) % 360
+	const { r, g, b } = hueToColor(hue).rgb()
+	return [r, g, b]
 }
