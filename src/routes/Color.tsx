@@ -1,5 +1,5 @@
-import { useServerSideMutation } from 'rakkasjs'
-import { RgbColorPicker, RgbaColorPicker } from 'react-colorful'
+import { useServerSideMutation, useServerSideQuery } from 'rakkasjs'
+import { RgbaColor, RgbaColorPicker } from 'react-colorful'
 import { settings } from '../settings'
 import { IArrColor } from 'src/typings'
 import classes from './container.module.css'
@@ -17,6 +17,13 @@ export default function Color() {
 		tgWebAppDataRef.current = initData.tgWebAppData
 	}, [])
 
+	const defaultColor = useServerSideQuery(async () => {
+		const [r, g, b] = settings.color
+		const a = settings.mixRatio
+		const color: RgbaColor = { r, g, b, a }
+		return color
+	})
+
 	const mutation = useServerSideMutation(async (ctx, [color, alpha, tgWebAppData]: [IArrColor, number, string]) => {
 		if (!tgWebAppData) return
 		const verified = isVerifiedUser(tgWebAppData)
@@ -28,6 +35,7 @@ export default function Color() {
 	return (
 		<div className={classes.container}>
 			<RgbaColorPicker
+				color={defaultColor.data}
 				onChange={({ r, g, b, a }) =>
 					requestAnimationFrame(timestamp => {
 						if (lastTimestamp === timestamp) return
