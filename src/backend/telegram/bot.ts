@@ -9,8 +9,10 @@ const bot = new Bot(config.tgApiKey)
 
 const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_name}`)
 
-function toggleTemplate(title: string, key: keyof ISettings) {
-	return menuTemplate.toggle(title, key, {
+type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boolean ? k : never }[keyof ISettings]
+
+const toggleTemplate = (title: string, key: IBooleanSettingsKeys) =>
+	menuTemplate.toggle(title, key, {
 		isSet: () => settings[key] as boolean,
 		set: async (ctx, val) => {
 			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
@@ -18,13 +20,12 @@ function toggleTemplate(title: string, key: keyof ISettings) {
 				return false
 			}
 
-			settings.nightOverride = val
+			settings[key] = val
 			await ctx.answerCallbackQuery(`${title} ${val ? 'on' : 'off'}`)
 
 			return true
 		},
 	})
-}
 
 toggleTemplate('Night override', 'nightOverride')
 toggleTemplate('GEO override', 'geoOverride')
