@@ -11,51 +11,61 @@ const colors = new RingBuffer<ColorCommonInstance>(activeColors + 1)
 for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 5000))
 
 let baseOffset = 0
+let alternativeColor: ColorCommonInstance
+let shouldBeAway: boolean
+let shouldBeNight: boolean
+const awayColor = rgb(5, 20, 5)
+let lastTrueColor = Date.now()
+
 export const noiseFrameMapper: IColorMapper = () => {
+	shouldBeNight = !settings.nightOverride && dynamic.isNight
+	shouldBeAway = !settings.geoOverride && dynamic.isAway
+	let coeff = 0
+	if (shouldBeAway || shouldBeNight) {
+		const diff = Date.now() - lastTrueColor
+		coeff = Math.cbrt(diff / (5 * 60 * 1000))
+		const hasFullyTransitioned = coeff > 1.3
+		if (hasFullyTransitioned) {
+			const { r, g, b } = alternativeColor.rgb()
+			return Array(pixelsCount).fill([r, g, b])
+		}
+	}
+
 	const rawOffset = baseOffset + 0.006
 	baseOffset = rawOffset % 1
-	if (rawOffset >= 1) {
-		colors.add(getNextColor())
-	}
+	if (rawOffset >= 1) colors.add(getNextColor(coeff))
 
 	return Array(pixelsCount)
 		.fill(null)
 		.map((_, index): IArrColor => getNoiseColor(index))
 }
 
-let colorNoiseOffset = 0
+function getNextColor(coeff: number): ColorCommonInstance {
+	const hasTransitioned = coeff > 1.1
+	if (hasTransitioned && (shouldBeAway || shouldBeNight)) return alternativeColor
 
+	let color: ColorCommonInstance = getNextRandomColor()
+	if (shouldBeAway || shouldBeNight) {
+		alternativeColor = getAlternativeColor()
+		const interpolator = getInterpolator(color, alternativeColor)
+		color = rgb(...interpolator(coeff))
+	} else {
+		lastTrueColor = Date.now()
+	}
+	return color
+}
+
+function getAlternativeColor() {
+	return shouldBeNight ? rgb(...dynamic.disabledColor) : awayColor
+}
+
+let colorNoiseOffset = 0
 function getNextRandomColor() {
 	const colorChange = normalNoise(Date.now(), 0) ** 2 * 23 + 1 / 3
 	colorNoiseOffset += colorChange
 
 	const hue = normalNoise(colorNoiseOffset, 0) * 360 + normalNoise(0, Date.now()) * 360
 	return hueToColor(hue)
-}
-
-const awayColor = rgb(5, 20, 5)
-let lastTrueColor = Date.now()
-function getNextColor(): ColorCommonInstance {
-	const shouldBeNight = !settings.nightOverride //&& dynamic.isNight for testing
-	const shouldBeAway = !settings.geoOverride && dynamic.isAway
-	if (!shouldBeAway && !shouldBeNight) lastTrueColor = Date.now()
-
-	const diff = Date.now() - lastTrueColor
-	const coeff = Math.cbrt(diff / (5 * 60 * 1000))
-	const hasTransitioned = coeff > 1
-
-	const alternativeColor = shouldBeNight ? rgb(...dynamic.disabledColor) : awayColor
-
-	if (hasTransitioned && (shouldBeAway || shouldBeNight)) {
-		return alternativeColor
-	} else {
-		let color: ColorCommonInstance = getNextRandomColor()
-		if (shouldBeAway || shouldBeNight) {
-			const interpolator = getInterpolator(color, alternativeColor)
-			color = rgb(...interpolator(coeff))
-		}
-		return color
-	}
 }
 
 const getNoiseColor: IColorGetter = index => {
