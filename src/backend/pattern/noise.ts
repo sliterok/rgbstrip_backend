@@ -47,7 +47,7 @@ function getNextColor(): ColorCommonInstance {
 	} else if (hasTransitioned && shouldBeAway) {
 		return awayColor
 	} else {
-		if (!shouldBeAway || !shouldBeNight) lastTrueColor = Date.now()
+		if (!shouldBeAway && !shouldBeNight) lastTrueColor = Date.now()
 		let color: ColorCommonInstance = getNextRandomColor()
 		if (shouldBeAway || shouldBeNight) {
 			const interpolator = getInterpolator(color, shouldBeAway ? awayColor : rgb(...dynamic.disabledColor))
