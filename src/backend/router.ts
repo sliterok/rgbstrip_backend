@@ -2,8 +2,8 @@ import { AxiosError, default as axios } from 'axios'
 import { wrapper } from 'axios-cookiejar-support'
 import { CookieJar } from 'tough-cookie'
 import crypto from 'crypto'
-import { settings } from 'src/settings'
 import { config } from './config'
+import { dynamic } from './shared'
 
 const jar = new CookieJar()
 const client = wrapper(axios.create({ jar, baseURL: config.routerEndpoint }))
@@ -52,11 +52,14 @@ async function updatePhoneLastSeen() {
 	// eslint-disable-next-line no-console
 	console.log('phone last seen:', lastSeen)
 	if (lastSeen === undefined || lastSeen > 120) {
-		if (!seenTimeout) seenTimeout = setTimeout(() => (settings.away = true), 120000)
+		if (!seenTimeout)
+			seenTimeout = setTimeout(() => {
+				dynamic.isAway = true
+			}, 120000)
 	} else {
 		if (seenTimeout) clearTimeout(seenTimeout)
 		seenTimeout = null
-		settings.away = false
+		dynamic.isAway = false
 	}
 }
 

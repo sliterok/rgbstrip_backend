@@ -6,6 +6,5 @@ export const settings: ISettings = {
 	progress: { current: 0, total: 0, lastUpdate: null },
 	nightOverride: false,
 	geoOverride: false,
-	away: false,
 	alive: new Date(),
 }

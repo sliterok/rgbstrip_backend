@@ -21,7 +21,6 @@ export interface ISettings {
 	progress: { current: number; total: number; lastUpdate: Date | null }
 	nightOverride: boolean
 	geoOverride: boolean
-	away: boolean
 	alive: Date
 }
 
@@ -29,6 +28,7 @@ export interface IDynamicDto {
 	disabledColor: IArrColor
 	hasConnections: boolean
 	isNight: boolean
+	isAway: boolean
 	lastMessage?: number
 	target?: Datagram.RemoteInfo
 }
