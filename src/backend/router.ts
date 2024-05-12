@@ -51,7 +51,7 @@ async function updatePhoneLastSeen() {
 	const lastSeen = await phoneLastSeen()
 	// eslint-disable-next-line no-console
 	console.log('phone last seen:', lastSeen)
-	if (lastSeen === undefined || lastSeen > 120) {
+	if (lastSeen === undefined || lastSeen > 150) {
 		if (!seenTimeout)
 			seenTimeout = setTimeout(() => {
 				dynamic.isAway = true
@@ -64,6 +64,6 @@ async function updatePhoneLastSeen() {
 }
 
 export function startRouterIntegration() {
-	setInterval(updatePhoneLastSeen, 120000)
+	setInterval(updatePhoneLastSeen, 100000)
 	updatePhoneLastSeen()
 }
