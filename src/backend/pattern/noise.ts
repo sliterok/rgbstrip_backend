@@ -41,21 +41,19 @@ function getNextColor(): ColorCommonInstance {
 	if (!shouldBeAway && !shouldBeNight) lastTrueColor = Date.now()
 
 	const diff = Date.now() - lastTrueColor
-	const coeff = diff / (60 * 1000)
+	const coeff = Math.sqrt(diff / (2 * 60 * 1000))
 	const hasTransitioned = coeff > 1
 
-	if (hasTransitioned && shouldBeNight) {
-		return rgb(...dynamic.disabledColor)
-	} else if (hasTransitioned && shouldBeAway) {
-		return awayColor
+	const alternativeColor = shouldBeNight ? rgb(...dynamic.disabledColor) : awayColor
+
+	if (hasTransitioned && (shouldBeAway || shouldBeNight)) {
+		return alternativeColor
 	} else {
 		let color: ColorCommonInstance = getNextRandomColor()
 		if (shouldBeAway || shouldBeNight) {
-			const interpolator = getInterpolator(color, shouldBeAway ? awayColor : rgb(...dynamic.disabledColor))
+			const interpolator = getInterpolator(color, alternativeColor)
 			color = rgb(...interpolator(coeff))
 		}
-		// eslint-disable-next-line no-console
-		console.log({ coeff, hasTransitioned, shouldBeNight, lastTrueColor })
 		return color
 	}
 }
