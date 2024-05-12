@@ -39,7 +39,7 @@ function getNextColor(): ColorCommonInstance {
 	const shouldBeNight = !settings.nightOverride //&& dynamic.isNight for testing
 	const shouldBeAway = !settings.geoOverride && dynamic.isAway
 	const diff = Date.now() - lastTrueColor
-	const coeff = diff / (1 * 60 * 1000)
+	const coeff = diff / (60 * 1000)
 	const hasTransitioned = coeff > 1
 
 	if (hasTransitioned && shouldBeNight) {
@@ -47,7 +47,7 @@ function getNextColor(): ColorCommonInstance {
 	} else if (hasTransitioned && shouldBeAway) {
 		return awayColor
 	} else {
-		if (!shouldBeAway && !shouldBeNight) lastTrueColor = Date.now()
+		if (!shouldBeAway || !shouldBeNight) lastTrueColor = Date.now()
 		let color: ColorCommonInstance = getNextRandomColor()
 		if (shouldBeAway || shouldBeNight) {
 			const interpolator = getInterpolator(color, shouldBeAway ? awayColor : rgb(...dynamic.disabledColor))
