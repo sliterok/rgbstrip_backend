@@ -13,6 +13,7 @@ type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boole
 
 const toggleTemplate = (title: string, key: IBooleanSettingsKeys) =>
 	menuTemplate.toggle(title, key, {
+		formatState: (ctx, text, state) => `${state ? '✅ ' : ''}${text}`,
 		isSet: () => settings[key] as boolean,
 		set: async (ctx, val) => {
 			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
