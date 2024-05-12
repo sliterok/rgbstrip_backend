@@ -12,7 +12,7 @@ for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 50
 
 let baseOffset = 0
 let lastTrueColor = Date.now()
-
+const alternativeColors = new WeakMap<IArrColor, ColorCommonInstance>()
 export const noiseFrameMapper: IColorMapper = () => {
 	const middlewareRes = defaultMapperMiddleware()
 	let coeff = 0
@@ -25,7 +25,12 @@ export const noiseFrameMapper: IColorMapper = () => {
 
 	const rawOffset = baseOffset + 0.006
 	baseOffset = rawOffset % 1
-	if (rawOffset >= 1) colors.add(getNextColor(coeff, middlewareRes && rgb(...middlewareRes)))
+	if (rawOffset >= 1) {
+		const hasInCache = middlewareRes && alternativeColors.has(middlewareRes)
+		const color = hasInCache ? alternativeColors.get(middlewareRes) : middlewareRes && rgb(...middlewareRes)
+		if (!hasInCache && color && middlewareRes) alternativeColors.set(middlewareRes, color)
+		colors.add(getNextColor(coeff, color))
+	}
 
 	return Array(pixelsCount)
 		.fill(null)

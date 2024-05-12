@@ -2,11 +2,13 @@ import { IColorGetter, IArrColor, IStaticColorGetter, IColorMapper } from 'src/t
 import { dynamic, pixelsCount } from '../shared'
 import { settings } from 'src/settings'
 
+export const awayColor: IArrColor = [5, 20, 5]
+
 export const defaultMapperMiddleware = (): IArrColor | undefined => {
 	const shouldBeNight = !settings.nightOverride && dynamic.isNight
 	if (shouldBeNight) return dynamic.disabledColor
 	const shouldBeAway = !settings.geoOverride && dynamic.isAway
-	if (shouldBeAway) return [5, 20, 5]
+	if (shouldBeAway) return awayColor
 }
 
 export const createIndexedMapper =
