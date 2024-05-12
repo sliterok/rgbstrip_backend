@@ -39,9 +39,31 @@ menuTemplate.toggle('GEO override', 'geoOverride', {
 	},
 })
 
+menuTemplate.toggle('Force away', 'forceAway', {
+	isSet: () => settings.forceAway,
+	set: async (ctx, val) => {
+		if (!allowedTelegramUsers.has(ctx.chat!.id)) {
+			await ctx.answerCallbackQuery('Unauthorized')
+			return false
+		}
+
+		settings.forceAway = val
+		await ctx.answerCallbackQuery(`Force away geo ${settings.forceAway ? 'on' : 'off'}`)
+
+		return true
+	},
+})
+
 menuTemplate.select(
 	'select_mode',
-	{ 0: 'off', 1: 'rainbow', 2: 'progress', 3: 'white', 4: 'away', 5: 'noise', 6: 'color' },
+	{
+		[IMode.Disabled]: 'off',
+		[IMode.Rainbow]: 'rainbow',
+		[IMode.Progress]: 'progress',
+		[IMode.White]: 'white',
+		[IMode.Noise]: 'noise',
+		[IMode.Color]: 'color',
+	},
 	{
 		columns: 2,
 		isSet: (ctx, key) => settings.mode === parseInt(key),

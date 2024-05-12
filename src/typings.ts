@@ -10,7 +10,6 @@ export enum IMode {
 	Rainbow,
 	Progress,
 	White,
-	Away,
 	Noise,
 	Color,
 }
@@ -21,6 +20,7 @@ export interface ISettings {
 	progress: { current: number; total: number; lastUpdate: Date | null }
 	nightOverride: boolean
 	geoOverride: boolean
+	forceAway: boolean
 	alive: Date
 }
 

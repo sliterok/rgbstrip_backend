@@ -7,7 +7,7 @@ export const awayColor: IArrColor = [5, 20, 5]
 export const defaultMapperMiddleware = (): IArrColor | undefined => {
 	const shouldBeNight = !settings.nightOverride && dynamic.isNight
 	if (shouldBeNight) return dynamic.disabledColor
-	const shouldBeAway = !settings.geoOverride && dynamic.isAway
+	const shouldBeAway = settings.forceAway || (!settings.geoOverride && dynamic.isAway)
 	if (shouldBeAway) return awayColor
 }
 
