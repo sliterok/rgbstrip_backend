@@ -51,7 +51,7 @@ function getNextColor(): ColorCommonInstance {
 		let color: ColorCommonInstance = getNextRandomColor()
 		if (shouldBeAway || shouldBeNight) {
 			const interpolator = getInterpolator(color, shouldBeAway ? awayColor : rgb(...dynamic.disabledColor))
-			color = rgb(...interpolator(1 - coeff))
+			color = rgb(...interpolator(coeff))
 		}
 		return color
 	}
