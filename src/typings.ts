@@ -3,6 +3,7 @@ import Datagram from 'dgram'
 export type IArrColor = [number, number, number]
 export type IStaticColorGetter = () => IArrColor
 export type IColorGetter = (index: number) => IArrColor
+export type IColorMapper = () => IArrColor[]
 
 export enum IMode {
 	Disabled,
@@ -26,7 +27,6 @@ export interface ISettings {
 
 export interface IDynamicDto {
 	disabledColor: IArrColor
-	offset: number
 	hasConnections: boolean
 	isNight: boolean
 	lastMessage?: number

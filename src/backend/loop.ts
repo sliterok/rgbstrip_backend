@@ -1,6 +1,6 @@
 import { broadcastMessage } from 'src/routes/debug/stream.api'
 import { getPixels } from './pattern'
-import { pixelsCount, dynamic, colors, hueToColor, normalNoise } from './shared'
+import { pixelsCount, dynamic } from './shared'
 import { socket } from './udp'
 import { settings } from 'src/settings'
 import { IArrColor, IMode } from 'src/typings'
@@ -9,26 +9,8 @@ export function startLoop() {
 	setInterval(loop, 16)
 }
 
-function getCurrentMode() {
-	if (dynamic.isNight && !settings.nightOverride) return IMode.Disabled
-	else if (settings.away && !settings.geoOverride) return IMode.Away
-	else return settings.mode
-}
-
-let colorNoiseOffset = 0
 const buf = new Uint8Array(pixelsCount * 3)
 function loop() {
-	const rawOffset = dynamic.offset + 0.006
-	dynamic.offset = rawOffset % 1
-	if (rawOffset >= 1) {
-		const colorChange = normalNoise(Date.now(), 0) ** 2 * 23 + 1 / 3
-		colorNoiseOffset += colorChange
-
-		const hue = normalNoise(colorNoiseOffset, 0) * 360 + normalNoise(0, Date.now()) * 360
-		const newColor = hueToColor(hue)
-		colors.add(newColor)
-	}
-
 	let pixels: IArrColor[] | undefined
 	if (dynamic.hasConnections) {
 		pixels = getPixels(IMode.Noise)
@@ -41,8 +23,7 @@ function loop() {
 		return
 	}
 
-	const mode = getCurrentMode()
-	if (!pixels || mode !== IMode.Noise) pixels = getPixels(mode)
+	if (!pixels || settings.mode !== IMode.Noise) pixels = getPixels(settings.mode)
 
 	for (let index = 0; index < pixels.length; index++) {
 		for (let color = 0; color < 3; color++) {
