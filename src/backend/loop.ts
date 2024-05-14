@@ -6,7 +6,7 @@ import { settings } from 'src/settings'
 import { IArrColor, IMode } from 'src/typings'
 
 export function startLoop() {
-	setInterval(loop, 16)
+	setInterval(loop, 10)
 }
 
 const buf = new Uint8Array(pixelsCount * 3)
