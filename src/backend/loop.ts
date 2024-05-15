@@ -6,7 +6,7 @@ import { settings } from 'src/settings'
 import { IArrColor, IMode } from 'src/typings'
 
 export function startLoop() {
-	setInterval(loop, 10)
+	setInterval(loop, 12)
 }
 
 const buf = new Uint8Array(pixelsCount * 3)
@@ -43,5 +43,5 @@ function loop() {
 	}
 
 	const { address, port } = dynamic.target
-	socket.send(buf, port, address)
+	socket.send(buf, 0, pixels.length * 3, port, address)
 }

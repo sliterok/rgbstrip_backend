@@ -27,5 +27,5 @@ export const createFlatMapper =
 	() => {
 		const middlewareRes = defaultMapperMiddleware()
 		const value = middlewareRes || (getter instanceof Function ? getter() : getter)
-		return Array(pixelsCount).fill(value)
+		return [value]
 	}

@@ -21,7 +21,7 @@ export const noiseFrameMapper: IColorMapper = () => {
 		const diff = Date.now() - lastTrueColor
 		coeff = coeff < 1 ? Math.cbrt(diff / (5 * 60 * 1000)) : diff / (5 * 60 * 1000)
 		const hasFullyTransitioned = coeff > 1.3
-		if (hasFullyTransitioned) return Array(pixelsCount).fill(middlewareRes)
+		if (hasFullyTransitioned) return [middlewareRes]
 	}
 
 	const rawOffset = baseOffset + 0.006
