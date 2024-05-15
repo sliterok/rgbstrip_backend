@@ -1,5 +1,5 @@
 import { IColorGetter, IArrColor, IStaticColorGetter, IColorMapper } from 'src/typings'
-import { dynamic, pixelsCount } from '../shared'
+import { batchSize, dynamic, frameInterval, pixelsCount } from '../shared'
 import { settings } from 'src/settings'
 
 export const awayColor: IArrColor = [5, 20, 5]
@@ -15,11 +15,16 @@ export const createIndexedMapper =
 	(getter: IColorGetter): IColorMapper =>
 	() => {
 		const middlewareRes = defaultMapperMiddleware()
-		if (middlewareRes) return Array(pixelsCount).fill(middlewareRes)
+		if (middlewareRes) return [middlewareRes]
 
-		return Array(pixelsCount)
+		const now = Date.now()
+		return Array(pixelsCount * batchSize)
 			.fill(null)
-			.map((_, index): IArrColor => getter(index))
+			.map((_, index): IArrColor => {
+				const indexInBatch = index % pixelsCount
+				const batchIndex = Math.floor(index / pixelsCount)
+				return getter(indexInBatch, now + batchIndex * frameInterval)
+			})
 	}
 
 export const createFlatMapper =

@@ -2,7 +2,7 @@ import Datagram from 'dgram'
 
 export type IArrColor = [number, number, number]
 export type IStaticColorGetter = () => IArrColor
-export type IColorGetter = (index: number) => IArrColor
+export type IColorGetter = (index: number, time: number) => IArrColor
 export type IColorMapper = () => IArrColor[]
 
 export enum IMode {

@@ -1,15 +1,15 @@
 import { broadcastMessage } from 'src/routes/debug/stream.api'
 import { getPixels } from './pattern'
-import { pixelsCount, dynamic } from './shared'
+import { pixelsCount, dynamic, batchSize, frameInterval } from './shared'
 import { socket } from './udp'
 import { settings } from 'src/settings'
 import { IArrColor, IMode } from 'src/typings'
 
 export function startLoop() {
-	setInterval(loop, 12)
+	setInterval(loop, frameInterval * batchSize)
 }
 
-const buf = new Uint8Array(pixelsCount * 3)
+const buf = new Uint8Array(pixelsCount * 3 * batchSize)
 function loop() {
 	let pixels: IArrColor[] | undefined
 	if (dynamic.hasConnections) {

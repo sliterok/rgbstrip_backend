@@ -4,7 +4,7 @@ const RingBuffer = RingBufferTs.RingBuffer
 import { ColorCommonInstance, rgb } from 'd3-color'
 import { interpolateLab } from 'd3-interpolate'
 import { IArrColor, IColorGetter, IColorMapper } from 'src/typings'
-import { pixelsCount, activeColors, normalNoise, hueToColor } from '../shared'
+import { pixelsCount, activeColors, normalNoise, hueToColor, frameInterval, batchSize } from '../shared'
 import { defaultMapperMiddleware } from './mappers'
 import { settings } from 'src/settings'
 
@@ -24,16 +24,21 @@ export const noiseFrameMapper: IColorMapper = () => {
 		if (hasFullyTransitioned) return [middlewareRes]
 	}
 
-	const rawOffset = baseOffset + 0.006
+	const rawOffset = baseOffset + 0.006 * batchSize
 	baseOffset = rawOffset % 1
 	if (rawOffset >= 1) {
 		const color = middlewareRes && getCachedColor(middlewareRes)
 		colors.add(getNextColor(coeff, color))
 	}
 
-	return Array(pixelsCount)
+	const now = Date.now()
+	return Array(pixelsCount * batchSize)
 		.fill(null)
-		.map((_, index): IArrColor => getNoiseColor(index))
+		.map((_, index): IArrColor => {
+			const indexInBatch = index % pixelsCount
+			const batchIndex = Math.floor(index / pixelsCount)
+			return getNoiseColor(indexInBatch, now + batchIndex * frameInterval)
+		})
 }
 
 function getCachedColor(arrColor: IArrColor) {
@@ -70,13 +75,12 @@ function getNextRandomColor() {
 	return hueToColor(hue)
 }
 
-const getNoiseColor: IColorGetter = index => {
-	const now = Date.now()
+const getNoiseColor: IColorGetter = (index, time) => {
 	const normalPosition = index / pixelsCount
-	const positionScaleNoise = 10 * normalNoise(now, index) + 3
+	const positionScaleNoise = 10 * normalNoise(time, index) + 3
 
 	const x = normalPosition * positionScaleNoise
-	const y = now / 5000
+	const y = time / 5000
 
 	const colorsOffset = normalNoise(x, y) * (activeColors - 1)
 	const offset = baseOffset + colorsOffset
