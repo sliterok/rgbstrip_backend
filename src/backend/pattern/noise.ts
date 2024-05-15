@@ -7,13 +7,13 @@ import { IArrColor, IColorGetter, IColorMapper } from 'src/typings'
 import { pixelsCount, activeColors, normalNoise, hueToColor, batchSize } from '../shared'
 import { callIndexedGetter, defaultMapperMiddleware } from './mappers'
 import { settings } from 'src/settings'
+import { getCachedColor } from 'src/helpers'
 
 const colors = new RingBuffer<ColorCommonInstance>(activeColors + 1)
 for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 5000))
 
 let baseOffset = 0
 let lastTrueColor = Date.now()
-const alternativeColors = new WeakMap<IArrColor, ColorCommonInstance>()
 export const noiseFrameMapper: IColorMapper = () => {
 	const middlewareRes = defaultMapperMiddleware()
 	let coeff = 0
@@ -32,13 +32,6 @@ export const noiseFrameMapper: IColorMapper = () => {
 	}
 
 	return callIndexedGetter(getNoiseColor)
-}
-
-function getCachedColor(arrColor: IArrColor) {
-	const hasInCache = arrColor && alternativeColors.has(arrColor)
-	const color = hasInCache ? alternativeColors.get(arrColor)! : arrColor && rgb(...arrColor)
-	if (!hasInCache && color) alternativeColors.set(arrColor, color)
-	return color
 }
 
 function getNextColor(coeff: number, alternativeColor?: ColorCommonInstance): ColorCommonInstance {
