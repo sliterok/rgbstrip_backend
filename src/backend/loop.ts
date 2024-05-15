@@ -9,8 +9,13 @@ export function startLoop() {
 	setInterval(loop, frameInterval * batchSize)
 }
 
+const send = (buffer: Uint8Array, length: number) =>
+	new Promise<number>((res, rej) =>
+		socket.send(buffer, 0, length, dynamic.target!.port, dynamic.target!.address, (err, bytes) => (err ? rej(err) : res(bytes)))
+	)
+
 const buf = new Uint8Array(pixelsCount * 3)
-function loop() {
+async function loop() {
 	let pixels: IArrColor[][] | undefined
 	if (dynamic.hasConnections) {
 		pixels = getPixels(IMode.Noise)
@@ -44,8 +49,6 @@ function loop() {
 				buf[index * 3 + color] = packet[index][actualColor]
 			}
 		}
-
-		const { address, port } = dynamic.target
-		socket.send(buf, 0, packet.length * 3, port, address)
+		await send(buf, packet.length * 3)
 	}
 }
