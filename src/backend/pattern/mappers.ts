@@ -11,20 +11,23 @@ export const defaultMapperMiddleware = (): IArrColor | undefined => {
 	if (shouldBeAway) return awayColor
 }
 
+export const callIndexedGetter = (getter: IColorGetter) => {
+	const now = Date.now()
+	return Array(batchSize)
+		.fill(null)
+		.map((_, batchIndex): IArrColor[] =>
+			Array(pixelsCount)
+				.fill(null)
+				.map((_, indexInBatch): IArrColor => getter(indexInBatch, now + batchIndex * frameInterval))
+		)
+}
+
 export const createIndexedMapper =
 	(getter: IColorGetter): IColorMapper =>
 	() => {
 		const middlewareRes = defaultMapperMiddleware()
-		if (middlewareRes) return [middlewareRes]
-
-		const now = Date.now()
-		return Array(pixelsCount * batchSize)
-			.fill(null)
-			.map((_, index): IArrColor => {
-				const indexInBatch = index % pixelsCount
-				const batchIndex = Math.floor(index / pixelsCount)
-				return getter(indexInBatch, now + batchIndex * frameInterval)
-			})
+		if (middlewareRes) return [[middlewareRes]]
+		return callIndexedGetter(getter)
 	}
 
 export const createFlatMapper =
@@ -32,5 +35,5 @@ export const createFlatMapper =
 	() => {
 		const middlewareRes = defaultMapperMiddleware()
 		const value = middlewareRes || (getter instanceof Function ? getter() : getter)
-		return [value]
+		return [[value]]
 	}

@@ -9,12 +9,14 @@ export function startLoop() {
 	setInterval(loop, frameInterval * batchSize)
 }
 
-const buf = new Uint8Array(pixelsCount * 3 * batchSize)
+const buf = new Uint8Array(pixelsCount * 3)
 function loop() {
-	let pixels: IArrColor[] | undefined
+	let pixels: IArrColor[][] | undefined
 	if (dynamic.hasConnections) {
 		pixels = getPixels(IMode.Noise)
-		broadcastMessage(JSON.stringify(pixels))
+		for (const packet of pixels) {
+			broadcastMessage(JSON.stringify(packet))
+		}
 	}
 
 	if (!dynamic.target) return
@@ -25,23 +27,25 @@ function loop() {
 
 	if (!pixels || settings.mode !== IMode.Noise) pixels = getPixels(settings.mode)
 
-	for (let index = 0; index < pixels.length; index++) {
-		for (let color = 0; color < 3; color++) {
-			let actualColor = color
-			// rgb strip uses g, r, b
-			switch (color) {
-				case 0:
-					actualColor = 1
-					break
-				case 1:
-					actualColor = 0
-					break
+	for (const packet of pixels) {
+		for (let index = 0; index < packet.length; index++) {
+			for (let color = 0; color < 3; color++) {
+				let actualColor = color
+				// rgb strip uses g, r, b
+				switch (color) {
+					case 0:
+						actualColor = 1
+						break
+					case 1:
+						actualColor = 0
+						break
+				}
+
+				buf[index * 3 + color] = packet[index][actualColor]
 			}
-
-			buf[index * 3 + color] = pixels[index][actualColor]
 		}
-	}
 
-	const { address, port } = dynamic.target
-	socket.send(buf, 0, pixels.length * 3, port, address)
+		const { address, port } = dynamic.target
+		socket.send(buf, 0, packet.length * 3, port, address)
+	}
 }

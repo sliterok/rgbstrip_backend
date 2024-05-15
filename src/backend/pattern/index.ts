@@ -15,7 +15,7 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Color]: createFlatMapper(() => settings.color),
 }
 
-export function getPixels(mode: IMode): IArrColor[] {
+export function getPixels(mode: IMode): IArrColor[][] {
 	const mapper = mappers[mode]
 	return mapper()
 }

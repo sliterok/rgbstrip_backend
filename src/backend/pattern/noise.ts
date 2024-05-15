@@ -4,8 +4,8 @@ const RingBuffer = RingBufferTs.RingBuffer
 import { ColorCommonInstance, rgb } from 'd3-color'
 import { interpolateLab } from 'd3-interpolate'
 import { IArrColor, IColorGetter, IColorMapper } from 'src/typings'
-import { pixelsCount, activeColors, normalNoise, hueToColor, frameInterval, batchSize } from '../shared'
-import { defaultMapperMiddleware } from './mappers'
+import { pixelsCount, activeColors, normalNoise, hueToColor, batchSize } from '../shared'
+import { callIndexedGetter, defaultMapperMiddleware } from './mappers'
 import { settings } from 'src/settings'
 
 const colors = new RingBuffer<ColorCommonInstance>(activeColors + 1)
@@ -21,7 +21,7 @@ export const noiseFrameMapper: IColorMapper = () => {
 		const diff = Date.now() - lastTrueColor
 		coeff = coeff < 1 ? Math.cbrt(diff / (5 * 60 * 1000)) : diff / (5 * 60 * 1000)
 		const hasFullyTransitioned = coeff > 1.3
-		if (hasFullyTransitioned) return [middlewareRes]
+		if (hasFullyTransitioned) return [[middlewareRes]]
 	}
 
 	const rawOffset = baseOffset + 0.006 * batchSize
@@ -31,14 +31,7 @@ export const noiseFrameMapper: IColorMapper = () => {
 		colors.add(getNextColor(coeff, color))
 	}
 
-	const now = Date.now()
-	return Array(pixelsCount * batchSize)
-		.fill(null)
-		.map((_, index): IArrColor => {
-			const indexInBatch = index % pixelsCount
-			const batchIndex = Math.floor(index / pixelsCount)
-			return getNoiseColor(indexInBatch, now + batchIndex * frameInterval)
-		})
+	return callIndexedGetter(getNoiseColor)
 }
 
 function getCachedColor(arrColor: IArrColor) {
