@@ -24,14 +24,14 @@ export const noiseFrameMapper: IColorMapper = () => {
 		if (hasFullyTransitioned) return [[middlewareRes]]
 	}
 
-	const rawOffset = baseOffset + 0.006 * batchSize
-	baseOffset = rawOffset % 1
-	if (rawOffset >= 1) {
-		const color = middlewareRes && getCachedColor(middlewareRes)
-		colors.add(getNextColor(coeff, color))
-	}
-
-	return callIndexedGetter(getNoiseColor)
+	return callIndexedGetter(getNoiseColor, () => {
+		const rawOffset = baseOffset + 0.006
+		baseOffset = rawOffset % 1
+		if (rawOffset >= 1) {
+			const color = middlewareRes && getCachedColor(middlewareRes)
+			colors.add(getNextColor(coeff, color))
+		}
+	})
 }
 
 function getNextColor(coeff: number, alternativeColor?: ColorCommonInstance): ColorCommonInstance {
