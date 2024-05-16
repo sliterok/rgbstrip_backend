@@ -12,6 +12,10 @@ import { getCachedColor } from 'src/helpers'
 const colors = new RingBuffer<ColorCommonInstance>(activeColors + 1)
 for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 5000))
 
+interface INoiseBatchData {
+	baseOffset: number
+}
+
 let baseOffset = 0
 let lastTrueColor = Date.now()
 export const noiseFrameMapper: IColorMapper = () => {
@@ -24,13 +28,14 @@ export const noiseFrameMapper: IColorMapper = () => {
 		if (hasFullyTransitioned) return [[middlewareRes]]
 	}
 
-	return callIndexedGetter(getNoiseColor, () => {
+	return callIndexedGetter<INoiseBatchData>(getNoiseColor, () => {
 		const rawOffset = baseOffset + 0.006
 		baseOffset = rawOffset % 1
 		if (rawOffset >= 1) {
 			const color = middlewareRes && getCachedColor(middlewareRes)
 			colors.add(getNextColor(coeff, color))
 		}
+		return { baseOffset }
 	})
 }
 
@@ -61,7 +66,7 @@ function getNextRandomColor() {
 	return hueToColor(hue)
 }
 
-const getNoiseColor: IColorGetter = (index, time) => {
+const getNoiseColor: IColorGetter<INoiseBatchData> = (index, time, batchData) => {
 	const normalPosition = index / pixelsCount
 	const positionScaleNoise = 10 * normalNoise(time, index) + 3
 
@@ -69,7 +74,7 @@ const getNoiseColor: IColorGetter = (index, time) => {
 	const y = time / 5000
 
 	const colorsOffset = normalNoise(x, y) * (activeColors - 1)
-	const offset = baseOffset + colorsOffset
+	const offset = batchData.baseOffset + colorsOffset
 
 	const segmentIndex = Math.floor(offset)
 	const segmentFraction = offset - segmentIndex

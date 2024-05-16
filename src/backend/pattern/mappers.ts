@@ -11,15 +11,15 @@ export const defaultMapperMiddleware = (): IArrColor | undefined => {
 	if (shouldBeAway) return awayColor
 }
 
-export const callIndexedGetter = (getter: IColorGetter, onBatch?: (batchIndex: number) => void) => {
+export const callIndexedGetter = <T = never>(getter: IColorGetter<T>, onBatch?: (batchIndex: number) => T) => {
 	const now = Date.now()
 	return Array(batchSize)
 		.fill(null)
 		.map((_, batchIndex): IArrColor[] => {
-			if (onBatch) onBatch(batchIndex)
+			const batchData = onBatch && onBatch(batchIndex)
 			return Array(pixelsCount)
 				.fill(null)
-				.map((_, indexInBatch): IArrColor => getter(indexInBatch, now + batchIndex * frameInterval))
+				.map((_, indexInBatch): IArrColor => getter(indexInBatch, now + batchIndex * frameInterval, batchData!))
 		})
 }
 
