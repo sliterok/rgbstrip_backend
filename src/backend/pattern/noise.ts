@@ -29,7 +29,7 @@ export const noiseFrameMapper: IColorMapper = () => {
 	}
 
 	return callIndexedGetter<INoiseBatchData>(getNoiseColor, () => {
-		const rawOffset = baseOffset + 0.006
+		const rawOffset = baseOffset + 0.0047
 		baseOffset = rawOffset % 1
 		if (rawOffset >= 1) {
 			const color = middlewareRes && getCachedColor(middlewareRes)
@@ -68,7 +68,7 @@ function getNextRandomColor() {
 
 const getNoiseColor: IColorGetter<INoiseBatchData> = (index, time, batchData) => {
 	const normalPosition = index / pixelsCount
-	const positionScaleNoise = 10 * normalNoise(time, index) + 3
+	const positionScaleNoise = 10 * normalNoise(time / 300, index) + 3
 
 	const x = normalPosition * positionScaleNoise
 	const y = time / 5000
