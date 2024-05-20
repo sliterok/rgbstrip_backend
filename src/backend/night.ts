@@ -22,7 +22,7 @@ const preWakeupTime = getTime(7, 30, true)
 const wakeupTime = getTime(8, 50, true)
 const sleepTime = getTime(23, 30, true)
 const wakeupTimeWeekend = getTime(10, 0, true)
-const sleepTimeWeekend = getTime(23, 55, true)
+const sleepTimeWeekend = getTime(23, 45, true)
 
 export function startNightChecks() {
 	updateNightStatus()
