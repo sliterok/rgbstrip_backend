@@ -4,7 +4,7 @@ const RingBuffer = RingBufferTs.RingBuffer
 import { ColorCommonInstance, rgb } from 'd3-color'
 import { interpolateLab } from 'd3-interpolate'
 import { IArrColor, IColorGetter, IColorMapper } from 'src/typings'
-import { pixelsCount, activeColors, normalNoise, hueToColor, batchSize } from '../shared'
+import { pixelsCount, activeColors, normalNoise, hueToColor } from '../shared'
 import { callIndexedGetter, defaultMapperMiddleware } from './mappers'
 import { settings } from 'src/settings'
 import { getCachedColor } from 'src/helpers'

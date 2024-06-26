@@ -41,7 +41,10 @@ function updateNightStatus(time = getCurrentTime()) {
 	const targetWakeupTime = getTargetTime(TargetTimes.wakeUp)
 	if (time >= targetSleepTime) dynamic.isNight = true
 	else if (time < targetWakeupTime) dynamic.isNight = true
-	else dynamic.isNight = false
+	else {
+		dynamic.isNight = false
+		settings.nightOverride = false
+	}
 
 	if (dynamic.isNight || settings.mode === IMode.Disabled) updateDisabledColor(time, targetWakeupTime)
 }

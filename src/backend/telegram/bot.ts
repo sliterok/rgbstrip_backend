@@ -28,7 +28,21 @@ const toggleTemplate = (title: string, key: IBooleanSettingsKeys) =>
 		},
 	})
 
-toggleTemplate('Night override', 'nightOverride')
+const buttonTemplate = (title: string, key: IBooleanSettingsKeys) =>
+	menuTemplate.interact(title, key, {
+		do: async ctx => {
+			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
+				await ctx.answerCallbackQuery('Unauthorized')
+				return false
+			}
+
+			settings[key] = !settings[key]
+			await ctx.answerCallbackQuery(`${title} ${settings[key] ? 'on' : 'off'}`)
+			return true
+		},
+	})
+
+buttonTemplate('Night override', 'nightOverride')
 toggleTemplate('GEO override', 'geoOverride')
 toggleTemplate('Force away', 'forceAway')
 toggleTemplate('Mix color with noise', 'mixColorWithNoise')
