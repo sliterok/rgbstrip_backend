@@ -11,7 +11,7 @@ import { getIsWeekend } from '../night/static'
 
 const bot = new Bot(config.tgApiKey)
 
-const formatBool = (val: boolean, text: string) => (val ? text : '\n')
+const formatBool = (val: boolean, text: string) => val && text
 
 const menuTemplate = new MenuTemplate<Context>(ctx =>
 	[
