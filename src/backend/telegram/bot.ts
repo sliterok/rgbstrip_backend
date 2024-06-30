@@ -11,12 +11,14 @@ import { getIsWeekend } from '../night/static'
 
 const bot = new Bot(config.tgApiKey)
 
+const formatBool = (val: boolean) => (val ? '✅' : '❌')
+
 const menuTemplate = new MenuTemplate<Context>(
 	ctx =>
 		`last update: ${new Date().toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short', hour12: false })}
-night: ${dynamic.isNight}
-away: ${dynamic.isAway}
-weekend: ${getIsWeekend() > 0 ? 'yes' : 'no'}`
+night ${formatBool(dynamic.isNight)}
+away ${formatBool(dynamic.isAway)}
+weekend ${formatBool(getIsWeekend() > 0)}`
 )
 
 type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boolean ? k : never }[keyof ISettings]
