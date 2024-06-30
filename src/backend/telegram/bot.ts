@@ -1,9 +1,10 @@
-import { Bot, Context } from 'grammy'
+import { Bot, CommandContext, Context, GrammyError } from 'grammy'
 import { settings } from '../../settings'
 import { MenuTemplate, MenuMiddleware } from 'grammy-inline-menu'
 import { config } from '../config'
 import { IMode, ISettings } from 'src/typings'
 import { allowedTelegramUsers } from '.'
+import { InlineKeyboardButton, Message } from 'grammy/types'
 
 const bot = new Bot(config.tgApiKey)
 
@@ -28,21 +29,7 @@ const toggleTemplate = (title: string, key: IBooleanSettingsKeys) =>
 		},
 	})
 
-const buttonTemplate = (title: string, key: IBooleanSettingsKeys) =>
-	menuTemplate.interact(title, key, {
-		do: async ctx => {
-			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-				await ctx.answerCallbackQuery('Unauthorized')
-				return false
-			}
-
-			settings[key] = !settings[key]
-			await ctx.answerCallbackQuery(`${title} ${settings[key] ? 'on' : 'off'}`)
-			return true
-		},
-	})
-
-buttonTemplate('Night override', 'nightOverride')
+toggleTemplate('Night override', 'nightOverride')
 toggleTemplate('GEO override', 'geoOverride')
 toggleTemplate('Force away', 'forceAway')
 toggleTemplate('Mix color with noise', 'mixColorWithNoise')
@@ -82,12 +69,34 @@ menuTemplate.manual({
 	},
 	text: 'select color',
 })
-
 const menuMiddleware = new MenuMiddleware('/', menuTemplate)
-bot.command('start', ctx => {
-	if (allowedTelegramUsers.has(ctx.chat.id)) menuMiddleware.replyToContext(ctx)
+let lastContext: CommandContext<Context> | undefined
+let lastMenu: Message.TextMessage | undefined
+
+bot.command('start', async ctx => {
+	if (allowedTelegramUsers.has(ctx.chat.id)) {
+		lastContext = ctx
+		lastMenu = (await menuMiddleware.replyToContext(lastContext!)) as Message.TextMessage
+	}
 })
 bot.use(menuMiddleware)
+
+export async function updateLastContext() {
+	if (!lastContext || !lastMenu) return
+
+	const keyboard = await menuTemplate.renderKeyboard(lastContext, '/')
+	try {
+		await bot.api.editMessageReplyMarkup(lastMenu.chat.id, lastMenu.message_id, {
+			reply_markup: { inline_keyboard: keyboard as InlineKeyboardButton[][] },
+		})
+	} catch (error) {
+		if (
+			'description' in (error as any) &&
+			!(error as GrammyError).description.endsWith('are exactly the same as a current content and reply markup of the message')
+		)
+			throw error
+	}
+}
 
 export function startTelegram() {
 	if (import.meta.env.PROD) {

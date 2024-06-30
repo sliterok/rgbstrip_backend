@@ -3,6 +3,7 @@ import { CronJob } from 'cron'
 import { config } from './config'
 import { settings } from 'src/settings'
 import { IMode } from 'src/typings'
+import { updateLastContext } from './telegram/bot'
 
 interface ICronTime {
 	minutes: number
@@ -43,7 +44,10 @@ function updateNightStatus(time = getCurrentTime()) {
 	else if (time < targetWakeupTime) dynamic.isNight = true
 	else {
 		dynamic.isNight = false
-		settings.nightOverride = false
+		if (settings.nightOverride !== false) {
+			settings.nightOverride = false
+			updateLastContext()
+		}
 	}
 
 	if (dynamic.isNight || settings.mode === IMode.Disabled) updateDisabledColor(time, targetWakeupTime)
