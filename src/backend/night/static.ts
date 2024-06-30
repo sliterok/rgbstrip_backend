@@ -1,9 +1,4 @@
-import { dynamic } from './shared'
-import { CronJob } from 'cron'
-import { config } from './config'
-import { settings } from 'src/settings'
-import { IMode } from 'src/typings'
-import { updateLastContext } from './telegram/bot'
+import { dynamic } from '../shared'
 
 interface ICronTime {
 	minutes: number
@@ -11,7 +6,7 @@ interface ICronTime {
 	time: number
 }
 
-const nightUpdateTimes: ICronTime[] = []
+export const nightUpdateTimes: ICronTime[] = []
 
 function getTime(hours: number, minutes: number, store = false) {
 	const time = hours + minutes / 60
@@ -25,35 +20,7 @@ const sleepTime = getTime(23, 30, true)
 const wakeupTimeWeekend = getTime(10, 0, true)
 const sleepTimeWeekend = getTime(23, 45, true)
 
-export function startNightChecks() {
-	updateNightStatus()
-	for (const { minutes, hours, time } of nightUpdateTimes) {
-		CronJob.from({
-			cronTime: `${minutes} ${hours} * * *`,
-			onTick: () => updateNightStatus(time),
-			start: true,
-			timeZone: config.TZ,
-		})
-	}
-}
-
-function updateNightStatus(time = getCurrentTime()) {
-	const targetSleepTime = getTargetTime(TargetTimes.sleep)
-	const targetWakeupTime = getTargetTime(TargetTimes.wakeUp)
-	if (time >= targetSleepTime) dynamic.isNight = true
-	else if (time < targetWakeupTime) dynamic.isNight = true
-	else {
-		dynamic.isNight = false
-		if (settings.nightOverride !== false) {
-			settings.nightOverride = false
-			updateLastContext()
-		}
-	}
-
-	if (dynamic.isNight || settings.mode === IMode.Disabled) updateDisabledColor(time, targetSleepTime)
-}
-
-function updateDisabledColor(time: number, targetSleepTime: number) {
+export function updateDisabledColor(time: number, targetSleepTime: number) {
 	if (time >= preWakeupTime && time < targetSleepTime) {
 		if (dynamic.disabledColor[1] !== 1) dynamic.disabledColor = [0, 1, 0]
 	} else {
@@ -61,19 +28,19 @@ function updateDisabledColor(time: number, targetSleepTime: number) {
 	}
 }
 
-enum TargetTimes {
+export enum TargetTimes {
 	sleep,
 	wakeUp,
 }
 
-enum WekeendDay {
+export enum WekeendDay {
 	workday,
 	friday,
 	saturday,
 	sunday,
 }
 
-function getTargetTime(target: TargetTimes): number {
+export function getTargetTime(target: TargetTimes): number {
 	const isWeekend = getIsWeekend()
 	if (target === TargetTimes.wakeUp) {
 		return isWeekend && isWeekend !== WekeendDay.friday ? wakeupTimeWeekend : wakeupTime
@@ -89,14 +56,14 @@ const weekends = new Map([
 	[0, WekeendDay.sunday],
 ])
 
-function getIsWeekend() {
+export function getIsWeekend() {
 	const d = new Date()
 	const day = d.getDay()
 	const isWeekend = weekends.get(day)
 	return isWeekend || WekeendDay.workday
 }
 
-function getCurrentTime() {
+export function getCurrentTime() {
 	const d = new Date()
 	const time = getTime(d.getHours(), d.getMinutes())
 

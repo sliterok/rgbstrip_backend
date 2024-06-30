@@ -5,10 +5,19 @@ import { config } from '../config'
 import { IMode, ISettings } from 'src/typings'
 import { allowedTelegramUsers } from '.'
 import { InlineKeyboardButton, Message } from 'grammy/types'
+import { TextBody } from 'grammy-inline-menu/dist/source/body'
+import { dynamic } from '../shared'
+import { getIsWeekend } from '../night/static'
 
 const bot = new Bot(config.tgApiKey)
 
-const menuTemplate = new MenuTemplate<Context>(ctx => `hi ${ctx?.from?.first_name}`)
+const menuTemplate = new MenuTemplate<Context>(
+	ctx =>
+		`last update: ${new Date().toString()}
+night: ${dynamic.isNight}
+away: ${dynamic.isAway}
+weekend: ${getIsWeekend() > 0 ? 'yes' : 'no'}`
+)
 
 type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boolean ? k : never }[keyof ISettings]
 
@@ -81,7 +90,7 @@ bot.command('start', async ctx => {
 })
 bot.use(menuMiddleware)
 
-export async function updateLastContext() {
+export async function updateKeyboard() {
 	if (!lastContext || !lastMenu) return
 
 	const keyboard = await menuTemplate.renderKeyboard(lastContext, '/')
@@ -89,6 +98,22 @@ export async function updateLastContext() {
 		await bot.api.editMessageReplyMarkup(lastMenu.chat.id, lastMenu.message_id, {
 			reply_markup: { inline_keyboard: keyboard as InlineKeyboardButton[][] },
 		})
+	} catch (error) {
+		if (
+			'description' in (error as any) &&
+			!(error as GrammyError).description.endsWith('are exactly the same as a current content and reply markup of the message')
+		)
+			throw error
+	}
+}
+
+export async function updateMessage() {
+	if (!lastContext || !lastMenu) return
+
+	const body = await menuTemplate.renderBody(lastContext, '/')
+	const text = typeof body === 'string' ? body : (body as TextBody).text
+	try {
+		await bot.api.editMessageText(lastMenu.chat.id, lastMenu.message_id, text)
 	} catch (error) {
 		if (
 			'description' in (error as any) &&

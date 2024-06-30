@@ -4,6 +4,7 @@ import { CookieJar } from 'tough-cookie'
 import crypto from 'crypto'
 import { config } from './config'
 import { dynamic } from './shared'
+import { updateMessage } from './telegram/bot'
 
 const jar = new CookieJar()
 const client = wrapper(axios.create({ jar, baseURL: config.routerEndpoint }))
@@ -54,16 +55,22 @@ async function updatePhoneLastSeen() {
 	if (lastSeen === undefined || lastSeen > 150) {
 		if (!seenTimeout)
 			seenTimeout = setTimeout(() => {
-				dynamic.isAway = true
-			}, 120000)
+				if (!dynamic.isAway) {
+					dynamic.isAway = true
+					updateMessage()
+				}
+			}, 50_000)
 	} else {
 		if (seenTimeout) clearTimeout(seenTimeout)
 		seenTimeout = null
-		dynamic.isAway = false
+		if (dynamic.isAway) {
+			dynamic.isAway = false
+			updateMessage()
+		}
 	}
 }
 
 export function startRouterIntegration() {
-	setInterval(updatePhoneLastSeen, 100000)
+	setInterval(updatePhoneLastSeen, 30_000)
 	updatePhoneLastSeen()
 }
