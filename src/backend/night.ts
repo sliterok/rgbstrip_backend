@@ -50,11 +50,11 @@ function updateNightStatus(time = getCurrentTime()) {
 		}
 	}
 
-	if (dynamic.isNight || settings.mode === IMode.Disabled) updateDisabledColor(time, targetWakeupTime)
+	if (dynamic.isNight || settings.mode === IMode.Disabled) updateDisabledColor(time, targetSleepTime)
 }
 
-function updateDisabledColor(time: number, targetWakeupTime: number) {
-	if (time >= preWakeupTime && time < targetWakeupTime) {
+function updateDisabledColor(time: number, targetSleepTime: number) {
+	if (time >= preWakeupTime && time < targetSleepTime) {
 		if (dynamic.disabledColor[1] !== 1) dynamic.disabledColor = [0, 1, 0]
 	} else {
 		if (dynamic.disabledColor[2] !== 1) dynamic.disabledColor = [0, 0, 1]
