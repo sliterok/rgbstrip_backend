@@ -6,7 +6,6 @@ export const settings: ISettings = {
 	progress: { current: 0, total: 0, lastUpdate: null },
 	nightOverride: false,
 	geoOverride: false,
-	forceAway: false,
 	mixRatio: 0,
 	mixColorWithNoise: false,
 	alive: new Date(),

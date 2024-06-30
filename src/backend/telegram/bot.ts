@@ -11,14 +11,17 @@ import { getIsWeekend } from '../night/static'
 
 const bot = new Bot(config.tgApiKey)
 
-const formatBool = (val: boolean) => (val ? '✅' : '❌')
+const formatBool = (val: boolean, text: string) => (val ? text : '\n')
 
-const menuTemplate = new MenuTemplate<Context>(
-	ctx =>
-		`last update: ${new Date().toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short', hour12: false })}
-night ${formatBool(dynamic.isNight)}
-away ${formatBool(dynamic.isAway)}
-weekend ${formatBool(getIsWeekend() > 0)}`
+const menuTemplate = new MenuTemplate<Context>(ctx =>
+	[
+		'last update: ' + new Date().toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short', hour12: false }),
+		formatBool(dynamic.isAway, 'away'),
+		formatBool(dynamic.isNight, 'night'),
+		formatBool(getIsWeekend() > 0, 'weekend'),
+	]
+		.filter(el => el)
+		.join('\n')
 )
 
 type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boolean ? k : never }[keyof ISettings]
@@ -42,7 +45,6 @@ const toggleTemplate = (title: string, key: IBooleanSettingsKeys) =>
 
 toggleTemplate('Night override', 'nightOverride')
 toggleTemplate('GEO override', 'geoOverride')
-toggleTemplate('Force away', 'forceAway')
 toggleTemplate('Mix color with noise', 'mixColorWithNoise')
 
 menuTemplate.select(

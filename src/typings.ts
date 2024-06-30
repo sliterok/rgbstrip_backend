@@ -21,7 +21,6 @@ export interface ISettings {
 	progress: { current: number; total: number; lastUpdate: Date | null }
 	nightOverride: boolean
 	geoOverride: boolean
-	forceAway: boolean
 	mixColorWithNoise: boolean
 	mixRatio: number
 	alive: Date
