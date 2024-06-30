@@ -13,7 +13,7 @@ const bot = new Bot(config.tgApiKey)
 
 const menuTemplate = new MenuTemplate<Context>(
 	ctx =>
-		`last update: ${new Date().toString()}
+		`last update: ${new Date().toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short', hour12: false })}
 night: ${dynamic.isNight}
 away: ${dynamic.isAway}
 weekend: ${getIsWeekend() > 0 ? 'yes' : 'no'}`
