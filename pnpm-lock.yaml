@@ -17,6 +17,9 @@ dependencies:
   cross-env:
     specifier: ^7.0.3
     version: 7.0.3
+  cryptr:
+    specifier: ^6.3.0
+    version: 6.3.0
   d3-color:
     specifier: ^3.1.0
     version: 3.1.0
@@ -1581,6 +1584,10 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
+
+  /cryptr@6.3.0:
+    resolution: {integrity: sha512-TA4byAuorT8qooU9H8YJhBwnqD151i1rcauHfJ3Divg6HmukHB2AYMp0hmjv2873J2alr4t15QqC7zAnWFrtfQ==}
+    dev: false
 
   /css-select@5.1.0:
     resolution: {integrity: sha512-nwoRF1rvRRnnCqqY7updORDsuqKzqYJ28+oSMaJMMgOauh3fvwHqMS7EZpIPqK8GL+g9mKxF1vP/ZjSeNjEVHg==}
