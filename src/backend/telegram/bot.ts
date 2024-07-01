@@ -15,7 +15,7 @@ const formatBool = (val: boolean, text: string) => val && text
 
 const menuTemplate = new MenuTemplate<Context>(ctx =>
 	[
-		'last update: ' + new Date().toLocaleString('en', { dateStyle: 'medium', timeStyle: 'short', hour12: false }),
+		new Date().toLocaleString('en', { month: 'short', day: '2-digit', hour: 'numeric', minute: '2-digit', hour12: false }),
 		formatBool(dynamic.isAway, 'away'),
 		formatBool(dynamic.isNight, 'night'),
 		formatBool(getIsWeekend() > 0, 'weekend'),
