@@ -80,18 +80,26 @@ menuTemplate.manual({
 const menuMiddleware = new MenuMiddleware('/', menuTemplate)
 let lastContext: CommandContext<Context> | undefined
 let lastMenu: Message.TextMessage | undefined
+let lastReact = 0
 
 bot.command('start', async ctx => {
 	if (allowedTelegramUsers.has(ctx.chat.id)) {
 		lastContext = ctx
 		lastMenu = (await menuMiddleware.replyToContext(lastContext!)) as Message.TextMessage
+	} else {
+		const now = Date.now()
+		const diff = now - lastReact
+		if (diff > 500) {
+			ctx.react(diff > 1000 ? '👎' : '🤬')
+			lastReact = now
+		}
 	}
 })
 bot.use(menuMiddleware)
 
-async function commandMiddleware(ctx: Context) {
+function commandMiddleware(ctx: Context) {
 	if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-		await ctx.answerCallbackQuery('Unauthorized')
+		ctx.answerCallbackQuery('Unauthorized')
 		return false
 	} else {
 		lastContext = ctx as CommandContext<Context>
