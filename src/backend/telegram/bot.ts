@@ -7,11 +7,16 @@ import { InlineKeyboardButton, Message } from 'grammy/types'
 import { TextBody } from 'grammy-inline-menu/dist/source/body'
 import { dynamic } from '../shared'
 import { getIsWeekend } from '../night/static'
-import Cryptr from 'cryptr'
+import crypto from 'crypto'
 import { addDeeplinkUser, deeplinkUsers } from './deeplink'
 
+const hash = (name: string) =>
+	crypto
+		.createHash('shake256', { outputLength: 48 })
+		.update(name + config.tgApiKey)
+		.digest('base64url')
+
 const allowedTelegramUsers = new Set([...config.tgAllowedUsers.split(',').map(el => parseInt(el)), deeplinkUsers])
-const cryptr = new Cryptr(config.tgAllowedUsers, { encoding: 'base64', saltLength: 1, pbkdf2Iterations: 10 })
 
 const bot = new Bot(config.tgApiKey)
 
@@ -91,10 +96,9 @@ const userData: Map<number, IUserData> = new Map()
 
 bot.command('start', async ctx => {
 	let deeplinked = false
-	if (ctx.match) {
+	if (ctx.match && ctx.from?.username) {
 		try {
-			const username = cryptr.decrypt(ctx.match)
-			if (ctx.from?.username?.slice(0, 15) === username) {
+			if (hash(ctx.from.username) === ctx.match) {
 				allowedTelegramUsers.add(ctx.from.id)
 				await addDeeplinkUser(ctx.from.id)
 				deeplinked = true
@@ -129,7 +133,7 @@ bot.use(menuMiddleware)
 
 bot.hears(/https:\/\/t.me\/(.+)/, async ctx => {
 	const [, username] = ctx.match
-	await ctx.reply(`[control lights](https://t.me/${ctx.me.username}?start=${cryptr.encrypt(username.slice(0, 15))})`, { parse_mode: 'MarkdownV2' })
+	await ctx.reply(`[control lights](https://t.me/${ctx.me.username}?start=${hash(username)})`, { parse_mode: 'MarkdownV2' })
 })
 
 export async function updateKeyboard(except?: number) {
