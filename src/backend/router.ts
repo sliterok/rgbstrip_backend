@@ -8,13 +8,12 @@ import { updateMessage } from './telegram/bot'
 
 const jar = new CookieJar()
 const client = wrapper(axios.create({ jar, baseURL: config.routerEndpoint }))
-const auth = { login: 'api', password: config.routerPassword }
 
-async function init() {
+async function auth() {
 	try {
 		const initCookieRes = await client.get('/auth').catch(err => err.response)
 		const headers = initCookieRes.headers
-		let md5 = auth.login + ':' + headers['x-ndm-realm'] + ':' + auth.password
+		let md5 = 'api:' + headers['x-ndm-realm'] + ':' + config.routerPassword
 		md5 = crypto.createHash('md5').update(md5).digest('hex')
 
 		const sha256 = crypto
@@ -22,13 +21,13 @@ async function init() {
 			.update(headers['x-ndm-challenge'] + md5)
 			.digest('hex')
 
-		await client.post('/auth', { ...auth, password: sha256 })
+		await client.post('/auth', { login: 'api', password: sha256 })
 	} catch (err) {
 		console.error('router login failed', (err as AxiosError).response?.data)
 	}
 }
 
-const initted = init()
+const initted = auth()
 
 interface IHost {
 	name: string
@@ -43,7 +42,13 @@ export async function phoneLastSeen() {
 		const myPhone = hosts.find(item => item.name.includes(config.routerDevice))
 		return myPhone?.['last-seen']
 	} catch (err) {
-		console.error('phone last seen failed', (err as AxiosError).response?.data)
+		const error = err as AxiosError
+		if (error.response?.status === 401) {
+			await auth()
+			await phoneLastSeen()
+		} else {
+			console.error('phone last seen failed', error.response?.data)
+		}
 	}
 }
 
