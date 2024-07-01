@@ -1,4 +1,4 @@
-import { Bot, CommandContext, Context, GrammyError } from 'grammy'
+import { Bot, CommandContext, Context, GrammyError, NextFunction } from 'grammy'
 import { settings } from '../../settings'
 import { MenuTemplate, MenuMiddleware } from 'grammy-inline-menu'
 import { config } from '../config'
@@ -31,8 +31,6 @@ const toggleTemplate = (title: string, key: IBooleanSettingsKeys) =>
 		formatState: (ctx, text, state) => `${state ? '✅ ' : ''}${text}`,
 		isSet: () => settings[key] as boolean,
 		set: async (ctx, val) => {
-			if (!commandMiddleware(ctx)) return false
-
 			settings[key] = val
 			await ctx.answerCallbackQuery(`${title} ${val ? 'on' : 'off'}`)
 
@@ -58,8 +56,6 @@ menuTemplate.select(
 		columns: 2,
 		isSet: (ctx, key) => settings.mode === parseInt(key),
 		set: async (ctx, key) => {
-			if (!commandMiddleware(ctx)) return false
-
 			settings.mode = parseInt(key)
 			const selectedMode = IMode[settings.mode]
 			// eslint-disable-next-line no-console
@@ -84,28 +80,29 @@ let lastReact = 0
 
 bot.command('start', async ctx => {
 	if (allowedTelegramUsers.has(ctx.chat.id)) {
+		await ctx.deleteMessages([ctx.message?.message_id, lastMenu?.message_id].filter(el => el) as number[])
 		lastContext = ctx
 		lastMenu = (await menuMiddleware.replyToContext(lastContext!)) as Message.TextMessage
 	} else {
 		const now = Date.now()
 		const diff = now - lastReact
 		if (diff > 500) {
-			ctx.react(diff > 1000 ? '👎' : '🤬')
 			lastReact = now
+			await ctx.react(diff > 1000 ? '👎' : '🤬')
 		}
 	}
 })
-bot.use(menuMiddleware)
 
-function commandMiddleware(ctx: Context) {
-	if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-		ctx.answerCallbackQuery('Unauthorized')
-		return false
+bot.use(async (ctx: Context, next: NextFunction) => {
+	const authorized = allowedTelegramUsers.has(ctx.chat!.id)
+	if (!authorized) {
+		await ctx.answerCallbackQuery('Unauthorized')
 	} else {
 		lastContext = ctx as CommandContext<Context>
 		lastMenu = ctx.callbackQuery?.message as Message.TextMessage
+		await next()
 	}
-}
+}).use(menuMiddleware)
 
 export async function updateKeyboard() {
 	if (!lastContext || !lastMenu) return
