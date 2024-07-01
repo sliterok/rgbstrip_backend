@@ -31,10 +31,7 @@ const toggleTemplate = (title: string, key: IBooleanSettingsKeys) =>
 		formatState: (ctx, text, state) => `${state ? '✅ ' : ''}${text}`,
 		isSet: () => settings[key] as boolean,
 		set: async (ctx, val) => {
-			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-				await ctx.answerCallbackQuery('Unauthorized')
-				return false
-			}
+			if (!commandMiddleware(ctx)) return false
 
 			settings[key] = val
 			await ctx.answerCallbackQuery(`${title} ${val ? 'on' : 'off'}`)
@@ -61,10 +58,8 @@ menuTemplate.select(
 		columns: 2,
 		isSet: (ctx, key) => settings.mode === parseInt(key),
 		set: async (ctx, key) => {
-			if (!allowedTelegramUsers.has(ctx.chat!.id)) {
-				await ctx.answerCallbackQuery('Unauthorized')
-				return false
-			}
+			if (!commandMiddleware(ctx)) return false
+
 			settings.mode = parseInt(key)
 			const selectedMode = IMode[settings.mode]
 			// eslint-disable-next-line no-console
@@ -94,6 +89,16 @@ bot.command('start', async ctx => {
 })
 bot.use(menuMiddleware)
 
+async function commandMiddleware(ctx: Context) {
+	if (!allowedTelegramUsers.has(ctx.chat!.id)) {
+		await ctx.answerCallbackQuery('Unauthorized')
+		return false
+	} else {
+		lastContext = ctx as CommandContext<Context>
+		lastMenu = ctx.callbackQuery?.message as Message.TextMessage
+	}
+}
+
 export async function updateKeyboard() {
 	if (!lastContext || !lastMenu) return
 
@@ -116,8 +121,11 @@ export async function updateMessage() {
 
 	const body = await menuTemplate.renderBody(lastContext, '/')
 	const text = typeof body === 'string' ? body : (body as TextBody).text
+	const keyboard = await menuTemplate.renderKeyboard(lastContext, '/')
 	try {
-		await bot.api.editMessageText(lastMenu.chat.id, lastMenu.message_id, text)
+		await bot.api.editMessageText(lastMenu.chat.id, lastMenu.message_id, text, {
+			reply_markup: { inline_keyboard: keyboard as InlineKeyboardButton[][] },
+		})
 	} catch (error) {
 		if (
 			'description' in (error as any) &&
