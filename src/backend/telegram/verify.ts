@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import { config } from 'src/backend/config'
-import { allowedTelegramUsers } from './bot'
+import { isAllowedUser } from './auth'
 
 interface ITelegramProfile {
 	allows_write_to_pm: true
@@ -31,5 +31,5 @@ export function isVerifiedUser(telegramInitData: string): boolean {
 
 	const user = JSON.parse(urlParams.get('user')!) as ITelegramProfile
 
-	return allowedTelegramUsers.has(user.id)
+	return isAllowedUser(user.id)
 }

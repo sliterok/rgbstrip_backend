@@ -4,6 +4,6 @@ import { config } from '../config'
 export function generateDeeplinkHash(username: string): string {
 	return crypto
 		.createHash('shake256', { outputLength: 48 })
-		.update(username + config.tgApiKey)
+		.update(username.toLowerCase() + config.tgApiKey)
 		.digest('base64url')
 }
