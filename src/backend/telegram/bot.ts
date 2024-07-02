@@ -27,7 +27,7 @@ const menuTemplate = new MenuTemplate<Context>(() =>
 		new Date().toLocaleString('en', { weekday: 'long', hour: 'numeric', minute: '2-digit', hour12: false }),
 		formatBool(dynamic.isAway, 'away'),
 		formatBool(dynamic.isNight, 'night'),
-		formatBool(getIsWeekend() > 0, 'weekend'),
+		formatBool(getIsWeekend() > 1, 'weekend'),
 	]
 		.filter(el => el)
 		.join('\n')
@@ -111,7 +111,8 @@ bot.command('start', async ctx => {
 	if (deeplinked || allowedTelegramUsers.has(ctx.chat.id)) {
 		const user = userData.get(ctx.chat.id)
 		await ctx.deleteMessages([ctx.message?.message_id, user?.menu?.message_id].filter(el => el) as number[])
-		userData.set(ctx.chat.id, { ctx, menu: (await menuMiddleware.replyToContext(ctx!)) as Message.TextMessage })
+		const menu = (await menuMiddleware.replyToContext(ctx!)) as Message.TextMessage
+		userData.set(ctx.chat.id, { ctx, menu })
 	} else {
 		await ctx.react('👎')
 	}
@@ -121,9 +122,10 @@ bot.use(async (ctx: Context, next: NextFunction) => {
 	if (!ctx.chat || !allowedTelegramUsers.has(ctx.chat.id)) {
 		if (ctx.callbackQuery) await ctx.answerCallbackQuery('Unauthorized')
 	} else {
+		const menu = ctx.callbackQuery?.message as Message.TextMessage
 		userData.set(ctx.chat.id, {
 			ctx: ctx as CommandContext<Context>,
-			menu: ctx.callbackQuery?.message as Message.TextMessage,
+			menu,
 		})
 		await next()
 	}
@@ -131,7 +133,7 @@ bot.use(async (ctx: Context, next: NextFunction) => {
 
 bot.use(menuMiddleware)
 
-bot.hears(/https:\/\/t.me\/(.+)/, async ctx => {
+bot.hears(/(?:(?:https:\/\/t.me\/)|(?:@))(.+)/, async ctx => {
 	const [, username] = ctx.match
 	await ctx.reply(`[control lights](https://t.me/${ctx.me.username}?start=${hash(username)})`, { parse_mode: 'MarkdownV2' })
 })
