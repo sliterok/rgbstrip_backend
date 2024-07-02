@@ -4,7 +4,7 @@ import { CookieJar } from 'tough-cookie'
 import crypto from 'crypto'
 import { config } from './config'
 import { dynamic } from './shared'
-import { updateMessage } from './telegram/bot'
+import { updateMessage } from './telegram/updates'
 
 const jar = new CookieJar()
 const client = wrapper(axios.create({ jar, baseURL: config.routerEndpoint }))

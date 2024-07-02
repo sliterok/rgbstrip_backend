@@ -1,16 +1,9 @@
-import fs from 'fs'
-import fsp from 'fs/promises'
+import crypto from 'crypto'
+import { config } from '../config'
 
-export const deeplinkUsers = getDeeplinkUsers()
-
-function getDeeplinkUsers(): number[] {
-	try {
-		return JSON.parse(fs.readFileSync('./deeplinkUsers.json', 'utf8'))
-	} catch (error) {
-		return []
-	}
-}
-
-export function addDeeplinkUser(user: number) {
-	if (!deeplinkUsers.includes(user)) return fsp.writeFile('./deeplinkUsers.json', JSON.stringify([...deeplinkUsers, user]))
+export function generateDeeplinkHash(username: string): string {
+	return crypto
+		.createHash('shake256', { outputLength: 48 })
+		.update(username + config.tgApiKey)
+		.digest('base64url')
 }

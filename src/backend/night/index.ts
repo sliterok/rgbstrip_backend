@@ -1,6 +1,6 @@
 import { settings } from 'src/settings'
 import { IMode } from 'src/typings'
-import { updateKeyboard, updateMessage } from '../telegram/bot'
+import { updateKeyboard, updateMessage } from '../telegram/updates'
 import { CronJob } from 'cron'
 import { config } from '../config'
 import { dynamic } from '../shared'
