@@ -16,7 +16,7 @@ const hash = (name: string) =>
 		.update(name + config.tgApiKey)
 		.digest('base64url')
 
-const allowedTelegramUsers = new Set([...config.tgAllowedUsers.split(',').map(el => parseInt(el)), deeplinkUsers])
+export const allowedTelegramUsers = new Set([...config.tgAllowedUsers.split(',').map(el => parseInt(el)), deeplinkUsers])
 
 const bot = new Bot(config.tgApiKey)
 

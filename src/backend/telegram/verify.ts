@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import { config } from 'src/backend/config'
-import { allowedTelegramUsers } from '.'
+import { allowedTelegramUsers } from './bot'
 
 interface ITelegramProfile {
 	allows_write_to_pm: true
