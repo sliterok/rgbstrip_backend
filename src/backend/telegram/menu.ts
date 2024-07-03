@@ -9,12 +9,12 @@ export function createMenuTemplate() {
 	const menuTemplate = new MenuTemplate<Context>(() =>
 		[
 			new Date().toLocaleString('en', { weekday: 'long', hour: 'numeric', minute: '2-digit', hour12: false }),
-			dynamic.isAway && 'away',
-			dynamic.isNight && 'night',
-			getIsWeekend() > 1 && 'weekend',
+			dynamic.isAway && '📵',
+			dynamic.isNight && '🌙',
+			getIsWeekend() > 1 && '📅',
 		]
 			.filter(el => el)
-			.join('\n')
+			.join(' ')
 	)
 
 	toggleSetting(menuTemplate, 'Night override', 'nightOverride')
