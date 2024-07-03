@@ -15,6 +15,11 @@ export function startUdpServer() {
 	}
 }
 
+export const sendPacket = (buffer: Uint8Array) =>
+	new Promise<number>((res, rej) =>
+		socket.send(buffer, dynamic.target!.port, dynamic.target!.address, (err, bytes) => (err ? rej(err) : res(bytes)))
+	)
+
 let lastTimeout: NodeJS.Timeout
 socket.on('message', (msg, newTarget) => {
 	dynamic.lastMessage = Date.now()
