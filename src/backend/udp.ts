@@ -15,7 +15,11 @@ export function startUdpServer() {
 	}
 }
 
+let lastTimeout: NodeJS.Timeout
 socket.on('message', (msg, newTarget) => {
 	dynamic.lastMessage = Date.now()
 	dynamic.target = newTarget
+
+	clearTimeout(lastTimeout)
+	lastTimeout = setTimeout(() => delete dynamic.target, 7000)
 })

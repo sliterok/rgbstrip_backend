@@ -5,10 +5,8 @@ import { settings } from 'src/settings'
 export const awayColor: IArrColor = [5, 20, 5]
 
 export const defaultMapperMiddleware = (): IArrColor | undefined => {
-	const shouldBeNight = !settings.nightOverride && dynamic.isNight
-	if (shouldBeNight) return dynamic.disabledColor
-	const shouldBeAway = !settings.geoOverride && dynamic.isAway
-	if (shouldBeAway) return awayColor
+	if (!settings.nightOverride && dynamic.isNight) return dynamic.disabledColor
+	if (!settings.geoOverride && dynamic.isAway) return awayColor
 }
 
 export const callIndexedGetter = <T = never>(getter: IColorGetter<T>, onBatch?: (batchIndex: number) => T) => {
