@@ -14,6 +14,7 @@ export const dynamic: IDynamicDto = {
 	disabledColor: [0, 0, 1],
 	isNight: true,
 	isAway: false,
+	lastMessage: 0,
 }
 
 export const hueToColor = (hue: number) => hsl(hue, 1, 0.5)

@@ -31,7 +31,7 @@ export interface IDynamicDto {
 	hasConnections: boolean
 	isNight: boolean
 	isAway: boolean
-	lastMessage?: number
+	lastMessage: number
 	target?: Datagram.RemoteInfo
 }
 
