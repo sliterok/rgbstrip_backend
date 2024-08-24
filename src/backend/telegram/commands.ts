@@ -19,7 +19,11 @@ export async function handleStartCommand(ctx: CommandContext<Context>) {
 
 	if (deeplinked || isAllowedUser(ctx.chat.id)) {
 		const user = userData.get(ctx.chat.id)
-		await ctx.deleteMessages([ctx.message?.message_id, user?.menu?.message_id].filter(el => el) as number[])
+		try {
+			await ctx.deleteMessages([ctx.message?.message_id, user?.menu?.message_id].filter(el => el) as number[])
+		} catch (err) {
+			console.error('failed to delete menu', err)
+		}
 		const menu = (await menuMiddleware.replyToContext(ctx!)) as Message.TextMessage
 		userData.set(ctx.chat.id, { ctx, menu })
 	} else {
