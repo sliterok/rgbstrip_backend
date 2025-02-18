@@ -6,9 +6,9 @@ socket.on('error', e => console.error(e))
 
 export function startUdpServer() {
 	try {
-		socket.bind(8008, '0.0.0.0', () => {
+		socket.bind(8009, '0.0.0.0', () => {
 			// eslint-disable-next-line no-console
-			console.log('up on 8008')
+			console.log('up on 8009')
 		})
 	} catch (err) {
 		console.error(err)
