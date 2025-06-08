@@ -45,7 +45,7 @@ export async function phoneLastSeen() {
 		const error = err as AxiosError
 		if (error.response?.status === 401) {
 			await auth()
-			await phoneLastSeen()
+			return phoneLastSeen()
 		} else {
 			console.error('phone last seen failed', error.response?.data)
 		}
