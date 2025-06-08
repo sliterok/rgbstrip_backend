@@ -1,0 +1,4 @@
+.pixel {
+	width: calc(100% / 288);
+	height: calc(100vw / 288);
+}
