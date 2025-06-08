@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { config } from 'src/backend/config'
+import { config } from '../config'
 import { isAllowedUser } from './auth'
 
 interface ITelegramProfile {
