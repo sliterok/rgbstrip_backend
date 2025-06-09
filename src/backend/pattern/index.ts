@@ -5,6 +5,8 @@ import { noiseFrameMapper } from './noise'
 import { getProgressColor } from './progress'
 import { getRainbowColor } from './rainbow'
 import { getPlasmaColor } from './plasma'
+import { getBreatheColor } from './breathe'
+import { getWaveColor } from './wave'
 import { createIndexedMapper, createFlatMapper } from './mappers'
 
 const mappers: Record<IMode, IColorMapper> = {
@@ -15,6 +17,8 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Noise]: noiseFrameMapper,
 	[IMode.Plasma]: createIndexedMapper(getPlasmaColor),
 	[IMode.Color]: createFlatMapper(() => settings.color),
+	[IMode.Breathe]: createIndexedMapper(getBreatheColor),
+	[IMode.Wave]: createIndexedMapper(getWaveColor),
 }
 
 export function getPixels(mode: IMode): IArrColor[][] {

@@ -3,12 +3,15 @@ import { Context } from 'grammy'
 import { settings } from '../../settings'
 import { IMode, ISettings } from '../../typings'
 import { updateKeyboard } from './updates'
+import { FormatStateFunction } from 'grammy-inline-menu/dist/source/buttons/select'
 
 type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boolean ? k : never }[keyof ISettings]
 
+const formatState: FormatStateFunction<Context> = (ctx, text, state) => `${state ? '✅' : '✔️'} ${text}`
+
 export function toggleSetting(menuTemplate: MenuTemplate<Context>, title: string, key: IBooleanSettingsKeys) {
 	menuTemplate.toggle(title, key, {
-		formatState: (ctx, text, state) => `${state ? '✅ ' : ''}${text}`,
+		formatState,
 		isSet: () => settings[key] as boolean,
 		set: async (ctx, val) => {
 			settings[key] = val
@@ -23,16 +26,19 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 	menuTemplate.select(
 		'select_mode',
 		{
-			[IMode.Disabled]: 'off',
-			[IMode.Rainbow]: 'rainbow',
-			[IMode.Progress]: 'progress',
-			[IMode.White]: 'white',
-			[IMode.Noise]: 'noise',
-			[IMode.Plasma]: 'plasma',
-			[IMode.Color]: 'color',
+			[IMode.Disabled]: '❌',
+			[IMode.Rainbow]: '🌈',
+			[IMode.Progress]: '⏳',
+			[IMode.White]: '⬜',
+			[IMode.Color]: '🎨',
+			[IMode.Noise]: '🌀',
+			[IMode.Plasma]: '✨',
+			[IMode.Breathe]: '🌪',
+			[IMode.Wave]: '🌊',
 		},
 		{
-			columns: 2,
+			formatState,
+			columns: 3,
 			isSet: (ctx, key) => settings.mode === parseInt(key),
 			set: async (ctx, key) => {
 				settings.mode = parseInt(key)

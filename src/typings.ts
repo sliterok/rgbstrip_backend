@@ -18,6 +18,8 @@ export enum IMode {
 	Noise,
 	Plasma,
 	Color,
+	Breathe,
+	Wave,
 }
 
 export interface ISettings {
