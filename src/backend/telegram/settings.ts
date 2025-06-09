@@ -28,6 +28,7 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			[IMode.Progress]: 'progress',
 			[IMode.White]: 'white',
 			[IMode.Noise]: 'noise',
+			[IMode.Plasma]: 'plasma',
 			[IMode.Color]: 'color',
 		},
 		{
