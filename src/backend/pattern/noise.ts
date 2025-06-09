@@ -2,15 +2,15 @@
 import RingBufferTs from 'ring-buffer-ts'
 const RingBuffer = RingBufferTs.RingBuffer
 import { ColorCommonInstance, rgb } from 'd3-color'
-import { interpolateLab } from 'd3-interpolate'
-import { IArrColor, IColorGetter, IColorMapper } from 'src/typings'
+import { IArrColor, IColorGetter, IColorMapper, IRgbLabColor } from 'src/typings'
+import { interpolateLabArr, toRgbLab } from './interpolate'
 import { pixelsCount, activeColors, normalNoise, hueToColor } from '../shared'
 import { callIndexedGetter, defaultMapperMiddleware } from './mappers'
 import { settings } from 'src/settings'
 import { getCachedColor } from 'src/helpers'
 
-const colors = new RingBuffer<ColorCommonInstance>(activeColors + 1)
-for (let i = 0; i <= activeColors; i++) colors.add(hueToColor(Math.random() * 5000))
+const colors = new RingBuffer<IRgbLabColor>(activeColors + 1)
+for (let i = 0; i <= activeColors; i++) colors.add(toRgbLab(hueToColor(Math.random() * 5000)))
 
 interface INoiseBatchData {
 	baseOffset: number
@@ -33,7 +33,7 @@ export const noiseFrameMapper: IColorMapper = () => {
 		baseOffset = rawOffset % 1
 		if (rawOffset >= 1) {
 			const color = middlewareRes && getCachedColor(middlewareRes)
-			colors.add(getNextColor(coeff, color))
+			colors.add(toRgbLab(getNextColor(coeff, color)))
 		}
 		return { baseOffset }
 	})
@@ -45,13 +45,13 @@ function getNextColor(coeff: number, alternativeColor?: ColorCommonInstance): Co
 
 	let color: ColorCommonInstance = getNextRandomColor()
 	if (coeff) {
-		const interpolator = getInterpolator(color, alternativeColor!)
+		const interpolator = getInterpolator(toRgbLab(color), toRgbLab(alternativeColor!))
 		color = rgb(...interpolator(coeff))
 	} else {
 		lastTrueColor = Date.now()
 	}
 	if (settings.mixColorWithNoise) {
-		const interpolator = getInterpolator(color, getCachedColor(settings.color))
+		const interpolator = getInterpolator(toRgbLab(color), toRgbLab(getCachedColor(settings.color)))
 		color = rgb(...interpolator(settings.mixRatio))
 	}
 	return color
@@ -87,27 +87,23 @@ const getNoiseColor: IColorGetter<INoiseBatchData> = (index, time, batchData) =>
 	return color
 }
 
-const interpolators = new WeakMap<ColorCommonInstance, WeakMap<ColorCommonInstance, (t: number) => string>>()
+const interpolators = new WeakMap<IRgbLabColor, WeakMap<IRgbLabColor, (t: number) => IArrColor>>()
 
-function getInterpolator(colorStart: ColorCommonInstance, colorEnd: ColorCommonInstance): (t: number) => IArrColor {
-	let interpolator: undefined | ((t: number) => string)
-	let subInterpolator: WeakMap<ColorCommonInstance, (t: number) => string>
+function getInterpolator(colorStart: IRgbLabColor, colorEnd: IRgbLabColor): (t: number) => IArrColor {
+	let interpolator: undefined | ((t: number) => IArrColor)
+	let subInterpolator: WeakMap<IRgbLabColor, (t: number) => IArrColor>
 	const hadFirstColor = interpolators.has(colorStart)
 	if (hadFirstColor) {
 		subInterpolator = interpolators.get(colorStart)!
 		interpolator = subInterpolator.get(colorEnd)
 	}
 	const hadSecondColor = !!interpolator
-	if (!interpolator) interpolator = interpolateLab(colorStart, colorEnd)
+	if (!interpolator) interpolator = interpolateLabArr(colorStart.lab, colorEnd.lab)
 	if (!hadFirstColor) {
 		subInterpolator = new WeakMap()
 		interpolators.set(colorStart, subInterpolator)
 	}
 	if (!hadSecondColor) subInterpolator!.set(colorEnd, interpolator)
 
-	return t =>
-		interpolator(t)
-			.replace(/[^\d,]/g, '')
-			.split(',')
-			.map(el => parseInt(el)) as IArrColor
+	return interpolator!
 }
