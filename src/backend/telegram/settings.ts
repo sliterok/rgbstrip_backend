@@ -28,10 +28,16 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			[IMode.Progress]: 'progress',
 			[IMode.White]: 'white',
 			[IMode.Noise]: 'noise',
+			[IMode.Plasma]: 'plasma',
+			[IMode.Breathe]: 'breathe',
+			[IMode.Fire]: 'fire',
+			[IMode.Ocean]: 'ocean',
+			[IMode.Twilight]: 'twilight',
+			[IMode.Wave]: 'wave',
 			[IMode.Color]: 'color',
 		},
 		{
-			columns: 2,
+			columns: 4,
 			isSet: (ctx, key) => settings.mode === parseInt(key),
 			set: async (ctx, key) => {
 				settings.mode = parseInt(key)

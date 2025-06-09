@@ -12,6 +12,12 @@ export enum IMode {
 	Progress,
 	White,
 	Noise,
+	Plasma,
+	Breathe,
+	Fire,
+	Ocean,
+	Twilight,
+	Wave,
 	Color,
 }
 
