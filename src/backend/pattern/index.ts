@@ -18,6 +18,7 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Progress]: createIndexedMapper(getProgressColor),
 	[IMode.White]: createFlatMapper([255, 255, 255]),
 	[IMode.Noise]: noiseFrameMapper,
+	[IMode.Plasma]: createIndexedMapper(getPlasmaColor),
 	[IMode.Color]: createFlatMapper(() => settings.color),
 	[IMode.Plasma]: createIndexedMapper(getPlasmaColor),
 	[IMode.Breathe]: createIndexedMapper(getBreatheColor),

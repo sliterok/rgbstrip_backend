@@ -1,6 +1,10 @@
 import Datagram from 'dgram'
 
 export type IArrColor = [number, number, number]
+export interface IRgbLabColor {
+	rgb: IArrColor
+	lab: IArrColor
+}
 export type IStaticColorGetter = () => IArrColor
 
 export type IColorGetter<T = never> = (index: number, time: number, batchData: T) => IArrColor
@@ -12,6 +16,7 @@ export enum IMode {
 	Progress,
 	White,
 	Noise,
+	Plasma,
 	Color,
 	Plasma,
 	Breathe,
