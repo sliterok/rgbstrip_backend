@@ -9,6 +9,7 @@ import { getCurrentTime, getTargetTime, nightUpdateTimes, TargetTimes, updateDis
 export function updateNightStatus(time = getCurrentTime()) {
 	const targetSleepTime = getTargetTime(TargetTimes.sleep)
 	const targetWakeupTime = getTargetTime(TargetTimes.wakeUp)
+	const wasNight = dynamic.isNight
 	if (time >= targetSleepTime) dynamic.isNight = true
 	else if (time < targetWakeupTime) dynamic.isNight = true
 	else {
@@ -18,6 +19,8 @@ export function updateNightStatus(time = getCurrentTime()) {
 			updateKeyboard()
 		}
 	}
+
+	if (wasNight !== dynamic.isNight) dynamic.nightChanged = Date.now()
 
 	updateMessage()
 

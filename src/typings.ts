@@ -39,6 +39,8 @@ export interface IDynamicDto {
 	isNight: boolean
 	isAway: boolean
 	lastMessage: number
+	nightChanged: number
+	awayChanged: number
 	target?: Datagram.RemoteInfo
 }
 
