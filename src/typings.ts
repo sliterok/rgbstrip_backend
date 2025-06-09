@@ -18,11 +18,7 @@ export enum IMode {
 	Noise,
 	Plasma,
 	Color,
-	Plasma,
 	Breathe,
-	Fire,
-	Ocean,
-	Twilight,
 	Wave,
 }
 

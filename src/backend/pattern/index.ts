@@ -6,9 +6,6 @@ import { getProgressColor } from './progress'
 import { getRainbowColor } from './rainbow'
 import { getPlasmaColor } from './plasma'
 import { getBreatheColor } from './breathe'
-import { getFireColor } from './fire'
-import { getOceanColor } from './ocean'
-import { getTwilightColor } from './twilight'
 import { getWaveColor } from './wave'
 import { createIndexedMapper, createFlatMapper } from './mappers'
 
@@ -20,11 +17,7 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Noise]: noiseFrameMapper,
 	[IMode.Plasma]: createIndexedMapper(getPlasmaColor),
 	[IMode.Color]: createFlatMapper(() => settings.color),
-	[IMode.Plasma]: createIndexedMapper(getPlasmaColor),
 	[IMode.Breathe]: createIndexedMapper(getBreatheColor),
-	[IMode.Fire]: createIndexedMapper(getFireColor),
-	[IMode.Ocean]: createIndexedMapper(getOceanColor),
-	[IMode.Twilight]: createIndexedMapper(getTwilightColor),
 	[IMode.Wave]: createIndexedMapper(getWaveColor),
 }
 
