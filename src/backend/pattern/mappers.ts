@@ -10,17 +10,28 @@ function mix(a: IArrColor, b: IArrColor, t: number): IArrColor {
 }
 
 function getOverride(now: number): { color: IArrColor; ratio: number } | undefined {
-	if (!settings.nightOverride && (dynamic.isNight || now - dynamic.nightChanged < nightDuration)) {
+	const nightActive = !settings.nightOverride && dynamic.isNight
+	if (nightActive !== dynamic.nightOverrideActive) {
+		dynamic.nightOverrideActive = nightActive
+		dynamic.nightChanged = now
+	}
+	if (nightActive || now - dynamic.nightChanged < nightDuration) {
 		const diff = now - dynamic.nightChanged
 		const base = Math.min(1, diff / nightDuration)
-		const ratio = dynamic.isNight ? base : 1 - base
-		return { color: dynamic.disabledColor, ratio }
+		const ratio = nightActive ? base : 1 - base
+		if (ratio > 0) return { color: dynamic.disabledColor, ratio }
 	}
-	if (!settings.geoOverride && (dynamic.isAway || now - dynamic.awayChanged < awayDuration)) {
+
+	const awayActive = !settings.geoOverride && dynamic.isAway
+	if (awayActive !== dynamic.awayOverrideActive) {
+		dynamic.awayOverrideActive = awayActive
+		dynamic.awayChanged = now
+	}
+	if (awayActive || now - dynamic.awayChanged < awayDuration) {
 		const diff = now - dynamic.awayChanged
 		const base = Math.min(1, diff / awayDuration)
-		const ratio = dynamic.isAway ? base : 1 - base
-		return { color: awayColor, ratio }
+		const ratio = awayActive ? base : 1 - base
+		if (ratio > 0) return { color: awayColor, ratio }
 	}
 }
 

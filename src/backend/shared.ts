@@ -17,6 +17,8 @@ export const dynamic: IDynamicDto = {
 	lastMessage: 0,
 	nightChanged: Date.now(),
 	awayChanged: Date.now(),
+	nightOverrideActive: true,
+	awayOverrideActive: false,
 	lastMode: IMode.Disabled,
 	modeChanged: Date.now(),
 }
