@@ -12,13 +12,13 @@ export enum IMode {
 	Progress,
 	White,
 	Noise,
+	Color,
 	Plasma,
 	Breathe,
 	Fire,
 	Ocean,
 	Twilight,
 	Wave,
-	Color,
 }
 
 export interface ISettings {

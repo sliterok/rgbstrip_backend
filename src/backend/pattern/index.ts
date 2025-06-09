@@ -18,13 +18,13 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Progress]: createIndexedMapper(getProgressColor),
 	[IMode.White]: createFlatMapper([255, 255, 255]),
 	[IMode.Noise]: noiseFrameMapper,
+	[IMode.Color]: createFlatMapper(() => settings.color),
 	[IMode.Plasma]: createIndexedMapper(getPlasmaColor),
 	[IMode.Breathe]: createIndexedMapper(getBreatheColor),
 	[IMode.Fire]: createIndexedMapper(getFireColor),
 	[IMode.Ocean]: createIndexedMapper(getOceanColor),
 	[IMode.Twilight]: createIndexedMapper(getTwilightColor),
 	[IMode.Wave]: createIndexedMapper(getWaveColor),
-	[IMode.Color]: createFlatMapper(() => settings.color),
 }
 
 export function getPixels(mode: IMode): IArrColor[][] {
