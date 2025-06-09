@@ -15,9 +15,9 @@ export enum IMode {
 	Rainbow,
 	Progress,
 	White,
+	Color,
 	Noise,
 	Plasma,
-	Color,
 	Breathe,
 	Wave,
 }

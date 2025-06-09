@@ -39,7 +39,7 @@ export async function phoneLastSeen() {
 		await initted
 		const devicesRes = await client.get(`/rci/show/ip/hotspot?mac=${config.routerMac}`)
 		const hosts = devicesRes.data.host as IHost[]
-		const myPhone = hosts.filter(item => item.name.includes(config.routerDevice)).sort((a, b) => b['last-seen'] - a['last-seen'])[0]
+		const myPhone = hosts.filter(item => item.name.includes(config.routerDevice)).sort((a, b) => (a['last-seen'] - b['last-seen']) && +Number.isInteger(a))[0]
 		return myPhone?.['last-seen']
 	} catch (err) {
 		const error = err as AxiosError
