@@ -4,6 +4,7 @@ import { IArrColor, IColorMapper, IMode } from 'src/typings'
 import { noiseFrameMapper } from './noise'
 import { getProgressColor } from './progress'
 import { getRainbowColor } from './rainbow'
+import { getPlasmaColor } from './plasma'
 import { createIndexedMapper, createFlatMapper } from './mappers'
 
 const mappers: Record<IMode, IColorMapper> = {
@@ -12,6 +13,7 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Progress]: createIndexedMapper(getProgressColor),
 	[IMode.White]: createFlatMapper([255, 255, 255]),
 	[IMode.Noise]: noiseFrameMapper,
+	[IMode.Plasma]: createIndexedMapper(getPlasmaColor),
 	[IMode.Color]: createFlatMapper(() => settings.color),
 }
 
