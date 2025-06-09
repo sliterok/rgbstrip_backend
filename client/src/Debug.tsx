@@ -1,12 +1,9 @@
-/* eslint-disable ssr-friendly/no-dom-globals-in-react-fc */
-import { Head } from 'rakkasjs'
+import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import classes from './pixel.module.css'
-import { IArrColor } from 'src/typings'
+import { IArrColor } from '../../src/typings'
 
 let eventSource: EventSource
-// eslint-disable-next-line ssr-friendly/no-dom-globals-in-module-scope
-if (typeof window !== 'undefined') window.addEventListener('unload', () => eventSource.close())
 
 export default function Debug() {
 	eventSource = eventSource ?? new EventSource('/debug/stream')
@@ -15,19 +12,13 @@ export default function Debug() {
 	const pixelsRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
-		eventSource.onopen = () => {
-			setReadyState(eventSource.readyState)
-		}
-
-		eventSource.onerror = () => {
-			setReadyState(eventSource.readyState)
-		}
-
+		eventSource.onopen = () => setReadyState(eventSource.readyState)
+		eventSource.onerror = () => setReadyState(eventSource.readyState)
 		eventSource.onmessage = event => {
 			const pixels = JSON.parse(event.data) as IArrColor[]
 			for (const i in pixels) {
 				const [r, g, b] = pixels[i]
-				const el = pixelsRef.current?.children[i]
+				const el = pixelsRef.current?.children[Number(i)]
 				el?.setAttribute('style', `background: rgb(${r}, ${g}, ${b})`)
 			}
 		}
@@ -39,11 +30,10 @@ export default function Debug() {
 			<div ref={pixelsRef} style={{ display: 'flex' }}>
 				{Array(288)
 					.fill(0)
-					.map((el, i) => (
+					.map((_, i) => (
 						<div key={i} className={classes.pixel}></div>
 					))}
 			</div>
-			<Head title="debug"></Head>
 		</div>
 	)
 }
