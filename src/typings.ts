@@ -41,6 +41,8 @@ export interface IDynamicDto {
 	lastMessage: number
 	nightChanged: number
 	awayChanged: number
+	lastMode: IMode
+	modeChanged: number
 	target?: Datagram.RemoteInfo
 }
 

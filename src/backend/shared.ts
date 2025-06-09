@@ -1,5 +1,5 @@
 import { createNoise2D } from 'simplex-noise'
-import { IDynamicDto } from 'src/typings'
+import { IDynamicDto, IMode } from 'src/typings'
 import { hsl } from 'd3-color'
 
 export const activeColors = 5
@@ -17,6 +17,8 @@ export const dynamic: IDynamicDto = {
 	lastMessage: 0,
 	nightChanged: Date.now(),
 	awayChanged: Date.now(),
+	lastMode: IMode.Disabled,
+	modeChanged: Date.now(),
 }
 
 export const hueToColor = (hue: number) => hsl(hue, 1, 0.5)
