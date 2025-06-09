@@ -15,6 +15,19 @@ Create a `.env` file in the project root with the following variables:
 -   `tgApiKey` – Telegram Bot API key.
 -   `externalUrl` – public URL used by Telegram Web App.
 
+Example `.env` file:
+
+```env
+TZ=Europe/Berlin
+routerMac=AA:BB:CC:DD:EE:FF
+routerDevice=my-phone
+routerEndpoint=http://router.local
+routerPassword=your-router-password
+tgAllowedUsers=123456789
+tgApiKey=123456:ABC-DEF
+externalUrl=https://example.com
+```
+
 ## Install
 
 Use your preferred package manager to install dependencies:
@@ -48,3 +61,11 @@ After building you can serve the production build with
 ```bash
 npm start
 ```
+
+## Telegram bot
+
+1. Message [@BotFather](https://t.me/BotFather) and run `/newbot`.
+2. Choose a name and username for your bot.
+3. BotFather will provide a token – put it in `tgApiKey` inside `.env`.
+4. Use [@userinfobot](https://t.me/userinfobot) to find your numeric user ID.
+5. Set this ID (or multiple comma‑separated IDs) in `tgAllowedUsers`.
