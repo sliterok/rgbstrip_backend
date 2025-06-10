@@ -21,6 +21,7 @@ export const dynamic: IDynamicDto = {
 	awayOverrideActive: false,
 	lastMode: IMode.Disabled,
 	modeChanged: Date.now(),
+	overrideRatio: 0,
 }
 
 export const hueToColor = (hue: number) => hsl(hue, 1, 0.5)

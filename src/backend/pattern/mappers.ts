@@ -39,12 +39,15 @@ export const awayColor: IArrColor = [5, 20, 5]
 
 export const defaultMapperMiddleware = (): { color: IArrColor; ratio: number } | undefined => {
 	const now = Date.now()
-	return getOverride(now)
+	const override = getOverride(now)
+	dynamic.overrideRatio = override ? override.ratio : 0
+	return override
 }
 
 export const callIndexedGetter = <T = never>(getter: IColorGetter<T>, onBatch?: (batchIndex: number) => T) => {
 	const now = Date.now()
 	const override = getOverride(now)
+	dynamic.overrideRatio = override ? override.ratio : 0
 	return Array(batchSize)
 		.fill(null)
 		.map((_, batchIndex): IArrColor[] => {
@@ -68,6 +71,7 @@ export const createFlatMapper =
 	() => {
 		const now = Date.now()
 		const override = getOverride(now)
+		dynamic.overrideRatio = override ? override.ratio : 0
 		const base = getter instanceof Function ? getter() : getter
 		if (!override) return [[base]]
 		if (override.ratio >= 1) return [[override.color]]

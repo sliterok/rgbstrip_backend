@@ -45,6 +45,7 @@ export interface IDynamicDto {
 	awayOverrideActive: boolean
 	lastMode: IMode
 	modeChanged: number
+	overrideRatio: number
 	target?: Datagram.RemoteInfo
 }
 
