@@ -39,6 +39,8 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			[IMode.Heartbeat]: '❤️',
 			[IMode.Strobe]: '💥',
 			[IMode.Pulse]: '🔆',
+			[IMode.GradientPulse]: '🎇',
+			[IMode.MultiPulse]: '🎆',
 		},
 		{
 			formatState,

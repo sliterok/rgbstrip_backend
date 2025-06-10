@@ -1,6 +1,8 @@
 import { IColorGetter, IArrColor } from 'src/typings'
 import { hslToRgb } from 'src/helpers'
 import { settings } from 'src/settings'
+import { getRainbowColor } from './rainbow'
+import { pixelsCount } from '../shared'
 
 export const getHeartbeatColor: IColorGetter = (_, time) => {
 	const cycle = 1000
@@ -51,10 +53,34 @@ export const getPulseColor: IColorGetter = (_, time) => {
 	return pulseColor.map(c => Math.round(c * intensity)) as IArrColor
 }
 
+export const getGradientPulseColor: IColorGetter = (index, time) => {
+	const base = (getRainbowColor as any)(index, time)
+	const cycle = 1000
+	const t = (time * settings.effectSpeed) % cycle
+	const intensity = Math.sin((t / cycle) * Math.PI)
+	return base.map((c: number) => Math.round(c * intensity)) as IArrColor
+}
+
+export const getMultiPulseColor: IColorGetter = (index, time) => {
+	const cycle = 1000
+	const t = (time * settings.effectSpeed) % cycle
+	if (t < lastMultiPulse) {
+		multiPulseColors = multiPulseColors.map(() => hslToRgb(Math.random() * 360, 1, 0.5))
+	}
+	lastMultiPulse = t
+	const segment = Math.min(Math.floor((index / pixelsCount) * multiPulseColors.length), multiPulseColors.length - 1)
+	const intensity = Math.sin((t / cycle) * Math.PI)
+	return multiPulseColors[segment].map((c: number) => Math.round(c * intensity)) as IArrColor
+}
+
 let strobeColor: IArrColor = [255, 255, 255]
 let lastStrobe = 0
 let pulseColor: IArrColor = [255, 0, 0]
 let lastPulse = 0
+let multiPulseColors: IArrColor[] = Array(4)
+	.fill(null)
+	.map(() => hslToRgb(Math.random() * 360, 1, 0.5))
+let lastMultiPulse = 0
 let prevHeartbeat: IArrColor = hslToRgb(Math.random() * 360, 1, 0.5)
 let nextHeartbeat: IArrColor = prevHeartbeat
 let lastHeartbeat = 0
