@@ -2,6 +2,7 @@ import { bot, menuTemplate, userData } from './bot'
 import { GrammyError } from 'grammy'
 import { TextBody } from 'grammy-inline-menu/dist/source/body'
 import { InlineKeyboardButton } from 'grammy/types'
+import { logger } from '../logger'
 
 export async function updateKeyboard(except?: number) {
 	for (const [userId, { ctx: lastContext, menu: lastMenu }] of userData.entries()) {
@@ -17,7 +18,7 @@ export async function updateKeyboard(except?: number) {
 				error instanceof GrammyError &&
 				!error.description.endsWith('are exactly the same as a current content and reply markup of the message')
 			) {
-				console.error(error)
+				logger.error(error)
 			}
 		}
 	}
@@ -39,7 +40,7 @@ export async function updateMessage(except?: number) {
 				error instanceof GrammyError &&
 				!error.description.endsWith('are exactly the same as a current content and reply markup of the message')
 			) {
-				console.error(error)
+				logger.error(error)
 			}
 		}
 	}
