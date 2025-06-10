@@ -15,10 +15,12 @@ const ConfigSchema = z.object({
 	externalUrl: z.string().nonempty(),
 })
 
-const parsed = ConfigSchema.safeParse(process.env)
-if (!parsed.success) {
+const isTest = process.env.NODE_ENV === 'test'
+const parsed = (isTest ? ConfigSchema.partial() : ConfigSchema).safeParse(process.env)
+
+if (!parsed.success && !isTest) {
 	const details = parsed.error.issues.map(issue => `${issue.path[0]}: ${issue.message}`).join(', ')
 	throw new Error(`Invalid environment variables - ${details}`)
 }
 
-export const config: IConfig = parsed.data
+export const config: IConfig = (parsed.success ? parsed.data : process.env) as IConfig
