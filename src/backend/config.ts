@@ -3,7 +3,7 @@ import { config as dotenv } from 'dotenv'
 import path from 'node:path'
 import { z } from 'zod'
 
-dotenv({ path: path.resolve(process.cwd(), '.env') })
+dotenv({ path: path.resolve(__dirname, '../../.env') })
 
 const ConfigSchema = z.object({
 	TZ: z.string().optional(),
