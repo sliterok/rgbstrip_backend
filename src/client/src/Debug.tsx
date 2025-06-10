@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import classes from './pixel.module.css'
-import { IArrColor } from '../../src/typings'
+import { IArrColor } from '../../typings'
 
 let eventSource: EventSource
 

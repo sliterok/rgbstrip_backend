@@ -7,10 +7,10 @@
 		"build": "zenom build",
 		"start": "zenom serve",
 		"restart": "pm2 restart 8",
-		"format": "prettier --write --ignore-unknown client server src",
+                "format": "prettier --write --ignore-unknown src",
 		"test": "npm run test:typecheck && npm run test:format && npm run test:jest",
 		"test:typecheck": "tsc -p tsconfig.json --noEmit",
-		"test:format": "prettier --check --ignore-unknown client server src",
+                "test:format": "prettier --check --ignore-unknown src",
 		"test:lint": "eslint . --ext .ts,.tsx,.js --ignore-pattern dist",
 		"test:jest": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage"
 	},

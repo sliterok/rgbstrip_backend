@@ -1,4 +1,4 @@
-import { broadcastMessage } from 'src/routes/debug/stream.api'
+import { broadcastMessage } from 'src/server/routes/debug/stream.api'
 import { getPixels } from './pattern'
 import { dynamic, batchSize, frameInterval } from './shared'
 import { sendPacket } from './udp'
