@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { dynamic } from '../../../backend/shared'
+import { dynamic } from '../../../core/shared'
 
 const connections = new Set<Response>()
 

@@ -1,5 +1,5 @@
-import { getBreatheColor } from '../src/backend/pattern/breathe'
-import { dynamic } from '../src/backend/shared'
+import { getBreatheColor } from '../src/core/pattern/breathe'
+import { dynamic } from '../src/core/shared'
 
 describe('getBreatheColor', () => {
 	beforeEach(() => {
