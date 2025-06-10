@@ -1,6 +1,9 @@
 import { IConfig } from 'src/typings'
 import { config as dotenv } from 'dotenv'
-import { z } from 'zod'
+const env = dotenv().parsed ?? {}
+
+	...(env as unknown as IConfig),
+	...(process.env as unknown as Partial<IConfig>),
 
 dotenv()
 
