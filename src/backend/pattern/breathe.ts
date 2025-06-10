@@ -8,9 +8,10 @@ export const getBreatheColor: IColorGetter = (_, time) => {
 	const ratio = clamp(0, dynamic.overrideRatio, 1)
 
 	const freezeAt = 0.6
+	const releaseAt = 0.45
 	if (ratio >= freezeAt && dynamic.breatheHue === undefined) {
 		dynamic.breatheHue = baseHue
-	} else if (ratio < freezeAt && dynamic.breatheHue !== undefined) {
+	} else if (ratio <= releaseAt && dynamic.breatheHue !== undefined) {
 		dynamic.breatheHue = undefined
 	}
 
