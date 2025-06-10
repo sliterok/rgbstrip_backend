@@ -4,6 +4,7 @@ import { jest } from '@jest/globals'
 
 process.env.tgAllowedUsers = '0'
 process.env.tgApiKey = '0:dummy'
+process.env.TZ = 'UTC'
 
 jest.mock('../src/backend', () => ({ init: () => {} }))
 
