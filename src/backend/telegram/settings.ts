@@ -2,6 +2,7 @@ import { MenuTemplate } from 'grammy-inline-menu'
 import { Context } from 'grammy'
 import { settings } from '../../settings'
 import { IMode, ISettings } from '../../typings'
+import { dynamic } from '../shared'
 import { updateKeyboard } from './updates'
 import { logger } from '../../logger'
 import { FormatStateFunction } from 'grammy-inline-menu/dist/source/buttons/select'
@@ -45,7 +46,11 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			columns: 4,
 			isSet: (ctx, key) => settings.mode === parseInt(key),
 			set: async (ctx, key) => {
-				settings.mode = parseInt(key)
+				const newMode = parseInt(key)
+				if (settings.mode !== newMode) {
+					dynamic.transition = { from: settings.mode, start: Date.now() }
+					settings.mode = newMode
+				}
 				const selectedMode = IMode[settings.mode]
 				logger.info('selected mode', { selectedMode, userId: ctx.chat!.id })
 				await ctx.answerCallbackQuery(settings.mode ? `${selectedMode} mode` : 'off')
