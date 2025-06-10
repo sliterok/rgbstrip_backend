@@ -9,6 +9,7 @@ let lastTimestamp: number
 export default function Color() {
 	const tgWebAppDataRef = useRef<string | null>(null)
 	const [color, setColor] = useState<RgbaColor>({ r: 255, g: 0, b: 255, a: 0 })
+	const [mic, setMic] = useState(false)
 
 	useEffect(() => {
 		const initData = urlParseHashParams(location.hash)
@@ -28,6 +29,14 @@ export default function Color() {
 		})
 	}
 
+	const toggleMic = () => {
+		fetch('/api/mic-mode', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ enable: !mic }),
+		}).then(() => setMic(!mic))
+	}
+
 	return (
 		<div className={classes.container}>
 			<RgbaColorPicker
@@ -42,6 +51,9 @@ export default function Color() {
 				}}
 				style={{ width: '95vw', height: '95vh' }}
 			/>
+			<button onClick={toggleMic} style={{ marginTop: 20 }}>
+				{mic ? 'Mic Off' : 'Mic On'}
+			</button>
 		</div>
 	)
 }

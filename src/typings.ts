@@ -25,6 +25,7 @@ export enum IMode {
 	Pulse,
 	GradientPulse,
 	MultiPulse,
+	Mic,
 }
 
 export interface ISettings {
@@ -48,6 +49,7 @@ export interface IDynamicDto {
 	nightChanged: number
 	awayChanged: number
 	overrideRatio: number
+	audioLevel: number
 	breatheHue?: number
 	target?: Datagram.RemoteInfo
 	transition?: { from: IMode; start: number }

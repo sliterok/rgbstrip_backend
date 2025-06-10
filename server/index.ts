@@ -3,7 +3,7 @@ import { init } from '../src/backend'
 import { logger } from '../src/logger'
 import { settings } from '../src/settings'
 import { isVerifiedUser, extractUserId } from '../src/backend/telegram/verify'
-import { IArrColor } from '../src/typings'
+import { IArrColor, IMode } from '../src/typings'
 import { streamHandler } from '../src/routes/debug/stream.api'
 
 init()
@@ -27,6 +27,12 @@ router.post('/color', (req, res) => {
 	settings.color = color
 	settings.mixRatio = alpha
 	logger.info('Color updated', { userId, color, alpha })
+	res.status(204).end()
+})
+
+router.post('/mic-mode', (req, res) => {
+	const { enable } = req.body as { enable: boolean }
+	settings.mode = enable ? IMode.Mic : IMode.Color
 	res.status(204).end()
 })
 
