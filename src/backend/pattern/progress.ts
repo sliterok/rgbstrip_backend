@@ -12,7 +12,8 @@ export const getProgressColor: IColorGetter = (index, time) => {
 
 	let lightness = clamp(0.25, progress > index ? 0.5 : 0.5 - 0.2 * dist, 0.5)
 	let saturation = lightness * 2
-	let color = (time / 16 + index) % 360
+	const t = time * settings.effectSpeed
+	let color = (t / 16 + index) % 360
 
 	if (total === 0) {
 		lightness = 0.5

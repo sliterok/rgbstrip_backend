@@ -1,10 +1,11 @@
 import { IColorGetter } from 'src/typings'
 import { hslToRgb } from 'src/helpers'
 import { pixelsCount, normalNoise } from '../shared'
+import { settings } from 'src/settings'
 
 export const getPlasmaColor: IColorGetter = (index, time) => {
 	const x = index / pixelsCount
-	const t = time / 1000
+	const t = (time * settings.effectSpeed) / 1000
 
 	const wave1 = Math.sin(t / 5 + x * 4)
 	const wave2 = Math.sin(t / 7 - x * 7)
