@@ -16,3 +16,8 @@ export function hslToRgb(h: number, s: number, l: number): IArrColor {
 }
 
 export const clamp = (min: number, num: number, max: number) => Math.min(Math.max(num, min), max)
+
+export const smoothStep = (x: number, edge0: number, edge1: number) => {
+	const t = clamp(0, (x - edge0) / (edge1 - edge0), 1)
+	return t * t * (3 - 2 * t)
+}
