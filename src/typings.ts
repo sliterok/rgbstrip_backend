@@ -23,6 +23,8 @@ export enum IMode {
 	Heartbeat,
 	Strobe,
 	Pulse,
+	GradientPulse,
+	MultiPulse,
 }
 
 export interface ISettings {

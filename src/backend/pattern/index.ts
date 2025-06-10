@@ -7,7 +7,7 @@ import { getRainbowColor } from './rainbow'
 import { getPlasmaColor } from './plasma'
 import { getBreatheColor } from './breathe'
 import { getWaveColor } from './wave'
-import { getHeartbeatColor, getStrobeColor, getPulseColor } from './extra'
+import { getHeartbeatColor, getStrobeColor, getPulseColor, getGradientPulseColor, getMultiPulseColor } from './extra'
 import { createIndexedMapper, createFlatMapper } from './mappers'
 
 const transitionDuration = 250
@@ -33,6 +33,8 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Heartbeat]: createIndexedMapper(getHeartbeatColor),
 	[IMode.Strobe]: createIndexedMapper(getStrobeColor),
 	[IMode.Pulse]: createIndexedMapper(getPulseColor),
+	[IMode.GradientPulse]: createIndexedMapper(getGradientPulseColor),
+	[IMode.MultiPulse]: createIndexedMapper(getMultiPulseColor),
 }
 
 export function getPixels(mode: IMode): IArrColor[][] {
