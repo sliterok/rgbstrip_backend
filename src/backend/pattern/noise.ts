@@ -18,10 +18,9 @@ interface INoiseBatchData {
 
 let baseOffset = 0
 let lastTrueColor = Date.now()
-const start = Date.now()
 export const noiseFrameMapper: IColorMapper = () =>
 	callIndexedGetter<INoiseBatchData>(getNoiseColor, () => {
-		const rawOffset = baseOffset + 0.007 * settings.effectSpeed
+		const rawOffset = baseOffset + 0.007
 		baseOffset = rawOffset % 1
 		if (rawOffset >= 1) {
 			colors.add(toRgbLab(getNextColor()))
@@ -50,11 +49,10 @@ function getNextRandomColor() {
 
 const getNoiseColor: IColorGetter<INoiseBatchData> = (index, time, batchData) => {
 	const normalPosition = index / pixelsCount
-	const t = (time - start) * settings.effectSpeed
-	const positionScaleNoise = 10 * normalNoise(t / 300, index) + 3
+	const positionScaleNoise = 10 * normalNoise(time / 300, index) + 3
 
 	const x = normalPosition * positionScaleNoise
-	const y = t / 5000
+	const y = time / 5000
 
 	const offset = batchData.baseOffset + normalNoise(x, y) * (activeColors - 1)
 

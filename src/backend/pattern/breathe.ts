@@ -1,12 +1,9 @@
 import { IColorGetter } from 'src/typings'
 import { hslToRgb } from 'src/helpers'
 import { dynamic } from '../shared'
-import { settings } from 'src/settings'
-
-const start = Date.now()
 
 export const getBreatheColor: IColorGetter = (_, time) => {
-	const t = ((time - start) * settings.effectSpeed) / 1000
+	const t = time / 1000
 	const baseHue = (t * 20) % 360
 	const baseLight = 0.5 + 0.25 * Math.sin(t / 2)
 
