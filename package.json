@@ -12,7 +12,7 @@
     "test:typecheck": "tsc -p tsconfig.json --noEmit",
     "test:format": "prettier --check --ignore-unknown client server src",
     "test:lint": "eslint . --ext .ts,.tsx,.js --ignore-pattern dist",
-    "test:jest": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test:jest": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },
   "devDependencies": {
     "@jest/globals": "^30.0.0",
