@@ -33,6 +33,8 @@ bot.use(menuMiddleware)
 
 export function startTelegram() {
 	if (process.env.NODE_ENV !== 'test') {
-		bot.start().catch(err => console.error(err))
+		bot.start()
+			.then(() => console.log('Telegram bot started'))
+			.catch(err => console.error(err))
 	}
 }

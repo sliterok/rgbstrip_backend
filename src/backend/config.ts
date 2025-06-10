@@ -1,9 +1,8 @@
 import { IConfig } from 'src/typings'
 import { config as dotenv } from 'dotenv'
-import path from 'node:path'
 import { z } from 'zod'
 
-dotenv({ path: path.join(process.cwd(), '.env') })
+dotenv()
 
 const ConfigSchema = z.object({
 	TZ: z.string().optional(),
