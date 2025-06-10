@@ -33,6 +33,10 @@ bot.use(menuMiddleware)
 
 export function startTelegram() {
 	if (process.env.NODE_ENV !== 'test') {
+		if (!config.tgApiKey) {
+			console.warn('Telegram token missing, bot not started')
+			return
+		}
 		bot.start()
 			.then(() => console.log('Telegram bot started'))
 			.catch(err => console.error(err))
