@@ -43,6 +43,7 @@ export interface IDynamicDto {
 	awayChanged: number
 	overrideRatio: number
 	breatheHue?: number
+	breatheOffset?: number
 	target?: Datagram.RemoteInfo
 }
 

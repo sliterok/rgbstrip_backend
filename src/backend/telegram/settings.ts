@@ -3,6 +3,7 @@ import { Context } from 'grammy'
 import { settings } from '../../settings'
 import { IMode, ISettings } from '../../typings'
 import { updateKeyboard } from './updates'
+import { dynamic } from '../shared'
 import { FormatStateFunction } from 'grammy-inline-menu/dist/source/buttons/select'
 
 type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boolean ? k : never }[keyof ISettings]
@@ -42,6 +43,7 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			isSet: (ctx, key) => settings.mode === parseInt(key),
 			set: async (ctx, key) => {
 				settings.mode = parseInt(key)
+				if (settings.mode === IMode.Breathe) dynamic.breatheOffset = Math.random() * 12_000
 				const selectedMode = IMode[settings.mode]
 				// eslint-disable-next-line no-console
 				console.log('selected mode:', selectedMode)

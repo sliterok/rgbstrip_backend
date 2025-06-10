@@ -3,7 +3,8 @@ import { hslToRgb } from 'src/helpers'
 import { dynamic } from '../shared'
 
 export const getBreatheColor: IColorGetter = (_, time) => {
-	const t = time / 1000
+	if (dynamic.breatheOffset === undefined) dynamic.breatheOffset = Math.random() * 12_000
+	const t = (time + dynamic.breatheOffset) / 1000
 	const baseHue = (t * 20) % 360
 	const baseLight = 0.5 + 0.25 * Math.sin(t / 2)
 
