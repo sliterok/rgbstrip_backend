@@ -65,6 +65,7 @@ async function updatePhoneLastSeen() {
 				if (!dynamic.isAway) {
 					dynamic.isAway = true
 					dynamic.awayChanged = Date.now()
+					dynamic.awayOverrideActive = true
 					updateMessage()
 				}
 			}, 50_000)
@@ -74,6 +75,7 @@ async function updatePhoneLastSeen() {
 		if (dynamic.isAway) {
 			dynamic.isAway = false
 			dynamic.awayChanged = Date.now()
+			dynamic.awayOverrideActive = false
 			updateMessage()
 		}
 	}
