@@ -20,8 +20,15 @@ router.get('/default-color', (req, res) => {
 
 router.post('/color', (req, res) => {
 	const { color, alpha, tgWebAppData } = req.body as { color: IArrColor; alpha: number; tgWebAppData: string }
+
+	const colorValid =
+		Array.isArray(color) && color.length === 3 && color.every(c => typeof c === 'number' && Number.isFinite(c) && c >= 0 && c <= 255)
+	const alphaValid = typeof alpha === 'number' && Number.isFinite(alpha) && alpha >= 0 && alpha <= 1
+	if (!colorValid || !alphaValid) return res.status(400).end()
+
 	if (!tgWebAppData) return res.status(400).end()
 	if (!isVerifiedUser(tgWebAppData)) return res.status(403).end()
+
 	settings.color = color
 	settings.mixRatio = alpha
 	res.status(204).end()
