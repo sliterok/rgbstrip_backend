@@ -1,8 +1,6 @@
-import { settings } from 'src/settings'
-import { logger } from 'src/backend/logger'
+import { touchAlive } from 'src/backend/alive'
 
 export async function get(): Promise<Response> {
-	settings.alive = new Date()
-	logger.info('alive:', settings.alive)
+	touchAlive()
 	return new Response('ok')
 }

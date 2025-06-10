@@ -5,6 +5,7 @@ import { isVerifiedUser } from '../src/backend/telegram/verify'
 import { IArrColor } from '../src/typings'
 import { streamHandler } from '../src/routes/debug/stream.api'
 import { logger } from '../src/backend/logger'
+import { touchAlive } from '../src/backend/alive'
 
 init()
 
@@ -29,8 +30,7 @@ router.post('/color', (req, res) => {
 })
 
 router.get('/alive', (req, res) => {
-	settings.alive = new Date()
-	logger.info('alive:', settings.alive)
+	touchAlive()
 	res.send('ok')
 })
 
