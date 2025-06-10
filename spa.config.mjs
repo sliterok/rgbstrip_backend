@@ -3,7 +3,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const pathsPlugin = tsconfigPaths({ projects: ['../tsconfig.json'] })
+const pathsPlugin = tsconfigPaths({ projects: ['../../tsconfig.json'] })
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const alias = [
@@ -14,7 +14,7 @@ const alias = [
 ]
 
 export default defineConfig({
-	root: './',
+        root: './src',
 	port: 8001,
 	backendConfig: {
 		plugins: [pathsPlugin],
