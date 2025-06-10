@@ -1,6 +1,7 @@
 import crypto from 'node:crypto'
 import { config } from '../config'
 import { isAllowedUser } from './auth'
+import { logger } from '../../logger'
 
 interface ITelegramProfile {
 	allows_write_to_pm: true
@@ -17,7 +18,8 @@ export function extractUserId(telegramInitData: string): number | null {
 		const user = urlParams.get('user')
 		if (!user) return null
 		return (JSON.parse(user) as ITelegramProfile).id
-	} catch {
+	} catch (err) {
+		logger.warn('failed to parse user id', err)
 		return null
 	}
 }
@@ -41,9 +43,13 @@ export function isVerifiedUser(telegramInitData: string): boolean {
 		.update(dataCheckString)
 		.digest('hex')
 
-	if (calculatedHash !== hash) return false
+	if (calculatedHash !== hash) {
+		logger.warn('invalid telegram signature')
+		return false
+	}
 
 	const user = JSON.parse(urlParams.get('user')!) as ITelegramProfile
-
-	return isAllowedUser(user.id)
+	const allowed = isAllowedUser(user.id)
+	if (!allowed) logger.warn('user not allowed', { userId: user.id })
+	return allowed
 }
