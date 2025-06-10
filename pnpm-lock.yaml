@@ -53,6 +53,9 @@ importers:
       zod:
         specifier: ^3.25.57
         version: 3.25.57
+      zod:
+        specifier: ^3.25.57
+        version: 3.25.57
     devDependencies:
       '@types/d3-color':
         specifier: ^3.1.3
@@ -3063,6 +3066,9 @@ packages:
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
     engines: {node: '>=10'}
+
+  zod@3.25.57:
+    resolution: {integrity: sha512-6tgzLuwVST5oLUxXTmBqoinKMd3JeesgbgseXeFasKKj8Q1FCZrHnbqJOyiEvr4cVAlbug+CgIsmJ8cl/pU5FA==}
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
@@ -6216,6 +6222,8 @@ snapshots:
       require-directory: 2.1.1
       string-width: 4.2.3
       y18n: 5.0.8
+
+  zod@3.25.57: {}
       yargs-parser: 21.1.1
 
   yn@3.1.1: {}
