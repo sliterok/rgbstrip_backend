@@ -34,7 +34,8 @@ export function createMenuTemplate() {
 
 	menuTemplate.interact('-', 'spd_dec', {
 		do: async ctx => {
-			settings.effectSpeed = Math.max(0.1, Math.round((settings.effectSpeed - 0.1) * 10) / 10)
+			const step = Math.max(0.1, settings.effectSpeed * 0.1)
+			settings.effectSpeed = Math.max(0.1, Math.round((settings.effectSpeed - step) * 10) / 10)
 			await ctx.answerCallbackQuery(`${Math.round(settings.effectSpeed * 100)}%`)
 			await updateKeyboard(ctx.chat!.id)
 			return true
@@ -52,7 +53,8 @@ export function createMenuTemplate() {
 	menuTemplate.interact('+', 'spd_inc', {
 		joinLastRow: true,
 		do: async ctx => {
-			settings.effectSpeed = Math.min(2, Math.round((settings.effectSpeed + 0.1) * 10) / 10)
+			const step = Math.max(0.1, settings.effectSpeed * 0.1)
+			settings.effectSpeed = Math.min(5, Math.round((settings.effectSpeed + step) * 10) / 10)
 			await ctx.answerCallbackQuery(`${Math.round(settings.effectSpeed * 100)}%`)
 			await updateKeyboard(ctx.chat!.id)
 			return true

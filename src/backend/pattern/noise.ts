@@ -49,10 +49,11 @@ function getNextRandomColor() {
 
 const getNoiseColor: IColorGetter<INoiseBatchData> = (index, time, batchData) => {
 	const normalPosition = index / pixelsCount
-	const positionScaleNoise = 10 * normalNoise(time / 300, index) + 3
+	const t = time * settings.effectSpeed
+	const positionScaleNoise = 10 * normalNoise(t / 300, index) + 3
 
 	const x = normalPosition * positionScaleNoise
-	const y = time / 5000
+	const y = t / 5000
 
 	const offset = batchData.baseOffset + normalNoise(x, y) * (activeColors - 1)
 
