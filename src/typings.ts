@@ -20,22 +20,7 @@ export enum IMode {
 	Plasma,
 	Breathe,
 	Wave,
-	Chase,
-	Ripple,
-	Meteor,
-	Lightning,
-	Scanner,
 	Heartbeat,
-	Sparkler,
-	Spectrum,
-	Sunrise,
-	Strobe,
-	Twinkle,
-	Pulse,
-	Fire,
-	Gradient,
-	Sparkle,
-	Ocean,
 }
 
 export interface ISettings {
