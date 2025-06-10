@@ -2,7 +2,6 @@ import { MenuTemplate } from 'grammy-inline-menu'
 import { Context } from 'grammy'
 import { settings } from '../../settings'
 import { IMode, ISettings } from '../../typings'
-import { dynamic } from '../shared'
 import { updateKeyboard } from './updates'
 import { FormatStateFunction } from 'grammy-inline-menu/dist/source/buttons/select'
 
@@ -42,12 +41,7 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			columns: 3,
 			isSet: (ctx, key) => settings.mode === parseInt(key),
 			set: async (ctx, key) => {
-				const newMode = parseInt(key)
-				if (settings.mode !== newMode) {
-					dynamic.lastMode = settings.mode
-					dynamic.modeChanged = Date.now()
-					settings.mode = newMode
-				}
+				settings.mode = parseInt(key)
 				const selectedMode = IMode[settings.mode]
 				// eslint-disable-next-line no-console
 				console.log('selected mode:', selectedMode)

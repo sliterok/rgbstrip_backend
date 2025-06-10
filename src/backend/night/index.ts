@@ -20,10 +20,7 @@ export function updateNightStatus(time = getCurrentTime()) {
 		}
 	}
 
-	if (wasNight !== dynamic.isNight) {
-		dynamic.nightChanged = Date.now()
-		dynamic.nightOverrideActive = dynamic.isNight
-	}
+	if (wasNight !== dynamic.isNight) dynamic.nightChanged = Date.now()
 
 	updateMessage()
 

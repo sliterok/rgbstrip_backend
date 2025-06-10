@@ -5,49 +5,45 @@ import { settings } from 'src/settings'
 const nightDuration = 10 * 60 * 1000
 const awayDuration = 60 * 1000
 
+export const awayColor: IArrColor = [5, 20, 5]
+
 function mix(a: IArrColor, b: IArrColor, t: number): IArrColor {
 	return [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)]
 }
 
-function getOverride(now: number): { color: IArrColor; ratio: number } | undefined {
-	const nightActive = !settings.nightOverride && dynamic.isNight
-	if (nightActive !== dynamic.nightOverrideActive) {
-		dynamic.nightOverrideActive = nightActive
-		dynamic.nightChanged = now
-	}
-	if (nightActive || now - dynamic.nightChanged < nightDuration) {
-		const diff = now - dynamic.nightChanged
-		const base = Math.min(1, diff / nightDuration)
-		const ratio = nightActive ? base : 1 - base
-		if (ratio > 0) return { color: dynamic.disabledColor, ratio }
-	}
-
-	const awayActive = !settings.geoOverride && dynamic.isAway
-	if (awayActive !== dynamic.awayOverrideActive) {
-		dynamic.awayOverrideActive = awayActive
-		dynamic.awayChanged = now
-	}
-	if (awayActive || now - dynamic.awayChanged < awayDuration) {
-		const diff = now - dynamic.awayChanged
-		const base = Math.min(1, diff / awayDuration)
-		const ratio = awayActive ? base : 1 - base
-		if (ratio > 0) return { color: awayColor, ratio }
-	}
-}
-
-export const awayColor: IArrColor = [5, 20, 5]
-
 export const defaultMapperMiddleware = (): { color: IArrColor; ratio: number } | undefined => {
 	const now = Date.now()
-	const override = getOverride(now)
-	dynamic.overrideRatio = override ? override.ratio : 0
-	return override
+	if (!settings.nightOverride) {
+		const diff = now - dynamic.nightChanged
+		if (dynamic.isNight || diff < nightDuration) {
+			const base = Math.min(1, diff / nightDuration)
+			const ratio = dynamic.isNight ? base : 1 - base
+			if (ratio > 0) {
+				dynamic.overrideRatio = ratio
+				return { color: dynamic.disabledColor, ratio }
+			}
+		}
+	}
+
+	if (!settings.geoOverride) {
+		const diff = now - dynamic.awayChanged
+		if (dynamic.isAway || diff < awayDuration) {
+			const base = Math.min(1, diff / awayDuration)
+			const ratio = dynamic.isAway ? base : 1 - base
+			if (ratio > 0) {
+				dynamic.overrideRatio = ratio
+				return { color: awayColor, ratio }
+			}
+		}
+	}
+
+	dynamic.overrideRatio = 0
+	return undefined
 }
 
 export const callIndexedGetter = <T = never>(getter: IColorGetter<T>, onBatch?: (batchIndex: number) => T) => {
+	const override = defaultMapperMiddleware()
 	const now = Date.now()
-	const override = getOverride(now)
-	dynamic.overrideRatio = override ? override.ratio : 0
 	return Array(batchSize)
 		.fill(null)
 		.map((_, batchIndex): IArrColor[] => {
@@ -69,9 +65,7 @@ export const createIndexedMapper =
 export const createFlatMapper =
 	(getter: IStaticColorGetter | IArrColor): IColorMapper =>
 	() => {
-		const now = Date.now()
-		const override = getOverride(now)
-		dynamic.overrideRatio = override ? override.ratio : 0
+		const override = defaultMapperMiddleware()
 		const base = getter instanceof Function ? getter() : getter
 		if (!override) return [[base]]
 		if (override.ratio >= 1) return [[override.color]]

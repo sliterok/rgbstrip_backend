@@ -41,10 +41,6 @@ export interface IDynamicDto {
 	lastMessage: number
 	nightChanged: number
 	awayChanged: number
-	nightOverrideActive: boolean
-	awayOverrideActive: boolean
-	lastMode: IMode
-	modeChanged: number
 	overrideRatio: number
 	breatheHue?: number
 	breatheLight?: number

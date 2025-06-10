@@ -1,5 +1,5 @@
 import { createNoise2D } from 'simplex-noise'
-import { IDynamicDto, IMode } from 'src/typings'
+import { IDynamicDto } from 'src/typings'
 import { hsl } from 'd3-color'
 
 export const activeColors = 5
@@ -17,10 +17,6 @@ export const dynamic: IDynamicDto = {
 	lastMessage: 0,
 	nightChanged: Date.now(),
 	awayChanged: Date.now(),
-	nightOverrideActive: true,
-	awayOverrideActive: false,
-	lastMode: IMode.Disabled,
-	modeChanged: Date.now(),
 	overrideRatio: 0,
 	breatheHue: undefined,
 	breatheLight: undefined,
