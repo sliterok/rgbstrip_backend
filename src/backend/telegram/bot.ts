@@ -32,7 +32,7 @@ bot.use(async (ctx: Context, next: NextFunction) => {
 bot.use(menuMiddleware)
 
 export function startTelegram() {
-	if (import.meta.env.PROD) {
+	if (process.env.NODE_ENV !== 'test') {
 		bot.start().catch(err => console.error(err))
 	}
 }
