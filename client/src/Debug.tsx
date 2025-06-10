@@ -6,7 +6,7 @@ import { IArrColor } from '../../src/typings'
 let eventSource: EventSource
 
 export default function Debug() {
-	eventSource = eventSource ?? new EventSource('/debug/stream')
+	eventSource = eventSource ?? new EventSource('/api/debug/stream')
 
 	const [readyState, setReadyState] = useState(eventSource.readyState)
 	const pixelsRef = useRef<HTMLDivElement>(null)
