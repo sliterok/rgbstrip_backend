@@ -9,14 +9,12 @@ export const getBreatheColor: IColorGetter = (_, time) => {
 
 	if (dynamic.overrideRatio > 0 && dynamic.breatheHue === undefined) {
 		dynamic.breatheHue = baseHue
-		dynamic.breatheLight = baseLight
 	} else if (dynamic.overrideRatio === 0 && dynamic.breatheHue !== undefined) {
 		dynamic.breatheHue = undefined
-		dynamic.breatheLight = undefined
 	}
 
 	const hue = dynamic.breatheHue ?? baseHue
-	const startLight = dynamic.breatheLight ?? baseLight
-	const light = startLight + (0.5 - startLight) * dynamic.overrideRatio
+	const amplitude = 0.25 * (1 - dynamic.overrideRatio)
+	const light = 0.5 + amplitude * Math.sin(t / 2)
 	return hslToRgb(hue, 1, light)
 }
