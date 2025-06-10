@@ -1,8 +1,11 @@
 import { IConfig } from 'src/typings'
 import { config as dotenv } from 'dotenv'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 
-dotenv()
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+dotenv({ path: path.resolve(__dirname, '../../.env') })
 
 const ConfigSchema = z.object({
 	TZ: z.string().optional(),
