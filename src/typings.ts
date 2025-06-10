@@ -33,6 +33,7 @@ export interface ISettings {
 	geoOverride: boolean
 	mixColorWithNoise: boolean
 	mixRatio: number
+	effectSpeed: number
 	alive: Date
 }
 

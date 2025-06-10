@@ -1,9 +1,10 @@
 import { IColorGetter, IArrColor } from 'src/typings'
 import { hslToRgb } from 'src/helpers'
+import { settings } from 'src/settings'
 
 export const getHeartbeatColor: IColorGetter = (_, time) => {
 	const cycle = 1000
-	const t = time % cycle
+	const t = (time * settings.effectSpeed) % cycle
 
 	if (t < lastHeartbeat) {
 		prevHeartbeat = nextHeartbeat
@@ -31,7 +32,7 @@ function pulseIntensity(t: number, offset: number) {
 
 export const getStrobeColor: IColorGetter = (_, time) => {
 	const interval = 200
-	const t = time % interval
+	const t = (time * settings.effectSpeed) % interval
 	if (t < lastStrobe) {
 		strobeColor = hslToRgb(Math.random() * 360, 1, 0.5)
 	}
@@ -41,7 +42,7 @@ export const getStrobeColor: IColorGetter = (_, time) => {
 
 export const getPulseColor: IColorGetter = (_, time) => {
 	const cycle = 1000
-	const t = time % cycle
+	const t = (time * settings.effectSpeed) % cycle
 	if (t < lastPulse) {
 		pulseColor = hslToRgb(Math.random() * 360, 1, 0.5)
 	}

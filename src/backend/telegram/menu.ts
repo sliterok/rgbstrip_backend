@@ -4,6 +4,7 @@ import { dynamic } from '../shared'
 import { settings } from '../../settings'
 import { getIsWeekend } from '../night/static'
 import { toggleSetting, selectMode } from './settings'
+import { updateKeyboard } from './updates'
 import { config } from '../config'
 
 export function createMenuTemplate() {
@@ -30,6 +31,33 @@ export function createMenuTemplate() {
 	toggleSetting(menuTemplate, 'Mix color with noise', 'mixColorWithNoise')
 
 	selectMode(menuTemplate)
+
+	menuTemplate.interact('-', 'spd_dec', {
+		do: async ctx => {
+			settings.effectSpeed = Math.max(0.1, Math.round((settings.effectSpeed - 0.1) * 10) / 10)
+			await ctx.answerCallbackQuery(`${Math.round(settings.effectSpeed * 100)}%`)
+			await updateKeyboard(ctx.chat!.id)
+			return true
+		},
+	})
+	menuTemplate.interact(() => `${Math.round(settings.effectSpeed * 100)}%`, 'spd_res', {
+		joinLastRow: true,
+		do: async ctx => {
+			settings.effectSpeed = 1
+			await ctx.answerCallbackQuery('reset to 100%')
+			await updateKeyboard(ctx.chat!.id)
+			return true
+		},
+	})
+	menuTemplate.interact('+', 'spd_inc', {
+		joinLastRow: true,
+		do: async ctx => {
+			settings.effectSpeed = Math.min(2, Math.round((settings.effectSpeed + 0.1) * 10) / 10)
+			await ctx.answerCallbackQuery(`${Math.round(settings.effectSpeed * 100)}%`)
+			await updateKeyboard(ctx.chat!.id)
+			return true
+		},
+	})
 
 	menuTemplate.manual({
 		web_app: {
