@@ -1,8 +1,11 @@
 import { config as loadEnv } from 'dotenv'
 import { IConfig } from 'src/typings'
-loadEnv()
+const env = loadEnv().parsed || {}
 
-export const config: IConfig = process.env as unknown as IConfig
+export const config: IConfig = {
+	...(env as Partial<IConfig>),
+	...(process.env as Partial<IConfig>),
+} as IConfig
 
 const ConfigSchema = z.object({
 	TZ: z.string().optional(),
