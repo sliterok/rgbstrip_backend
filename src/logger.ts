@@ -1,26 +1,48 @@
 import { createLogger, format, transports } from 'winston'
+import chalk from 'chalk'
 
 const service = 'rgbstrip'
+
+const isProd = process.env.NODE_ENV === 'production'
+
+function formatMeta(meta: Record<string, unknown>) {
+	const entries = Object.entries(meta)
+		.filter(([key]) => key !== 'service')
+		.map(([key, val]) => {
+			const v = typeof val === 'object' ? JSON.stringify(val) : String(val)
+			return `${isProd ? key : chalk.magenta(key)}=${isProd ? v : chalk.cyan(v)}`
+		})
+	return entries.length ? ' ' + entries.join(' ') : ''
+}
 
 const baseFormat = format.combine(
 	format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 	format.errors({ stack: true }),
 	format.splat(),
 	format.printf(info => {
-		const { timestamp, level, message, stack, ...meta } = info
-		const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : ''
-		return `[${timestamp}] ${level}: ${stack || message}${metaStr}`
+		const { timestamp, level, message, stack, service, ...meta } = info
+		const lvlColor =
+			level === 'error'
+				? chalk.redBright
+				: level === 'warn'
+				? chalk.yellowBright
+				: level === 'info'
+				? chalk.greenBright
+				: level === 'debug'
+				? chalk.cyanBright
+				: (v: string) => v
+		const msg = stack || message
+		const metaStr = formatMeta(meta)
+		const time = isProd ? `[${timestamp}]` : chalk.gray(`[${timestamp}]`)
+		const lvl = isProd ? level : lvlColor(level)
+		return `${time} ${lvl}: ${msg}${metaStr}`
 	})
 )
 
 export const logger = createLogger({
 	level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
 	defaultMeta: { service },
-	transports: [
-		new transports.Console({
-			format: process.env.NODE_ENV === 'production' ? baseFormat : format.combine(format.colorize({ all: true }), baseFormat),
-		}),
-	],
+	transports: [new transports.Console({ format: baseFormat })],
 })
 
 export function childLogger(meta: Record<string, unknown>) {
