@@ -35,7 +35,7 @@ const baseFormat = format.combine(
 				: (v: string) => v
 		const msg = stack || message
 		const metaStr = formatMeta(meta)
-		const time = useColors ? chalk.gray(`[${timestamp}]`) : `[${timestamp}]`
+		const time = useColors ? chalk.whiteBright(`[${timestamp}]`) : `[${timestamp}]`
 		const lvl = useColors ? lvlColor(level) : level
 		return `${time} ${lvl}: ${msg}${metaStr}`
 	})
