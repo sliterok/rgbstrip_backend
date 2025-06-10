@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
+import { logger } from '../../logger'
 import { dynamic } from '../../backend/shared'
 
 const connections = new Set<Response>()
 
 export function streamHandler(req: Request, res: Response) {
 	if (process.env.NODE_ENV === 'production') {
-		console.warn('debug stream connection attempt rejected on prod')
+		logger.warn('debug stream connection attempt rejected on prod')
 		res.end()
 		return
 	}

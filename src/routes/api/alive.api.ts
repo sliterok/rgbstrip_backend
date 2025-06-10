@@ -1,8 +1,8 @@
 import { settings } from 'src/settings'
+import { logger } from 'src/logger'
 
 export async function get(): Promise<Response> {
 	settings.alive = new Date()
-	// eslint-disable-next-line no-console
-	console.log('alive:', settings.alive)
+	logger.debug('alive', { time: settings.alive })
 	return new Response('ok')
 }

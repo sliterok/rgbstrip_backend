@@ -11,6 +11,17 @@ interface ITelegramProfile {
 	username: string
 }
 
+export function extractUserId(telegramInitData: string): number | null {
+	try {
+		const urlParams = new URLSearchParams(telegramInitData)
+		const user = urlParams.get('user')
+		if (!user) return null
+		return (JSON.parse(user) as ITelegramProfile).id
+	} catch {
+		return null
+	}
+}
+
 export function isVerifiedUser(telegramInitData: string): boolean {
 	const urlParams = new URLSearchParams(telegramInitData)
 

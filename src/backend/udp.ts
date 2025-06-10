@@ -1,17 +1,17 @@
 import datagram from 'dgram'
+import { logger } from '../logger'
 import { dynamic } from './shared'
 
 export const socket = datagram.createSocket('udp4')
-socket.on('error', e => console.error(e))
+socket.on('error', e => logger.error(e))
 
 export function startUdpServer() {
 	try {
 		socket.bind(8009, '0.0.0.0', () => {
-			// eslint-disable-next-line no-console
-			console.log('up on 8009')
+			logger.info('UDP server listening', { port: 8009 })
 		})
 	} catch (err) {
-		console.error(err)
+		logger.error(err)
 	}
 }
 
