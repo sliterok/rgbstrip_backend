@@ -25,7 +25,6 @@ export enum IMode {
 	Pulse,
 	GradientPulse,
 	MultiPulse,
-	Mic,
 }
 
 export interface ISettings {
@@ -35,6 +34,7 @@ export interface ISettings {
 	nightOverride: boolean
 	geoOverride: boolean
 	mixColorWithNoise: boolean
+	music: boolean
 	mixRatio: number
 	effectSpeed: number
 	alive: Date

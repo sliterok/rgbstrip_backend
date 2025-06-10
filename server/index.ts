@@ -30,12 +30,6 @@ router.post('/color', (req, res) => {
 	res.status(204).end()
 })
 
-router.post('/mic-mode', (req, res) => {
-	const { enable } = req.body as { enable: boolean }
-	settings.mode = enable ? IMode.Mic : IMode.Color
-	res.status(204).end()
-})
-
 router.get('/alive', (req, res) => {
 	settings.alive = new Date()
 	logger.debug('alive', { time: settings.alive })
