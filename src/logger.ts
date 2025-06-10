@@ -1,9 +1,11 @@
 import { createLogger, format, transports } from 'winston'
-import chalk, { supportsColor } from 'chalk'
+import chalk from 'chalk'
+
+chalk.level = 3
 
 const service = 'rgbstrip'
 
-const useColors = supportsColor !== false
+const useColors = true
 
 function formatMeta(meta: Record<string, unknown>) {
 	const entries = Object.entries(meta)
@@ -19,7 +21,7 @@ const baseFormat = format.combine(
 	format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 	format.errors({ stack: true }),
 	format.splat(),
-	format.printf(info => {
+	format.printf((info: any) => {
 		const { timestamp, level, message, stack, service, ...meta } = info
 		const lvlColor =
 			level === 'error'
