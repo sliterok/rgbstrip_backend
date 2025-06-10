@@ -35,10 +35,13 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			[IMode.Plasma]: '✨',
 			[IMode.Breathe]: '🌪',
 			[IMode.Wave]: '🌊',
+			[IMode.Heartbeat]: '❤️',
+			[IMode.Strobe]: '💥',
+			[IMode.Pulse]: '🔆',
 		},
 		{
 			formatState,
-			columns: 3,
+			columns: 4,
 			isSet: (ctx, key) => settings.mode === parseInt(key),
 			set: async (ctx, key) => {
 				settings.mode = parseInt(key)
