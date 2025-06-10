@@ -46,6 +46,8 @@ export interface IDynamicDto {
 	lastMode: IMode
 	modeChanged: number
 	overrideRatio: number
+	breatheHue?: number
+	breatheLight?: number
 	target?: Datagram.RemoteInfo
 }
 

@@ -22,6 +22,8 @@ export const dynamic: IDynamicDto = {
 	lastMode: IMode.Disabled,
 	modeChanged: Date.now(),
 	overrideRatio: 0,
+	breatheHue: undefined,
+	breatheLight: undefined,
 }
 
 export const hueToColor = (hue: number) => hsl(hue, 1, 0.5)
