@@ -1,16 +1,24 @@
 import { IColorGetter, IArrColor } from 'src/typings'
-import { settings } from 'src/settings'
 import { hslToRgb } from 'src/helpers'
 
 export const getHeartbeatColor: IColorGetter = (_, time) => {
 	const cycle = 1000
 	const t = time % cycle
 
+	if (t < lastHeartbeat) {
+		prevHeartbeat = nextHeartbeat
+		nextHeartbeat = hslToRgb(Math.random() * 360, 1, 0.5)
+	}
+	lastHeartbeat = t
+
+	const fade = Math.min(t / 200, 1)
+	const baseColor = prevHeartbeat.map((c, i) => c + (nextHeartbeat[i] - c) * fade) as IArrColor
+
 	const first = pulseIntensity(t, 0)
 	const second = pulseIntensity(t, 250)
 	const intensity = Math.max(first, second)
 
-	return settings.color.map(c => Math.round(c * intensity)) as IArrColor
+	return baseColor.map(c => Math.round(c * intensity)) as IArrColor
 }
 
 const pulseDuration = 200
@@ -46,3 +54,6 @@ let strobeColor: IArrColor = [255, 255, 255]
 let lastStrobe = 0
 let pulseColor: IArrColor = [255, 0, 0]
 let lastPulse = 0
+let prevHeartbeat: IArrColor = hslToRgb(Math.random() * 360, 1, 0.5)
+let nextHeartbeat: IArrColor = prevHeartbeat
+let lastHeartbeat = 0
