@@ -1,16 +1,16 @@
 import { createLogger, format, transports } from 'winston'
-import chalk from 'chalk'
+import chalk, { supportsColor } from 'chalk'
 
 const service = 'rgbstrip'
 
-const isProd = process.env.NODE_ENV === 'production'
+const useColors = supportsColor !== false
 
 function formatMeta(meta: Record<string, unknown>) {
 	const entries = Object.entries(meta)
 		.filter(([key]) => key !== 'service')
 		.map(([key, val]) => {
 			const v = typeof val === 'object' ? JSON.stringify(val) : String(val)
-			return `${isProd ? key : chalk.magenta(key)}=${isProd ? v : chalk.cyan(v)}`
+			return `${useColors ? chalk.magenta(key) : key}=${useColors ? chalk.cyan(v) : v}`
 		})
 	return entries.length ? ' ' + entries.join(' ') : ''
 }
@@ -33,8 +33,8 @@ const baseFormat = format.combine(
 				: (v: string) => v
 		const msg = stack || message
 		const metaStr = formatMeta(meta)
-		const time = isProd ? `[${timestamp}]` : chalk.gray(`[${timestamp}]`)
-		const lvl = isProd ? level : lvlColor(level)
+		const time = useColors ? chalk.gray(`[${timestamp}]`) : `[${timestamp}]`
+		const lvl = useColors ? lvlColor(level) : level
 		return `${time} ${lvl}: ${msg}${metaStr}`
 	})
 )
