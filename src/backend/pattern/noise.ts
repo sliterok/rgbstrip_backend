@@ -5,7 +5,7 @@ import { ColorCommonInstance, rgb } from 'd3-color'
 import { IArrColor, IColorGetter, IColorMapper, IRgbLabColor } from 'src/typings'
 import { interpolateLabArr, toRgbLab } from './interpolate'
 import { pixelsCount, activeColors, normalNoise, hueToColor } from '../shared'
-import { callIndexedGetter, defaultMapperMiddleware } from './mappers'
+import { callIndexedGetter } from './mappers'
 import { settings } from 'src/settings'
 import { getCachedColor } from 'src/helpers'
 
@@ -18,38 +18,19 @@ interface INoiseBatchData {
 
 let baseOffset = 0
 let lastTrueColor = Date.now()
-export const noiseFrameMapper: IColorMapper = () => {
-	const middlewareRes = defaultMapperMiddleware()
-	let coeff = 0
-	if (middlewareRes) {
-		const diff = Date.now() - lastTrueColor
-		coeff = coeff < 1 ? Math.cbrt(diff / (5 * 60 * 1000)) : diff / (5 * 60 * 1000)
-		const hasFullyTransitioned = coeff > 1.3
-		if (hasFullyTransitioned) return [[middlewareRes]]
-	}
-
-	return callIndexedGetter<INoiseBatchData>(getNoiseColor, () => {
+export const noiseFrameMapper: IColorMapper = () =>
+	callIndexedGetter<INoiseBatchData>(getNoiseColor, () => {
 		const rawOffset = baseOffset + 0.007
 		baseOffset = rawOffset % 1
 		if (rawOffset >= 1) {
-			const color = middlewareRes && getCachedColor(middlewareRes)
-			colors.add(toRgbLab(getNextColor(coeff, color)))
+			colors.add(toRgbLab(getNextColor()))
 		}
 		return { baseOffset }
 	})
-}
 
-function getNextColor(coeff: number, alternativeColor?: ColorCommonInstance): ColorCommonInstance {
-	const hasTransitioned = coeff > 1.1
-	if (hasTransitioned) return alternativeColor!
-
+function getNextColor(): ColorCommonInstance {
 	let color: ColorCommonInstance = getNextRandomColor()
-	if (coeff) {
-		const interpolator = getInterpolator(toRgbLab(color), toRgbLab(alternativeColor!))
-		color = rgb(...interpolator(coeff))
-	} else {
-		lastTrueColor = Date.now()
-	}
+	lastTrueColor = Date.now()
 	if (settings.mixColorWithNoise) {
 		const interpolator = getInterpolator(toRgbLab(color), toRgbLab(getCachedColor(settings.color)))
 		color = rgb(...interpolator(settings.mixRatio))

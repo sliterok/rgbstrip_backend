@@ -39,7 +39,9 @@ export async function phoneLastSeen() {
 		await initted
 		const devicesRes = await client.get(`/rci/show/ip/hotspot?mac=${config.routerMac}`)
 		const hosts = devicesRes.data.host as IHost[]
-		const myPhone = hosts.filter(item => item.name.includes(config.routerDevice)).sort((a, b) => (a['last-seen'] - b['last-seen']) && +Number.isInteger(a))[0]
+		const myPhone = hosts
+			.filter(item => item.name.includes(config.routerDevice))
+			.sort((a, b) => a['last-seen'] - b['last-seen'] && +Number.isInteger(a))[0]
 		return myPhone?.['last-seen']
 	} catch (err) {
 		const error = err as AxiosError
@@ -62,6 +64,7 @@ async function updatePhoneLastSeen() {
 			seenTimeout = setTimeout(() => {
 				if (!dynamic.isAway) {
 					dynamic.isAway = true
+					dynamic.awayChanged = Date.now()
 					updateMessage()
 				}
 			}, 50_000)
@@ -70,6 +73,7 @@ async function updatePhoneLastSeen() {
 		seenTimeout = null
 		if (dynamic.isAway) {
 			dynamic.isAway = false
+			dynamic.awayChanged = Date.now()
 			updateMessage()
 		}
 	}
