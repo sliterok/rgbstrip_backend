@@ -19,6 +19,7 @@ export const dynamic: IDynamicDto = {
 	awayChanged: Date.now(),
 	overrideRatio: 0,
 	breatheHue: undefined,
+	transition: undefined,
 }
 
 export const hueToColor = (hue: number) => hsl(hue, 1, 0.5)

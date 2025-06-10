@@ -48,6 +48,7 @@ export interface IDynamicDto {
 	overrideRatio: number
 	breatheHue?: number
 	target?: Datagram.RemoteInfo
+	transition?: { from: IMode; start: number }
 }
 
 export interface IConfig {
