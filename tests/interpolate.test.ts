@@ -1,6 +1,6 @@
 import { rgb, lab } from 'd3-color'
 import { interpolateLab } from 'd3-interpolate'
-import { interpolateLabArr, toRgbLab } from '../src/core/pattern/interpolate'
+import { interpolateLabArr, toRgbLab } from '../src/server/pattern/interpolate'
 
 describe('interpolation', () => {
   function parseColor(str: string): [number, number, number] {

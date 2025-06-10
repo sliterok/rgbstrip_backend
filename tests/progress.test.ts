@@ -1,4 +1,4 @@
-import { getProgressColor } from '../src/core/pattern/progress'
+import { getProgressColor } from '../src/server/pattern/progress'
 import { settings } from '../src/settings'
 import { hsl, rgb } from 'd3-color'
 

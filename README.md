@@ -1,6 +1,6 @@
 # RGB Strip Backend
 
-This project controls an RGB LED strip and exposes a Telegram bot for interaction. The backend is written in TypeScript and relies on environment variables defined in `src/core/config.ts`.
+This project controls an RGB LED strip and exposes a Telegram bot for interaction. The backend is written in TypeScript and relies on environment variables defined in `src/server/config.ts`.
 
 ## Environment variables
 

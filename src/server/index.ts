@@ -1,9 +1,9 @@
 import express, { Router } from 'express'
-import { init } from '../core'
+import { init } from './init'
 import { settings } from '../settings'
-import { isVerifiedUser } from '../core/telegram/verify'
+import { isVerifiedUser } from './telegram/verify'
 import { IArrColor } from '../typings'
-import { streamHandler } from './routes/debug/stream.api'
+import { streamHandler } from './stream'
 
 init()
 

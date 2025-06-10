@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { RgbaColor, RgbaColorPicker } from 'react-colorful'
 import classes from './container.module.css'
-import { urlParseHashParams } from '../../core/telegram/decode'
+import { urlParseHashParams } from '../../server/telegram/decode'
 
 let lastTimestamp: number
 
