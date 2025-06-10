@@ -24,6 +24,7 @@
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"@types/tough-cookie": "^4.0.5",
+		"@types/winston": "^2.4.4",
 		"axios": "^0.27.2",
 		"axios-cookiejar-support": "^4.0.7",
 		"eslint": "^8.57.0",
@@ -43,6 +44,7 @@
 	"dependencies": {
 		"@hattip/adapter-node": "^0.0.35",
 		"@hattip/response": "0.0.45",
+		"chalk": "^5.3.0",
 		"cron": "^3.1.7",
 		"cross-env": "^7.0.3",
 		"d3-color": "^3.1.0",
@@ -54,6 +56,7 @@
 		"react-dom": "^19.1.0",
 		"react-router-dom": "^6.23.0",
 		"ring-buffer-ts": "^1.2.0",
+		"winston": "^3.17.0",
 		"zod": "^3.25.57"
 	}
 }

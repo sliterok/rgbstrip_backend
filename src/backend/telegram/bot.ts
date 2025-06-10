@@ -1,6 +1,7 @@
 import { Bot, CommandContext, Context, NextFunction } from 'grammy'
 import { MenuMiddleware } from 'grammy-inline-menu'
 import { Message } from 'grammy/types'
+import { logger } from '../../logger'
 import { config } from '../config'
 import { createMenuTemplate } from './menu'
 import { handleStartCommand, handleDeeplink } from './commands'
@@ -33,6 +34,8 @@ bot.use(menuMiddleware)
 
 export function startTelegram() {
 	if (process.env.NODE_ENV !== 'test') {
-		bot.start().catch(err => console.error(err))
+		bot.start()
+			.then(() => logger.info('Telegram bot started'))
+			.catch(err => logger.error(err))
 	}
 }

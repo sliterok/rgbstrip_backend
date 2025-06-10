@@ -4,6 +4,7 @@ import { dynamic, batchSize, frameInterval } from './shared'
 import { sendPacket } from './udp'
 import { settings } from 'src/settings'
 import { IArrColor } from 'src/typings'
+import { logger } from '../logger'
 
 export function startLoop() {
 	setInterval(loop, frameInterval * batchSize)
@@ -19,7 +20,7 @@ async function loop() {
 			if (dynamic.target) await sendPacket(convertPixels(pixels))
 		}
 	} catch (err) {
-		console.error('Error sending packet:', err)
+		logger.error('Error sending packet:', err)
 	}
 }
 
