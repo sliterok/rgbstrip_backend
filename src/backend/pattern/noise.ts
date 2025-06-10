@@ -20,7 +20,7 @@ let baseOffset = 0
 let lastTrueColor = Date.now()
 export const noiseFrameMapper: IColorMapper = () =>
 	callIndexedGetter<INoiseBatchData>(getNoiseColor, () => {
-		const rawOffset = baseOffset + 0.007
+		const rawOffset = baseOffset + 0.007 * settings.effectSpeed
 		baseOffset = rawOffset % 1
 		if (rawOffset >= 1) {
 			colors.add(toRgbLab(getNextColor()))
@@ -48,6 +48,7 @@ function getNextRandomColor() {
 }
 
 const getNoiseColor: IColorGetter<INoiseBatchData> = (index, time, batchData) => {
+	time *= settings.effectSpeed
 	const normalPosition = index / pixelsCount
 	const positionScaleNoise = 10 * normalNoise(time / 300, index) + 3
 
