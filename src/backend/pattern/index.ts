@@ -7,7 +7,7 @@ import { getRainbowColor } from './rainbow'
 import { getPlasmaColor } from './plasma'
 import { getBreatheColor } from './breathe'
 import { getWaveColor } from './wave'
-import { getHeartbeatColor } from './extra'
+import { getHeartbeatColor, getStrobeColor, getPulseColor } from './extra'
 import { createIndexedMapper, createFlatMapper } from './mappers'
 
 const mappers: Record<IMode, IColorMapper> = {
@@ -21,6 +21,8 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.Breathe]: createIndexedMapper(getBreatheColor),
 	[IMode.Wave]: createIndexedMapper(getWaveColor),
 	[IMode.Heartbeat]: createIndexedMapper(getHeartbeatColor),
+	[IMode.Strobe]: createIndexedMapper(getStrobeColor),
+	[IMode.Pulse]: createIndexedMapper(getPulseColor),
 }
 
 export function getPixels(mode: IMode): IArrColor[][] {

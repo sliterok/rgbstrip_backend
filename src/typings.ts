@@ -21,6 +21,8 @@ export enum IMode {
 	Breathe,
 	Wave,
 	Heartbeat,
+	Strobe,
+	Pulse,
 }
 
 export interface ISettings {
