@@ -62,6 +62,9 @@ After building you can serve the production build with
 npm start
 ```
 
+Run the server with `NODE_ENV=production` so that debugging routes such as
+`/debug/stream` are disabled.
+
 ## Telegram bot
 
 1. Message [@BotFather](https://t.me/BotFather) and run `/newbot`.
