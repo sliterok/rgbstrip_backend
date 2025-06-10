@@ -8,11 +8,11 @@ import { startNightChecks } from './night'
 // eslint-disable-next-line no-undef
 process.env.TZ = config.TZ
 
-let initted = false
+const g = globalThis as any
 
 export function init() {
-	if (initted) return
-	initted = true
+	if (g.__rgb_initted) return
+	g.__rgb_initted = true
 	startLoop()
 	startNightChecks()
 	startTelegram()
