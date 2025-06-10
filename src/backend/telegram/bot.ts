@@ -5,6 +5,7 @@ import { config } from '../config'
 import { createMenuTemplate } from './menu'
 import { handleStartCommand, handleDeeplink } from './commands'
 import { isAllowedUser } from './auth'
+import { error } from '../../logger'
 
 export const bot = new Bot(config.tgApiKey)
 
@@ -33,6 +34,6 @@ bot.use(menuMiddleware)
 
 export function startTelegram() {
 	if (process.env.NODE_ENV !== 'test') {
-		bot.start().catch(err => console.error(err))
+		bot.start().catch(err => error(err))
 	}
 }

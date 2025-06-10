@@ -2,6 +2,7 @@ import { CommandContext, Context } from 'grammy'
 import { menuMiddleware, userData } from './bot'
 import { isAllowedUser, addDeeplinkUser, isAdmin } from './auth'
 import { generateDeeplinkHash } from './deeplink'
+import { error } from '../../logger'
 import { Message } from 'grammy/types'
 
 export async function handleStartCommand(ctx: CommandContext<Context>) {
@@ -12,8 +13,8 @@ export async function handleStartCommand(ctx: CommandContext<Context>) {
 				await addDeeplinkUser(ctx.from.id)
 				deeplinked = true
 			}
-		} catch (error) {
-			return console.error(error)
+		} catch (err) {
+			return error(err)
 		}
 	}
 
@@ -22,7 +23,7 @@ export async function handleStartCommand(ctx: CommandContext<Context>) {
 		try {
 			await ctx.deleteMessages([ctx.message?.message_id, user?.menu?.message_id].filter(el => el) as number[])
 		} catch (err) {
-			console.error('failed to delete menu', err)
+			error('failed to delete menu', err)
 		}
 		const menu = (await menuMiddleware.replyToContext(ctx!)) as Message.TextMessage
 		userData.set(ctx.chat.id, { ctx, menu })

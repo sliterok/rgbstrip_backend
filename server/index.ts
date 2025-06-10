@@ -4,6 +4,7 @@ import { settings } from '../src/settings'
 import { isVerifiedUser } from '../src/backend/telegram/verify'
 import { IArrColor } from '../src/typings'
 import { streamHandler } from '../src/routes/debug/stream.api'
+import { info } from '../src/logger'
 
 init()
 
@@ -29,7 +30,7 @@ router.post('/color', (req, res) => {
 
 router.get('/alive', (req, res) => {
 	settings.alive = new Date()
-	console.log('alive:', settings.alive)
+	info('alive:', settings.alive)
 	res.send('ok')
 })
 

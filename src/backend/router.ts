@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import { config } from './config'
 import { dynamic } from './shared'
 import { updateMessage } from './telegram/updates'
+import { info, error } from '../logger'
 
 const jar = new CookieJar()
 const client = wrapper(axios.create({ jar, baseURL: config.routerEndpoint }))
@@ -22,8 +23,8 @@ async function auth() {
 			.digest('hex')
 
 		await client.post('/auth', { login: 'api', password: sha256 })
-	} catch (err) {
-		console.error('router login failed', (err as AxiosError).response?.data)
+	} catch (e) {
+		error('router login failed', (e as AxiosError).response?.data)
 	}
 }
 
@@ -44,12 +45,12 @@ export async function phoneLastSeen() {
 			.sort((a, b) => a['last-seen'] - b['last-seen'] && +Number.isInteger(a))[0]
 		return myPhone?.['last-seen']
 	} catch (err) {
-		const error = err as AxiosError
-		if (error.response?.status === 401) {
+		const axiosErr = err as AxiosError
+		if (axiosErr.response?.status === 401) {
 			await auth()
 			return phoneLastSeen()
 		} else {
-			console.error('phone last seen failed', error.response?.data)
+			error('phone last seen failed', axiosErr.response?.data)
 		}
 	}
 }
@@ -57,8 +58,7 @@ export async function phoneLastSeen() {
 let seenTimeout: NodeJS.Timeout | null = null
 async function updatePhoneLastSeen() {
 	const lastSeen = await phoneLastSeen()
-	// eslint-disable-next-line no-console
-	console.log('phone last seen:', lastSeen)
+	info('phone last seen:', lastSeen)
 	if (lastSeen === undefined || lastSeen > 150) {
 		if (!seenTimeout)
 			seenTimeout = setTimeout(() => {

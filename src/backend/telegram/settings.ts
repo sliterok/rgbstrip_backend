@@ -3,6 +3,7 @@ import { Context } from 'grammy'
 import { settings } from '../../settings'
 import { IMode, ISettings } from '../../typings'
 import { updateKeyboard } from './updates'
+import { info } from '../../logger'
 import { FormatStateFunction } from 'grammy-inline-menu/dist/source/buttons/select'
 
 type IBooleanSettingsKeys = { [k in keyof ISettings]: ISettings[k] extends boolean ? k : never }[keyof ISettings]
@@ -43,8 +44,7 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			set: async (ctx, key) => {
 				settings.mode = parseInt(key)
 				const selectedMode = IMode[settings.mode]
-				// eslint-disable-next-line no-console
-				console.log('selected mode:', selectedMode)
+				info('selected mode:', selectedMode)
 				await ctx.answerCallbackQuery(settings.mode ? `${selectedMode} mode` : 'off')
 				await updateKeyboard(ctx.chat!.id)
 				return true

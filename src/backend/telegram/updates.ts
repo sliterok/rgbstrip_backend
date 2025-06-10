@@ -2,6 +2,7 @@ import { bot, menuTemplate, userData } from './bot'
 import { GrammyError } from 'grammy'
 import { TextBody } from 'grammy-inline-menu/dist/source/body'
 import { InlineKeyboardButton } from 'grammy/types'
+import { error } from '../../logger'
 
 export async function updateKeyboard(except?: number) {
 	for (const [userId, { ctx: lastContext, menu: lastMenu }] of userData.entries()) {
@@ -12,12 +13,12 @@ export async function updateKeyboard(except?: number) {
 			await bot.api.editMessageReplyMarkup(lastMenu.chat.id, lastMenu.message_id, {
 				reply_markup: { inline_keyboard: keyboard as InlineKeyboardButton[][] },
 			})
-		} catch (error) {
+		} catch (err) {
 			if (
-				error instanceof GrammyError &&
-				!error.description.endsWith('are exactly the same as a current content and reply markup of the message')
+				err instanceof GrammyError &&
+				!err.description.endsWith('are exactly the same as a current content and reply markup of the message')
 			) {
-				console.error(error)
+				error(err)
 			}
 		}
 	}
@@ -34,12 +35,12 @@ export async function updateMessage(except?: number) {
 			await bot.api.editMessageText(lastMenu.chat.id, lastMenu.message_id, text, {
 				reply_markup: { inline_keyboard: keyboard as InlineKeyboardButton[][] },
 			})
-		} catch (error) {
+		} catch (err) {
 			if (
-				error instanceof GrammyError &&
-				!error.description.endsWith('are exactly the same as a current content and reply markup of the message')
+				err instanceof GrammyError &&
+				!err.description.endsWith('are exactly the same as a current content and reply markup of the message')
 			) {
-				console.error(error)
+				error(err)
 			}
 		}
 	}
