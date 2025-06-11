@@ -1,7 +1,6 @@
 import { IColorMapper, IArrColor, IColorGetter } from 'src/typings'
 import { callIndexedGetter } from './mappers'
 import { pixelsCount, hueToColor } from '../shared'
-import { dynamic } from '../shared'
 import { settings } from 'src/settings'
 
 interface Ripple {
@@ -13,20 +12,27 @@ interface Ripple {
 
 let ripples: Ripple[] = []
 let lastTime = Date.now()
+let spawnTimer = 0
+const spawnInterval = 1000
+
+function spawnRipple() {
+	const { r, g, b } = hueToColor(Math.random() * 360).rgb()
+	ripples.push({ pos: Math.random() * pixelsCount, radius: 1, speed: 50, color: [r, g, b] })
+}
 
 function update(time: number) {
 	const dt = (time - lastTime) * settings.effectSpeed
 	lastTime = time
-	ripples.forEach(r => (r.radius += (r.speed * dt) / 30))
-	ripples = ripples.filter(r => r.radius < pixelsCount)
-	if (settings.music && dynamic.audioLevel > Math.random()) {
-		const { r, g, b } = hueToColor(dynamic.audioHue).rgb()
-		const speed = 0.5 + dynamic.audioLevel * 5
-		ripples.push({ pos: Math.random() * pixelsCount, radius: 1, speed, color: [r, g, b] })
+	spawnTimer += dt
+	while (spawnTimer >= spawnInterval) {
+		spawnTimer -= spawnInterval
+		spawnRipple()
 	}
+	ripples.forEach(r => (r.radius += (r.speed * dt) / 1000))
+	ripples = ripples.filter(r => r.radius < pixelsCount * 2)
 }
 
-const getRippleColor: IColorGetter = (index, time) => {
+export const getRippleColor: IColorGetter = (index, time) => {
 	if (index === 0) update(time)
 	let r = 0
 	let g = 0
@@ -43,4 +49,10 @@ const getRippleColor: IColorGetter = (index, time) => {
 	return [Math.min(255, Math.round(r)), Math.min(255, Math.round(g)), Math.min(255, Math.round(b))]
 }
 
-export const musicRippleMapper: IColorMapper = () => callIndexedGetter(getRippleColor)
+export function resetRipples() {
+	ripples = []
+	lastTime = 0
+	spawnTimer = 0
+}
+
+export const rippleMapper: IColorMapper = () => callIndexedGetter(getRippleColor)

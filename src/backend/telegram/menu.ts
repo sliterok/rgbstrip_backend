@@ -29,7 +29,6 @@ export function createMenuTemplate() {
 	toggleSetting(menuTemplate, 'Night override', 'nightOverride')
 	toggleSetting(menuTemplate, 'GEO override', 'geoOverride')
 	toggleSetting(menuTemplate, 'Mix color with noise', 'mixColorWithNoise')
-	toggleSetting(menuTemplate, 'Music reactive', 'music')
 
 	selectMode(menuTemplate)
 

@@ -2,7 +2,6 @@ import { startTelegram } from './telegram/bot'
 import { startLoop } from './loop'
 import { startRouterIntegration } from './router'
 import { startUdpServer } from './udp'
-import { startAudioServer } from './audio'
 import { config } from './config'
 import { startNightChecks } from './night'
 
@@ -19,5 +18,4 @@ export function init() {
 	startTelegram()
 	startUdpServer()
 	startRouterIntegration()
-	startAudioServer()
 }

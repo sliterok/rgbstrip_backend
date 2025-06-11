@@ -25,7 +25,7 @@ export enum IMode {
 	Pulse,
 	GradientPulse,
 	MultiPulse,
-	MusicRipple,
+	Ripple,
 }
 
 export interface ISettings {
@@ -35,7 +35,6 @@ export interface ISettings {
 	nightOverride: boolean
 	geoOverride: boolean
 	mixColorWithNoise: boolean
-	music: boolean
 	mixRatio: number
 	effectSpeed: number
 	alive: Date
@@ -50,8 +49,6 @@ export interface IDynamicDto {
 	nightChanged: number
 	awayChanged: number
 	overrideRatio: number
-	audioLevel: number
-	audioHue: number
 	breatheHue?: number
 	target?: Datagram.RemoteInfo
 	transition?: { from: IMode; start: number }

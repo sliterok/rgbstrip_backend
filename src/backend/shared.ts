@@ -18,8 +18,6 @@ export const dynamic: IDynamicDto = {
 	nightChanged: Date.now(),
 	awayChanged: Date.now(),
 	overrideRatio: 0,
-	audioLevel: 0,
-	audioHue: 0,
 	breatheHue: undefined,
 	transition: undefined,
 }

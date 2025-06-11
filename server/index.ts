@@ -3,7 +3,7 @@ import { init } from '../src/backend'
 import { logger } from '../src/logger'
 import { settings } from '../src/settings'
 import { isVerifiedUser, extractUserId } from '../src/backend/telegram/verify'
-import { IArrColor, IMode } from '../src/typings'
+import { IArrColor } from '../src/typings'
 import { streamHandler } from '../src/routes/debug/stream.api'
 
 init()
