@@ -2,7 +2,7 @@ import { IColorGetter, IColorMapper, IArrColor } from 'src/typings'
 import { callIndexedGetter } from './mappers'
 import { pixelsCount, hueToColor } from '../shared'
 import { settings } from 'src/settings'
-import { audioState } from '../wsAudio'
+import { audioState, AudioEvent } from '../wsAudio'
 
 interface Ripple {
 	pos: number
@@ -14,15 +14,18 @@ interface Ripple {
 let ripples: Ripple[] = []
 let lastTime = Date.now()
 
-function spawnRipple() {
-	const { r, g, b } = hueToColor(audioState.hue).rgb()
-	ripples.push({ pos: Math.random() * pixelsCount, radius: 1, speed: 50 + audioState.level * 200, color: [r, g, b] })
+function spawnRipple(evt: AudioEvent) {
+	const { r, g, b } = hueToColor(evt.hue).rgb()
+	ripples.push({ pos: Math.random() * pixelsCount, radius: 1, speed: 50 + evt.level * 200, color: [r, g, b] })
 }
 
 function update(time: number) {
 	const dt = (time - lastTime) * settings.effectSpeed
 	lastTime = time
-	if (audioState.level > 0.1) spawnRipple()
+	while (audioState.events.length) {
+		const evt = audioState.events.shift()!
+		spawnRipple(evt)
+	}
 	ripples.forEach(r => (r.radius += (r.speed * dt) / 1000))
 	ripples = ripples.filter(r => r.radius < pixelsCount * 2)
 }
