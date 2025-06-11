@@ -1,4 +1,4 @@
-import { processAudio, audioState } from '../src/backend/wsAudio'
+import { processAudio, audioState, resetAudioState } from '../src/backend/wsAudio'
 
 function genSine(freq: number, samples: number, sampleRate: number) {
 	const buf = Buffer.alloc(samples * 2)
@@ -10,10 +10,14 @@ function genSine(freq: number, samples: number, sampleRate: number) {
 }
 
 describe('processAudio', () => {
-	test('detects frequency', () => {
-		const buf = genSine(440, 1024, 44100)
-		processAudio(buf)
-		expect(audioState.freq).toBeGreaterThan(430)
-		expect(audioState.freq).toBeLessThan(450)
-	})
+        beforeEach(() => {
+                resetAudioState()
+        })
+        test('detects frequency', () => {
+                const buf = genSine(440, 1024, 44100)
+                processAudio(buf)
+                expect(audioState.freq).toBeGreaterThan(430)
+                expect(audioState.freq).toBeLessThan(450)
+        })
+
 })
