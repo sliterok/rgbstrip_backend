@@ -50,6 +50,7 @@ export interface IDynamicDto {
 	awayChanged: number
 	overrideRatio: number
 	audioLevel: number
+	audioHue: number
 	breatheHue?: number
 	target?: Datagram.RemoteInfo
 	transition?: { from: IMode; start: number }

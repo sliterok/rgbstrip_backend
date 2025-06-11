@@ -1,5 +1,5 @@
 import { settings } from 'src/settings'
-import { dynamic } from '../shared'
+import { dynamic, hueToColor } from '../shared'
 import { IArrColor, IColorMapper, IMode } from 'src/typings'
 import { noiseFrameMapper } from './noise'
 import { getProgressColor } from './progress'
@@ -15,7 +15,9 @@ const transitionDuration = 250
 function applyMusic(pixels: IArrColor[][]): IArrColor[][] {
 	if (!settings.music) return pixels
 	const level = Math.min(dynamic.audioLevel, 1)
-	return pixels.map(batch => batch.map(([r, g, b]) => [Math.round(r * level), Math.round(g * level), Math.round(b * level)]))
+	const { r, g, b } = hueToColor(dynamic.audioHue).rgb()
+	const musicColor: IArrColor = [r, g, b]
+	return pixels.map(batch => batch.map(color => mix(color, musicColor, level)))
 }
 
 function mix(a: IArrColor, b: IArrColor, t: number): IArrColor {
