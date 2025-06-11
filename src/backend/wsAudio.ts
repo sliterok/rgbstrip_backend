@@ -5,9 +5,10 @@ const { fft, util } = fftjs
 export interface AudioState {
 	hue: number
 	level: number
+	freq: number
 }
 
-export const audioState: AudioState = { hue: 0, level: 0 }
+export const audioState: AudioState = { hue: 0, level: 0, freq: 0 }
 
 export function startAudioServer(port = 8081) {
 	const wss = new WebSocketServer({ port })
@@ -19,10 +20,10 @@ export function startAudioServer(port = 8081) {
 }
 
 export function processAudio(buffer: Buffer, sampleRate = 44100) {
-	const view = new Int16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2)
-	const input = Array.from(view).map(v => v / 32768)
-	const phasors = fft(input)
-	const mags = util.fftMag(phasors)
+	const samples = new Int16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2)
+	const input = Array.from(samples, s => s / 32768)
+	const spectrum = fft(input)
+	const mags = util.fftMag(spectrum)
 	let max = 0
 	let idx = 0
 	for (let i = 1; i < mags.length / 2; i++) {
@@ -31,6 +32,8 @@ export function processAudio(buffer: Buffer, sampleRate = 44100) {
 			idx = i
 		}
 	}
+	const freq = (idx * sampleRate) / input.length
+	audioState.freq = freq
 	audioState.hue = (idx / (mags.length / 2)) * 360
 	audioState.level = max / (mags.length / 2)
 }
