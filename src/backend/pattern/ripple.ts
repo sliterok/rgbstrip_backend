@@ -22,7 +22,7 @@ function update(time: number) {
 	if (settings.music && dynamic.audioLevel > Math.random()) {
 		const { r, g, b } = hueToColor(dynamic.audioHue).rgb()
 		const speed = 0.5 + dynamic.audioLevel * 5
-		ripples.push({ pos: Math.random() * pixelsCount, radius: 0, speed, color: [r, g, b] })
+		ripples.push({ pos: Math.random() * pixelsCount, radius: 1, speed, color: [r, g, b] })
 	}
 }
 
@@ -33,7 +33,7 @@ const getRippleColor: IColorGetter = (index, time) => {
 	let b = 0
 	for (const ripple of ripples) {
 		const dist = Math.abs(index - ripple.pos)
-		const t = ripple.radius > 0 ? 1 - dist / ripple.radius : 1
+		const t = ripple.radius > 0 ? 1 - dist / ripple.radius : dist === 0 ? 1 : 0
 		if (t > 0) {
 			r += ripple.color[0] * t
 			g += ripple.color[1] * t
