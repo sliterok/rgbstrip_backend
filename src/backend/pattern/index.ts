@@ -9,6 +9,7 @@ import { getBreatheColor } from './breathe'
 import { getWaveColor } from './wave'
 import { getHeartbeatColor, getStrobeColor, getPulseColor, getGradientPulseColor, getMultiPulseColor } from './extra'
 import { rippleMapper } from './ripple'
+import { musicRippleMapper } from './musicRipple'
 import { createIndexedMapper, createFlatMapper } from './mappers'
 
 const transitionDuration = 250
@@ -37,6 +38,7 @@ const mappers: Record<IMode, IColorMapper> = {
 	[IMode.GradientPulse]: createIndexedMapper(getGradientPulseColor),
 	[IMode.MultiPulse]: createIndexedMapper(getMultiPulseColor),
 	[IMode.Ripple]: rippleMapper,
+	[IMode.MusicRipple]: musicRippleMapper,
 }
 
 export function getPixels(mode: IMode): IArrColor[][] {

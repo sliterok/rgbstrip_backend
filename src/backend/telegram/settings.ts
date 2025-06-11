@@ -43,6 +43,7 @@ export function selectMode(menuTemplate: MenuTemplate<Context>) {
 			[IMode.GradientPulse]: '🎇',
 			[IMode.MultiPulse]: '🎆',
 			[IMode.Ripple]: '💧',
+			[IMode.MusicRipple]: '🎶',
 		},
 		{
 			formatState,
