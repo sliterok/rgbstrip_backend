@@ -9,7 +9,6 @@ let lastTimestamp: number
 export default function Color() {
 	const tgWebAppDataRef = useRef<string | null>(null)
 	const [color, setColor] = useState<RgbaColor>({ r: 255, g: 0, b: 255, a: 0 })
-
 	useEffect(() => {
 		const initData = urlParseHashParams(location.hash)
 		tgWebAppDataRef.current = initData.tgWebAppData
@@ -27,7 +26,6 @@ export default function Color() {
 			body: JSON.stringify({ color: [c.r, c.g, c.b], alpha: c.a, tgWebAppData }),
 		})
 	}
-
 	return (
 		<div className={classes.container}>
 			<RgbaColorPicker
