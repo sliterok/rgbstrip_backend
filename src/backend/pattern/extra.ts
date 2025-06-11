@@ -1,8 +1,7 @@
 import { IColorGetter, IArrColor } from 'src/typings'
 import { hslToRgb } from 'src/helpers'
 import { settings } from 'src/settings'
-import { getRainbowColor } from './rainbow'
-import { pixelsCount } from '../shared'
+import { pixelsCount, hueToColor } from '../shared'
 
 export const getHeartbeatColor: IColorGetter = (_, time) => {
 	const cycle = 1000
@@ -54,11 +53,14 @@ export const getPulseColor: IColorGetter = (_, time) => {
 }
 
 export const getGradientPulseColor: IColorGetter = (index, time) => {
-	const base = (getRainbowColor as any)(index, time)
+	const t = time * settings.effectSpeed
+	const hueSpan = 60
+	const hue = (t / 16 + (index / pixelsCount) * hueSpan) % 360
+	const { r, g, b } = hueToColor(hue).rgb()
 	const cycle = 1000
-	const t = (time * settings.effectSpeed) % cycle
-	const intensity = Math.sin((t / cycle) * Math.PI)
-	return base.map((c: number) => Math.round(c * intensity)) as IArrColor
+	const pulse = t % cycle
+	const intensity = Math.sin((pulse / cycle) * Math.PI)
+	return [Math.round(r * intensity), Math.round(g * intensity), Math.round(b * intensity)] as IArrColor
 }
 
 export const getMultiPulseColor: IColorGetter = (index, time) => {
