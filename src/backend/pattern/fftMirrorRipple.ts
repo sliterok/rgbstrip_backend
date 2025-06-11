@@ -14,15 +14,18 @@ interface Ripple {
 let ripples: Ripple[] = []
 let lastTime = Date.now()
 let averages: number[] = []
+let cooldowns: number[] = []
 let hueShift = 0
 const attenuation = 0.9
 const speed = 60
+const spawnCooldown = 100
 
-function spawnRipple(bin: number, mag: number) {
+function spawnRipple(bin: number, mag: number, avg: number) {
 	const hue = (bin / audioState.bins.length) * 360 + hueShift
+	const brightness = Math.min(1, mag / (avg * 2))
 	const pos = (bin / audioState.bins.length) * pixelsCount
-	ripples.push({ pos, radius: 1, brightness: Math.min(1, mag), hue })
-	ripples.push({ pos: pixelsCount - pos, radius: 1, brightness: Math.min(1, mag), hue })
+	ripples.push({ pos, radius: 1, brightness, hue })
+	ripples.push({ pos: pixelsCount - pos, radius: 1, brightness, hue })
 }
 
 function update(time: number) {
@@ -31,11 +34,18 @@ function update(time: number) {
 	hueShift = (hueShift + dt * 0.05) % 360
 	const bins = audioState.bins
 	if (bins && bins.length) {
-		if (averages.length !== bins.length) averages = bins.slice()
+		if (averages.length !== bins.length) {
+			averages = bins.slice()
+			cooldowns = new Array(bins.length).fill(0)
+		}
 		for (let i = 0; i < bins.length; i++) {
 			const m = bins[i]
 			averages[i] = averages[i] * 0.9 + m * 0.1
-			if (m > averages[i] * 1.5) spawnRipple(i, m)
+			cooldowns[i] -= dt
+			if (m > averages[i] * 1.5 && cooldowns[i] <= 0) {
+				spawnRipple(i, m, averages[i])
+				cooldowns[i] = spawnCooldown
+			}
 		}
 	}
 	ripples.forEach(r => {
@@ -53,7 +63,7 @@ export const getFftMirrorColor: IColorGetter = (index, time) => {
 	for (const ripple of ripples) {
 		const dist = Math.abs(index - ripple.pos)
 		if (dist <= ripple.radius) {
-			const intensity = ripple.brightness * (1 - dist / ripple.radius)
+			const intensity = (ripple.brightness * (1 - dist / ripple.radius)) / ripple.radius
 			const { r: rr, g: gg, b: bb } = hueToColor(ripple.hue).rgb()
 			r += rr * intensity
 			g += gg * intensity
@@ -65,8 +75,9 @@ export const getFftMirrorColor: IColorGetter = (index, time) => {
 
 export function resetFftMirror() {
 	ripples = []
-	lastTime = Date.now()
+	lastTime = 0
 	averages = []
+	cooldowns = []
 	hueShift = 0
 }
 
