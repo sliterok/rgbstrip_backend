@@ -1,4 +1,4 @@
-import { IColorGetter, IColorMapper, IArrColor } from 'src/typings'
+import { IColorGetter, IColorMapper } from 'src/typings'
 import { callIndexedGetter } from './mappers'
 import { pixelsCount, hueToColor } from '../shared'
 import { settings } from 'src/settings'
@@ -21,7 +21,7 @@ const speed = 60
 function spawnRipple(bin: number, mag: number) {
 	const hue = (bin / audioState.bins.length) * 360 + hueShift
 	ripples.push({
-		pos: (bin / audioState.bins.length) * pixelsCount,
+		pos: Math.random() * pixelsCount,
 		radius: 1,
 		brightness: Math.min(1, mag),
 		hue,
@@ -48,7 +48,7 @@ function update(time: number) {
 	ripples = ripples.filter(r => r.brightness > 0.05)
 }
 
-export const getFftRippleColor: IColorGetter = (index, time) => {
+export const getFftRandomColor: IColorGetter = (index, time) => {
 	if (index === 0) update(time)
 	let r = 0
 	let g = 0
@@ -66,11 +66,11 @@ export const getFftRippleColor: IColorGetter = (index, time) => {
 	return [Math.min(255, Math.round(r)), Math.min(255, Math.round(g)), Math.min(255, Math.round(b))]
 }
 
-export function resetFftRipples() {
+export function resetFftRandom() {
 	ripples = []
 	lastTime = Date.now()
 	averages = []
 	hueShift = 0
 }
 
-export const fftRippleMapper: IColorMapper = () => callIndexedGetter(getFftRippleColor)
+export const fftRandomMapper: IColorMapper = () => callIndexedGetter(getFftRandomColor)

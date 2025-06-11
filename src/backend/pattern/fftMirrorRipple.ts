@@ -1,4 +1,4 @@
-import { IColorGetter, IColorMapper, IArrColor } from 'src/typings'
+import { IColorGetter, IColorMapper } from 'src/typings'
 import { callIndexedGetter } from './mappers'
 import { pixelsCount, hueToColor } from '../shared'
 import { settings } from 'src/settings'
@@ -20,12 +20,9 @@ const speed = 60
 
 function spawnRipple(bin: number, mag: number) {
 	const hue = (bin / audioState.bins.length) * 360 + hueShift
-	ripples.push({
-		pos: (bin / audioState.bins.length) * pixelsCount,
-		radius: 1,
-		brightness: Math.min(1, mag),
-		hue,
-	})
+	const pos = (bin / audioState.bins.length) * pixelsCount
+	ripples.push({ pos, radius: 1, brightness: Math.min(1, mag), hue })
+	ripples.push({ pos: pixelsCount - pos, radius: 1, brightness: Math.min(1, mag), hue })
 }
 
 function update(time: number) {
@@ -48,7 +45,7 @@ function update(time: number) {
 	ripples = ripples.filter(r => r.brightness > 0.05)
 }
 
-export const getFftRippleColor: IColorGetter = (index, time) => {
+export const getFftMirrorColor: IColorGetter = (index, time) => {
 	if (index === 0) update(time)
 	let r = 0
 	let g = 0
@@ -66,11 +63,11 @@ export const getFftRippleColor: IColorGetter = (index, time) => {
 	return [Math.min(255, Math.round(r)), Math.min(255, Math.round(g)), Math.min(255, Math.round(b))]
 }
 
-export function resetFftRipples() {
+export function resetFftMirror() {
 	ripples = []
 	lastTime = Date.now()
 	averages = []
 	hueShift = 0
 }
 
-export const fftRippleMapper: IColorMapper = () => callIndexedGetter(getFftRippleColor)
+export const fftMirrorMapper: IColorMapper = () => callIndexedGetter(getFftMirrorColor)
