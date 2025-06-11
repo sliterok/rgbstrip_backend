@@ -27,6 +27,7 @@ export enum IMode {
 	MultiPulse,
 	Ripple,
 	MusicRipple,
+	FftRipple,
 }
 
 export interface ISettings {

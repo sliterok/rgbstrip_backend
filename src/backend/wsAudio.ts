@@ -6,9 +6,10 @@ export interface AudioState {
 	hue: number
 	level: number
 	freq: number
+	bins: number[]
 }
 
-export const audioState: AudioState = { hue: 0, level: 0, freq: 0 }
+export const audioState: AudioState = { hue: 0, level: 0, freq: 0, bins: [] }
 
 export function startAudioServer(port = 8081) {
 	const wss = new WebSocketServer({ port })
@@ -24,6 +25,7 @@ export function processAudio(buffer: Buffer, sampleRate = 44100) {
 	const input = Array.from(samples, s => s / 32768)
 	const spectrum = fft(input)
 	const mags = util.fftMag(spectrum)
+	audioState.bins = mags.slice(0, mags.length / 2)
 	let max = 0
 	let idx = 0
 	for (let i = 1; i < mags.length / 2; i++) {
