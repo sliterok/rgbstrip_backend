@@ -18,11 +18,11 @@ let cooldowns: number[] = []
 let hueShift = 0
 const attenuation = 0.9
 const speed = 60
-const spawnCooldown = 100
+const spawnCooldown = 200
 
 function spawnRipple(bin: number, mag: number, avg: number) {
 	const hue = (bin / audioState.bins.length) * 360 + hueShift
-	const brightness = Math.min(1, mag / (avg * 2))
+	const brightness = Math.min(1, Math.max(0, (mag - avg) / avg))
 	ripples.push({
 		pos: Math.random() * pixelsCount,
 		radius: 1,
@@ -68,9 +68,9 @@ export const getFftRandomColor: IColorGetter = (index, time) => {
 		if (dist <= ripple.radius) {
 			const intensity = (ripple.brightness * (1 - dist / ripple.radius)) / ripple.radius
 			const { r: rr, g: gg, b: bb } = hueToColor(ripple.hue).rgb()
-			r += rr * intensity
-			g += gg * intensity
-			b += bb * intensity
+			r = Math.max(r, rr * intensity)
+			g = Math.max(g, gg * intensity)
+			b = Math.max(b, bb * intensity)
 		}
 	}
 	return [Math.min(255, Math.round(r)), Math.min(255, Math.round(g)), Math.min(255, Math.round(b))]
