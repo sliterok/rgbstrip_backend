@@ -1,6 +1,5 @@
 import { WebSocketServer } from 'ws'
 import fftjs from 'fft-js'
-import MusicTempo from 'music-tempo'
 // eslint-disable-next-line import/default
 import RingBufferTs from 'ring-buffer-ts'
 const RingBuffer = RingBufferTs.RingBuffer
@@ -30,6 +29,37 @@ const bpmWindow = sampleRateDefault * 8
 const sampleBuffer = new RingBuffer<number>(bpmWindow)
 let lastBpmUpdate = 0
 
+function detectBpm(samples: number[], sampleRate: number): number {
+	const windowSize = 1024
+	const energies: number[] = []
+	for (let i = 0; i < samples.length; i += windowSize) {
+		let sum = 0
+		for (let j = 0; j < windowSize && i + j < samples.length; j++) {
+			const v = samples[i + j]
+			sum += v * v
+		}
+		energies.push(sum / windowSize)
+	}
+	if (energies.length < 3) return 0
+	const mean = energies.reduce((a, b) => a + b, 0) / energies.length
+	const threshold = mean * 1.5
+	const peaks: number[] = []
+	for (let i = 1; i < energies.length - 1; i++) {
+		if (energies[i] > threshold && energies[i] > energies[i - 1] && energies[i] > energies[i + 1]) {
+			peaks.push(i)
+		}
+	}
+	if (peaks.length < 2) return 0
+	const intervals = []
+	for (let i = 1; i < peaks.length; i++) intervals.push(((peaks[i] - peaks[i - 1]) * windowSize) / sampleRate)
+	intervals.sort((a, b) => a - b)
+	const median = intervals[Math.floor(intervals.length / 2)]
+	if (!median) return 0
+	const bpm = 60 / median
+	if (bpm < 60 || bpm > 180) return 0
+	return bpm
+}
+
 export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 	const samples = new Int16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2)
 	const input = Array.from(samples, s => s / 32768)
@@ -53,12 +83,11 @@ export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 	audioState.level = max / (mags.length / 2)
 
 	const now = Date.now()
-	if (now - lastBpmUpdate > 2000 && sampleBuffer.getBufferLength() >= sampleRate * 4) {
+	if (now - lastBpmUpdate > 500 && sampleBuffer.getBufferLength() >= sampleRate * 2) {
 		lastBpmUpdate = now
 		try {
-			const mt = new MusicTempo(Float32Array.from(sampleBuffer.toArray()))
-			const tempo = parseFloat(String(mt.tempo))
-			if (!Number.isNaN(tempo)) audioState.bpm = tempo
+			const bpm = detectBpm(sampleBuffer.toArray(), sampleRate)
+			if (bpm) audioState.bpm = bpm
 		} catch {
 			// ignore errors
 		}
