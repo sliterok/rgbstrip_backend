@@ -18,11 +18,16 @@ let hueShift = 0
 const attenuation = 0.9
 const speed = 60
 const shiftSpeed = 40
+const offsetRange = pixelsCount * 0.25
 
 function spawnRipple(bin: number, mag: number) {
 	const hue = ((bin / audioState.bins.length) * 360 + hueShift) % 360
+	let pos = (bin / audioState.bins.length) * pixelsCount
+	pos += (Math.random() - 0.5) * offsetRange
+	if (pos < 0) pos = 0
+	if (pos >= pixelsCount) pos = pixelsCount - 1
 	ripples.push({
-		pos: Math.random() * pixelsCount,
+		pos,
 		radius: 1,
 		brightness: Math.min(1, mag),
 		hue,
