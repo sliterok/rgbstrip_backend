@@ -11,10 +11,11 @@ export interface AudioState {
 	level: number
 	freq: number
 	bpm: number
+	beatTime: number
 	bins: number[]
 }
 
-export const audioState: AudioState = { hue: 0, level: 0, freq: 0, bpm: 0, bins: [] }
+export const audioState: AudioState = { hue: 0, level: 0, freq: 0, bpm: 0, beatTime: 0, bins: [] }
 
 export function startAudioServer(port = 8081) {
 	const wss = new WebSocketServer({ port })
@@ -53,12 +54,18 @@ export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 	audioState.level = max / (mags.length / 2)
 
 	const now = Date.now()
-	if (now - lastBpmUpdate > 2000 && sampleBuffer.getBufferLength() >= sampleRate * 4) {
+	if (now - lastBpmUpdate > 500 && sampleBuffer.getBufferLength() >= sampleRate * 4) {
 		lastBpmUpdate = now
 		try {
-			const mt = new MusicTempo(Float32Array.from(sampleBuffer.toArray()))
+			const data = Float32Array.from(sampleBuffer.toArray())
+			const mt = new MusicTempo(data)
 			const tempo = parseFloat(String(mt.tempo))
-			if (!Number.isNaN(tempo)) audioState.bpm = tempo
+			if (!Number.isNaN(tempo)) {
+				audioState.bpm = audioState.bpm ? (audioState.bpm * 3 + tempo) / 4 : tempo
+				const duration = sampleBuffer.getBufferLength() / sampleRate
+				const beatSec = mt.beats[mt.beats.length - 1] ?? 0
+				audioState.beatTime = now - (duration - beatSec) * 1000
+			}
 		} catch {
 			// ignore errors
 		}
@@ -70,6 +77,7 @@ export function resetAudioState() {
 	audioState.level = 0
 	audioState.freq = 0
 	audioState.bpm = 0
+	audioState.beatTime = 0
 	audioState.bins = []
 	sampleBuffer.clear()
 	lastBpmUpdate = 0

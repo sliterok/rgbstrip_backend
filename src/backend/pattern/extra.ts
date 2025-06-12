@@ -7,7 +7,8 @@ import { audioState } from '../wsAudio'
 export const getHeartbeatColor: IColorGetter = (_, time) => {
 	const beat = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 1000
 	const cycle = beat
-	const t = (time * settings.effectSpeed) % cycle
+	const offset = settings.syncToMusic ? audioState.beatTime : 0
+	const t = ((time - offset) * settings.effectSpeed) % cycle
 
 	if (t < lastHeartbeat) {
 		prevHeartbeat = nextHeartbeat
@@ -36,7 +37,8 @@ function pulseIntensity(t: number, offset: number, cycle: number) {
 
 export const getStrobeColor: IColorGetter = (_, time) => {
 	const interval = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 200
-	const t = (time * settings.effectSpeed) % interval
+	const offset = settings.syncToMusic ? audioState.beatTime : 0
+	const t = ((time - offset) * settings.effectSpeed) % interval
 	if (t < lastStrobe) {
 		strobeColor = hslToRgb(Math.random() * 360, 1, 0.5)
 	}
@@ -47,7 +49,8 @@ export const getStrobeColor: IColorGetter = (_, time) => {
 
 export const getPulseColor: IColorGetter = (_, time) => {
 	const cycle = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 1000
-	const t = (time * settings.effectSpeed) % cycle
+	const offset = settings.syncToMusic ? audioState.beatTime : 0
+	const t = ((time - offset) * settings.effectSpeed) % cycle
 	if (t < lastPulse) {
 		pulseColor = hslToRgb(Math.random() * 360, 1, 0.5)
 	}
