@@ -38,4 +38,11 @@ describe('processAudio', () => {
                expect(audioState.bpm).toBeLessThan(130)
        })
 
+       test('detects slow bpm', () => {
+               const buf = genBeat(80, 8, 44100)
+               processAudio(buf)
+               expect(audioState.bpm).toBeGreaterThan(70)
+               expect(audioState.bpm).toBeLessThan(90)
+       })
+
 })

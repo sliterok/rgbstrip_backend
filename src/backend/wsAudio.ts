@@ -27,7 +27,7 @@ export function startAudioServer(port = 8081) {
 }
 
 const sampleRateDefault = 44100
-const bpmWindow = sampleRateDefault * 8
+const bpmWindow = sampleRateDefault * 12
 const sampleBuffer = new RingBuffer<number>(bpmWindow)
 let lastBpmUpdate = 0
 
