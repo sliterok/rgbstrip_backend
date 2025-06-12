@@ -34,7 +34,9 @@ export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 	const samples = new Int16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2)
 	const input = Array.from(samples, s => s / 32768)
 	for (const s of input) sampleBuffer.add(s)
-	const spectrum = fft(input)
+
+	const size = 1 << Math.floor(Math.log2(input.length || 1))
+	const spectrum = fft(input.slice(0, size))
 	const mags = util.fftMag(spectrum)
 	audioState.bins = mags.slice(0, mags.length / 2)
 	let max = 0
@@ -45,7 +47,7 @@ export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 			idx = i
 		}
 	}
-	const freq = (idx * sampleRate) / input.length
+	const freq = (idx * sampleRate) / size
 	audioState.freq = freq
 	audioState.hue = (idx / (mags.length / 2)) * 360
 	audioState.level = max / (mags.length / 2)
@@ -55,7 +57,8 @@ export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 		lastBpmUpdate = now
 		try {
 			const mt = new MusicTempo(Float32Array.from(sampleBuffer.toArray()))
-			if (mt.tempo) audioState.bpm = mt.tempo
+			const tempo = parseFloat(String(mt.tempo))
+			if (!Number.isNaN(tempo)) audioState.bpm = tempo
 		} catch {
 			// ignore errors
 		}
