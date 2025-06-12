@@ -36,7 +36,7 @@ function update(time: number) {
 		for (let i = 0; i < bins.length; i++) {
 			const m = bins[i]
 			averages[i] = averages[i] * 0.9 + m * 0.1
-			if (m > averages[i] * 1.5) spawnRipple(i, m)
+			if (m > averages[i] * (1.5 - audioState.beat)) spawnRipple(i, m)
 		}
 	}
 	ripples.forEach(r => {

@@ -22,7 +22,7 @@ function spawnRipple() {
 function update(time: number) {
 	const dt = (time - lastTime) * settings.effectSpeed
 	lastTime = time
-	if (audioState.level > 0.1) spawnRipple()
+	if (audioState.level > 0.1 || audioState.beat > 0.5) spawnRipple()
 	ripples.forEach(r => (r.radius += (r.speed * dt) / 1000))
 	ripples = ripples.filter(r => r.radius < pixelsCount * 2)
 }

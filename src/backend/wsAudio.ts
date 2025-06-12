@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws'
 import fftjs from 'fft-js'
+import { processBeat } from './bpm'
 const { fft, util } = fftjs
 
 export interface AudioState {
@@ -7,9 +8,11 @@ export interface AudioState {
 	level: number
 	freq: number
 	bins: number[]
+	bpm: number
+	beat: number
 }
 
-export const audioState: AudioState = { hue: 0, level: 0, freq: 0, bins: [] }
+export const audioState: AudioState = { hue: 0, level: 0, freq: 0, bins: [], bpm: 0, beat: 0 }
 
 export function startAudioServer(port = 8081) {
 	const wss = new WebSocketServer({ port })
@@ -23,6 +26,7 @@ export function startAudioServer(port = 8081) {
 export function processAudio(buffer: Buffer, sampleRate = 44100) {
 	const samples = new Int16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2)
 	const input = Array.from(samples, s => s / 32768)
+	processBeat(input, sampleRate)
 	const spectrum = fft(input)
 	const mags = util.fftMag(spectrum)
 	audioState.bins = mags.slice(0, mags.length / 2)
