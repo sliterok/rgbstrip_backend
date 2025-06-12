@@ -2,9 +2,11 @@ import { IColorGetter, IArrColor } from 'src/typings'
 import { hslToRgb } from 'src/helpers'
 import { settings } from 'src/settings'
 import { pixelsCount, hueToColor } from '../shared'
+import { audioState } from '../wsAudio'
 
 export const getHeartbeatColor: IColorGetter = (_, time) => {
-	const cycle = 1000
+	const beat = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 1000
+	const cycle = beat
 	const t = (time * settings.effectSpeed) % cycle
 
 	if (t < lastHeartbeat) {
@@ -16,33 +18,35 @@ export const getHeartbeatColor: IColorGetter = (_, time) => {
 	const fade = Math.min(t / 200, 1)
 	const baseColor = prevHeartbeat.map((c, i) => c + (nextHeartbeat[i] - c) * fade) as IArrColor
 
-	const first = pulseIntensity(t, 0)
-	const second = pulseIntensity(t, 250)
+	const first = pulseIntensity(t, 0, cycle)
+	const second = pulseIntensity(t, cycle / 4, cycle)
 	const intensity = Math.max(first, second)
 
 	return baseColor.map(c => Math.round(c * intensity)) as IArrColor
 }
 
-const pulseDuration = 200
-function pulseIntensity(t: number, offset: number) {
+const pulseBaseDuration = 200
+function pulseIntensity(t: number, offset: number, cycle: number) {
+	const duration = settings.syncToMusic ? cycle * (pulseBaseDuration / 1000) : pulseBaseDuration
 	const dt = t - offset
-	if (dt < 0 || dt >= pulseDuration) return 0
-	const ratio = dt / pulseDuration
+	if (dt < 0 || dt >= duration) return 0
+	const ratio = dt / duration
 	return Math.sin(ratio * Math.PI)
 }
 
 export const getStrobeColor: IColorGetter = (_, time) => {
-	const interval = 200
+	const interval = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 200
 	const t = (time * settings.effectSpeed) % interval
 	if (t < lastStrobe) {
 		strobeColor = hslToRgb(Math.random() * 360, 1, 0.5)
 	}
 	lastStrobe = t
-	return t < 40 ? strobeColor : [0, 0, 0]
+	const flash = settings.syncToMusic ? interval * 0.2 : 40
+	return t < flash ? strobeColor : [0, 0, 0]
 }
 
 export const getPulseColor: IColorGetter = (_, time) => {
-	const cycle = 1000
+	const cycle = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 1000
 	const t = (time * settings.effectSpeed) % cycle
 	if (t < lastPulse) {
 		pulseColor = hslToRgb(Math.random() * 360, 1, 0.5)
@@ -86,3 +90,17 @@ let lastMultiPulse = 0
 let prevHeartbeat: IArrColor = hslToRgb(Math.random() * 360, 1, 0.5)
 let nextHeartbeat: IArrColor = prevHeartbeat
 let lastHeartbeat = 0
+
+export function resetExtraPatterns() {
+	strobeColor = [255, 255, 255]
+	lastStrobe = 0
+	pulseColor = [255, 0, 0]
+	lastPulse = 0
+	multiPulseColors = Array(4)
+		.fill(null)
+		.map(() => hslToRgb(Math.random() * 360, 1, 0.5))
+	lastMultiPulse = 0
+	prevHeartbeat = hslToRgb(Math.random() * 360, 1, 0.5)
+	nextHeartbeat = prevHeartbeat
+	lastHeartbeat = 0
+}

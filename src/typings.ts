@@ -37,6 +37,7 @@ export interface ISettings {
 	nightOverride: boolean
 	geoOverride: boolean
 	mixColorWithNoise: boolean
+	syncToMusic: boolean
 	mixRatio: number
 	effectSpeed: number
 	alive: Date
