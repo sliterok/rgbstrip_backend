@@ -46,13 +46,25 @@ export const getStrobeColor: IColorGetter = (_, time) => {
 }
 
 export const getPulseColor: IColorGetter = (_, time) => {
-	const cycle = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 1000
-	const t = (time * settings.effectSpeed) % cycle
-	if (t < lastPulse) {
+	const target = settings.syncToMusic && audioState.bpm ? 60000 / audioState.bpm : 1000
+
+	if (!lastPulseTime) {
+		lastPulseTime = time
+		pulseCycle = target
+	}
+
+	const dt = (time - lastPulseTime) * settings.effectSpeed
+	lastPulseTime = time
+	pulsePhase += dt / pulseCycle
+
+	if (pulsePhase >= 1) {
+		pulsePhase %= 1
 		pulseColor = hslToRgb(Math.random() * 360, 1, 0.5)
 	}
-	lastPulse = t
-	const intensity = Math.sin((t / cycle) * Math.PI)
+
+	pulseCycle = target
+
+	const intensity = Math.sin(pulsePhase * Math.PI)
 	return pulseColor.map(c => Math.round(c * intensity)) as IArrColor
 }
 
@@ -82,7 +94,9 @@ export const getMultiPulseColor: IColorGetter = (index, time) => {
 let strobeColor: IArrColor = [255, 255, 255]
 let lastStrobe = 0
 let pulseColor: IArrColor = [255, 0, 0]
-let lastPulse = 0
+let pulseCycle = 1000
+let pulsePhase = 0
+let lastPulseTime = 0
 let multiPulseColors: IArrColor[] = Array(4)
 	.fill(null)
 	.map(() => hslToRgb(Math.random() * 360, 1, 0.5))
@@ -95,7 +109,9 @@ export function resetExtraPatterns() {
 	strobeColor = [255, 255, 255]
 	lastStrobe = 0
 	pulseColor = [255, 0, 0]
-	lastPulse = 0
+	pulseCycle = 1000
+	pulsePhase = 0
+	lastPulseTime = 0
 	multiPulseColors = Array(4)
 		.fill(null)
 		.map(() => hslToRgb(Math.random() * 360, 1, 0.5))
