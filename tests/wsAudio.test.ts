@@ -24,16 +24,16 @@ describe('processAudio', () => {
         beforeEach(() => {
                 resetAudioState()
         })
-       test('detects frequency', () => {
+       test('detects frequency', async () => {
                const buf = genSine(440, 1234, 44100)
-               processAudio(buf)
+               await processAudio(buf)
                expect(audioState.freq).toBeGreaterThan(430)
                expect(audioState.freq).toBeLessThan(450)
        })
 
-       test('detects bpm', () => {
+       test('detects bpm', async () => {
                const buf = genBeat(120, 4, 44100)
-               processAudio(buf)
+               await processAudio(buf)
                expect(audioState.bpm).toBeGreaterThan(110)
                expect(audioState.bpm).toBeLessThan(130)
        })
