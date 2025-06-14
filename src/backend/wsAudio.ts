@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws'
 import fftjs from 'fft-js'
-import MusicTempo from 'music-tempo'
+import { Essentia, EssentiaWASM } from 'essentia.js'
 // eslint-disable-next-line import/default
 import RingBufferTs from 'ring-buffer-ts'
 const RingBuffer = RingBufferTs.RingBuffer
@@ -29,8 +29,10 @@ const sampleRateDefault = 44100
 const bpmWindow = sampleRateDefault * 8
 const sampleBuffer = new RingBuffer<number>(bpmWindow)
 let lastBpmUpdate = 0
+const essentiaPromise = Promise.resolve(new Essentia(EssentiaWASM))
+let bpmSmoothed = 0
 
-export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
+export async function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 	const samples = new Int16Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 2)
 	const input = Array.from(samples, s => s / 32768)
 	for (const s of input) sampleBuffer.add(s)
@@ -56,9 +58,14 @@ export function processAudio(buffer: Buffer, sampleRate = sampleRateDefault) {
 	if (now - lastBpmUpdate > 2000 && sampleBuffer.getBufferLength() >= sampleRate * 4) {
 		lastBpmUpdate = now
 		try {
-			const mt = new MusicTempo(Float32Array.from(sampleBuffer.toArray()))
-			const tempo = parseFloat(String(mt.tempo))
-			if (!Number.isNaN(tempo)) audioState.bpm = tempo
+			const essentia = await essentiaPromise
+			const signal = essentia.arrayToVector(Float32Array.from(sampleBuffer.toArray()))
+			const res = essentia.RhythmExtractor2013(signal, 208, 'multifeature', 40)
+			const tempo = res.bpm
+			if (!Number.isNaN(tempo)) {
+				bpmSmoothed = bpmSmoothed ? bpmSmoothed * 0.9 + tempo * 0.1 : tempo
+				audioState.bpm = bpmSmoothed
+			}
 		} catch {
 			// ignore errors
 		}
@@ -73,4 +80,5 @@ export function resetAudioState() {
 	audioState.bins = []
 	sampleBuffer.clear()
 	lastBpmUpdate = 0
+	bpmSmoothed = 0
 }
