@@ -20,7 +20,16 @@ export function startAudioServer(port = 8081) {
 	const wss = new WebSocketServer({ port })
 	wss.on('connection', ws => {
 		ws.on('message', data => {
-			if (Buffer.isBuffer(data)) processAudio(data)
+			if (Buffer.isBuffer(data)) {
+				processAudio(data)
+			} else {
+				try {
+					const msg = JSON.parse(data.toString())
+					if (typeof msg.bpm === 'number') audioState.bpm = msg.bpm
+				} catch {
+					// ignore non-json messages
+				}
+			}
 		})
 	})
 }

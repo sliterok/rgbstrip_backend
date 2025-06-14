@@ -55,14 +55,16 @@ export const getPulseColor: IColorGetter = (_, time) => {
 
 	const dt = (time - lastPulseTime) * settings.effectSpeed
 	lastPulseTime = time
-	pulsePhase += dt / pulseCycle
+
+	const elapsed = pulsePhase * pulseCycle + dt
+	pulseCycle = target
+	pulsePhase = elapsed / pulseCycle
 
 	if (pulsePhase >= 1) {
-		pulsePhase %= 1
+		const cycles = Math.floor(pulsePhase)
+		pulsePhase -= cycles
 		pulseColor = hslToRgb(Math.random() * 360, 1, 0.5)
 	}
-
-	pulseCycle = target
 
 	const intensity = Math.sin(pulsePhase * Math.PI)
 	return pulseColor.map(c => Math.round(c * intensity)) as IArrColor
